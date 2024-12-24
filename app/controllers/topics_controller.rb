@@ -17,9 +17,9 @@ class TopicsController < ApplicationController
   def show
     @gifs = GiphyService.search(@topic.title)
     @artworks = ArtsyService.new.search(@topic.title)
+    @urban_definitions = UrbanDictionaryService.search(@topic.title)
     
-    Rails.logger.info "Artworks found for #{@topic.title}: #{@artworks.size}"
-    Rails.logger.debug "Artwork data: #{@artworks.inspect}"
+    Rails.logger.info "Urban definitions found for #{@topic.title}: #{@urban_definitions.inspect}"
     
     # Redirect if accessed through wrong type's route
     unless params[:type] == @topic.type

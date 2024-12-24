@@ -28,6 +28,10 @@
 <%# Render Artworks %>
 <%= render 'shared/artwork_grid', artworks: local_assigns[:artworks] %>
 
+<%# Render Urban Dictionary definitions %>
+<%= render 'shared/urban_dictionary', 
+    urban_definitions: local_assigns[:urban_definitions] %>
+
 <%# Related Topics %>
 <% if topic.related_topics.any? %>
   <div class="mt-8 pt-6 border-t border-gray-200">
