@@ -10,21 +10,44 @@ class ConceptNetService
 
   def lookup(term, language = 'en')
     formatted_term = format_term(term)
-    uri = URI("#{BASE_URL}/c/#{language}/#{formatted_term}?limit=50")
+    base_id = "/c/#{language}/#{formatted_term}"
     
+    # First try direct lookup
+    uri = URI("#{BASE_URL}/c/#{language}/#{formatted_term}")
+    response = make_request(uri)
+    
+    # If direct lookup fails or has no edges, try query endpoint
+    if !response || !response['edges']&.any?
+      uri = URI("#{BASE_URL}/query?node=#{base_id}&limit=50")
+      response = make_request(uri)
+    end
+
+    return nil unless response
+
+    # Log the response structure
+    Rails.logger.debug "ConceptNet Response Structure:"
+    Rails.logger.debug "Edges: #{response['edges']&.size}"
+    if response['edges']&.any?
+      Rails.logger.debug "Sample edge: #{response['edges'].first.inspect}"
+    end
+
+    # Add the @id to the response for compatibility
+    response['@id'] = base_id
+    response
+  end
+
+  def make_request(uri)
     Rails.logger.info "ConceptNet API Request: #{uri}"
     
-    # Create HTTP client that follows redirects
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = uri.scheme == 'https'
     
-    # Make request and follow redirects (max 5 times)
     response = fetch_with_redirects(http, uri)
     Rails.logger.info "ConceptNet API Final Response Status: #{response.code}"
     
     if response.is_a?(Net::HTTPSuccess)
       data = JSON.parse(response.body)
-      Rails.logger.info "ConceptNet API Response: #{data['@id']}"
+      Rails.logger.info "ConceptNet API Response edges: #{data['edges']&.size}"
       data
     else
       Rails.logger.error "ConceptNet API Error: #{response.body}"
@@ -32,9 +55,6 @@ class ConceptNetService
     end
   rescue JSON::ParserError => e
     Rails.logger.error "ConceptNet JSON Parse Error: #{e.message}"
-    nil
-  rescue URI::InvalidURIError => e
-    Rails.logger.error "ConceptNet Invalid URI Error: #{e.message}"
     nil
   rescue StandardError => e
     Rails.logger.error "ConceptNet Unexpected Error: #{e.message}"
@@ -63,7 +83,11 @@ class ConceptNetService
   end
 
   def format_term(term)
-    # Handle special characters and spaces properly for URLs
-    ERB::Util.url_encode(term.downcase.strip.gsub(/\s+/, '_'))
+    # Normalize the term
+    term = term.downcase.strip
+    
+    # Handle special characters and spaces
+    term.gsub(/[^a-z0-9\s]/i, '') # Remove special characters
+        .gsub(/\s+/, '_')         # Replace spaces with underscores
   end
 end 
