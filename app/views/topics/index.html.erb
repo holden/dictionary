@@ -1,0 +1,68 @@
+<div class="min-h-screen bg-gray-50">
+  <%# Alphabet Navigation %>
+  <nav class="sticky top-0 z-50 bg-white shadow-md">
+    <div class="container mx-auto px-4 py-3">
+      <div class="flex justify-center space-x-2 text-sm">
+        <% @letters.each do |letter| %>
+          <%= link_to letter, "##{letter}", 
+              class: "px-2 py-1 rounded hover:bg-gray-100 transition-colors" %>
+        <% end %>
+      </div>
+    </div>
+  </nav>
+
+  <%# Main Content %>
+  <main class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold mb-8 text-center">The Devil's Dictionary</h1>
+
+    <div class="space-y-12">
+      <% @topics.each do |letter, topics| %>
+        <section id="<%= letter %>" class="scroll-mt-16">
+          <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-2"><%= letter %></h2>
+          
+          <div class="space-y-8">
+            <% topics.each do |topic| %>
+              <article class="bg-white rounded-lg shadow-sm p-6">
+                <header class="mb-4">
+                  <h3 class="text-xl font-bold text-gray-900">
+                    <%= topic.title %>
+                    <span class="text-sm font-normal text-gray-500">
+                      (<%= topic.type.downcase %>.)
+                    </span>
+                  </h3>
+                </header>
+
+                <% topic.definitions.each do |definition| %>
+                  <div class="prose prose-lg max-w-none text-gray-700">
+                    <%= definition.content %>
+                    
+                    <div class="mt-2 text-sm text-gray-500">
+                      <% if definition.author %>
+                        — <%= definition.author.title %>,
+                      <% end %>
+                      <% if definition.source %>
+                        <%= definition.source.title %>
+                        <% if definition.source.is_a?(Book) && definition.source.published_date %>
+                          (<%= definition.source.published_date.year %>)
+                        <% end %>
+                      <% end %>
+                    </div>
+                  </div>
+                <% end %>
+              </article>
+            <% end %>
+          </div>
+        </section>
+      <% end %>
+    </div>
+  </main>
+</div>
+
+<%# Vertical Alphabet Navigation %>
+<nav class="hidden lg:block fixed right-4 top-1/2 transform -translate-y-1/2 space-y-1">
+  <% @letters.each do |letter| %>
+    <%= link_to letter, "##{letter}", 
+        class: "block w-8 h-8 text-center leading-8 rounded hover:bg-gray-100 
+                transition-colors text-sm text-gray-600 hover:text-gray-900" %>
+  <% end %>
+</nav> 
