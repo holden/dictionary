@@ -25,7 +25,10 @@
         <% end %>
       </header>
 
-      <%= render 'shared/topic_content', topic: @topic, gifs: @gifs %>
+      <%= render 'shared/topic_content', 
+          topic: @topic, 
+          gifs: @gifs,
+          artworks: @artworks %>
     </article>
   </div>
 </div> 

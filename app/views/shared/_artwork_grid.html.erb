@@ -1,0 +1,32 @@
+<% if artworks&.any? %>
+  <div class="mt-8">
+    <h3 class="text-lg font-medium text-gray-700 mb-3">
+      Related Artworks
+      <span class="text-sm font-normal text-gray-500">
+        — Powered by Artsy
+      </span>
+    </h3>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+      <% artworks.each do |artwork| %>
+        <a href="<%= artwork[:artwork_url] %>" 
+           target="_blank" 
+           class="group block">
+          <div class="aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-lg bg-gray-100">
+            <%= image_tag artwork[:image_url], 
+                class: "object-cover object-center group-hover:opacity-75 transition-opacity", 
+                alt: artwork[:title] %>
+          </div>
+          <div class="mt-2">
+            <h4 class="text-sm font-medium text-gray-900 truncate"><%= artwork[:title] %></h4>
+            <% if artwork[:artist].present? %>
+              <p class="text-xs text-gray-500"><%= artwork[:artist] %></p>
+            <% end %>
+            <% if artwork[:date].present? %>
+              <p class="text-xs text-gray-400"><%= artwork[:date] %></p>
+            <% end %>
+          </div>
+        </a>
+      <% end %>
+    </div>
+  </div>
+<% end %> 

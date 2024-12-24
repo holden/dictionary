@@ -25,6 +25,9 @@
   <% end %>
 </div>
 
+<%# Render Artworks %>
+<%= render 'shared/artwork_grid', artworks: local_assigns[:artworks] %>
+
 <%# Related Topics %>
 <% if topic.related_topics.any? %>
   <div class="mt-8 pt-6 border-t border-gray-200">

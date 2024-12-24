@@ -1,11 +1,19 @@
 <% if gifs&.any? %>
-  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mt-6">
-    <% gifs.each do |gif| %>
-      <div class="aspect-w-16 aspect-h-9">
-        <%= image_tag gif[:url], 
-            class: "rounded-lg shadow-md object-cover w-full h-full max-w-[200px]", 
-            alt: "Illustration for #{topic.title}" %>
-      </div>
-    <% end %>
+  <div class="mt-6">
+    <h3 class="text-lg font-medium text-gray-700 mb-3">
+      Illustrations from Giphy
+      <span class="text-sm font-normal text-gray-500">
+        — Powered by GIPHY
+      </span>
+    </h3>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+      <% gifs.each do |gif| %>
+        <div class="aspect-w-16 aspect-h-9">
+          <%= image_tag gif[:url], 
+              class: "rounded-lg shadow-md object-cover w-full h-full max-w-[200px]", 
+              alt: "Illustration for #{topic.title}" %>
+        </div>
+      <% end %>
+    </div>
   </div>
 <% end %> 
