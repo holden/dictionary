@@ -1,23 +1,28 @@
 class GiphyService
   include HTTParty
-  base_uri 'api.giphy.com/v1/gifs'
+  base_uri 'https://api.giphy.com/v1/gifs'
 
-  def self.search(term, limit: 5)
-    response = get('/search', query: {
-      q: term,
-      api_key: Rails.application.credentials.giphy_api_key,
-      limit: limit,
-      rating: 'g'  # Keep it family-friendly
-    })
+  def self.search(term)
+    Rails.cache.fetch("giphy/#{term}", expires_in: 1.hour) do
+      response = get('/search', {
+        query: {
+          api_key: Rails.application.credentials.giphy_api_key,
+          q: term,
+          limit: 5,
+          rating: 'g'
+        }
+      })
 
-    return nil unless response.success?
+      return [] unless response.success?
 
-    response.parsed_response['data'].map do |gif|
-      {
-        url: gif.dig('images', 'fixed_width', 'url'),
-        width: gif.dig('images', 'fixed_width', 'width'),
-        height: gif.dig('images', 'fixed_width', 'height')
-      }
+      response['data'].map do |gif|
+        {
+          url: gif.dig('images', 'fixed_height', 'url'),
+          width: gif.dig('images', 'fixed_height', 'width'),
+          height: gif.dig('images', 'fixed_height', 'height'),
+          giphy_url: gif['url']  # Add the Giphy URL
+        }
+      end
     end
   end
 end 

@@ -1,0 +1,26 @@
+<nav class="sticky top-0 z-50 bg-white shadow-md">
+  <div class="container mx-auto px-4 py-3">
+    <div class="flex items-center justify-between">
+      <%# Title %>
+      <div class="flex items-center space-x-4">
+        <% if local_assigns[:show_back] %>
+          <%= link_to root_path, 
+              class: "text-gray-600 hover:text-gray-900 transition-colors" do %>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+            </svg>
+          <% end %>
+        <% end %>
+        <h1 class="text-2xl font-bold text-gray-900">New Devil's Dictionary</h1>
+      </div>
+      
+      <%# Navigation Links %>
+      <div class="flex space-x-6">
+        <%= link_to "Home", root_path, 
+            class: "text-gray-600 hover:text-gray-900 transition-colors" %>
+        <%= link_to "About", "#", 
+            class: "text-gray-600 hover:text-gray-900 transition-colors" %>
+      </div>
+    </div>
+  </div>
+</nav> 
