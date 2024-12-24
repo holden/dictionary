@@ -1,20 +1,24 @@
 <div class="min-h-screen bg-gray-50">
-  <%# Alphabet Navigation %>
+  <%# Top Navigation %>
   <nav class="sticky top-0 z-50 bg-white shadow-md">
     <div class="container mx-auto px-4 py-3">
-      <div class="flex justify-center space-x-2 text-sm">
-        <% @letters.each do |letter| %>
-          <%= link_to letter, "##{letter}", 
-              class: "px-2 py-1 rounded hover:bg-gray-100 transition-colors" %>
-        <% end %>
+      <div class="flex items-center justify-between">
+        <%# Title %>
+        <h1 class="text-2xl font-bold text-gray-900">New Devil's Dictionary</h1>
+        
+        <%# Navigation Links %>
+        <div class="flex space-x-6">
+          <%= link_to "Home", root_path, 
+              class: "text-gray-600 hover:text-gray-900 transition-colors" %>
+          <%= link_to "About", "#", 
+              class: "text-gray-600 hover:text-gray-900 transition-colors" %>
+        </div>
       </div>
     </div>
   </nav>
 
   <%# Main Content %>
   <main class="container mx-auto px-4 py-8">
-    <h1 class="text-4xl font-bold mb-8 text-center">The Devil's Dictionary</h1>
-
     <div class="space-y-12">
       <% @topics.each do |letter, topics| %>
         <section id="<%= letter %>" class="scroll-mt-16">
