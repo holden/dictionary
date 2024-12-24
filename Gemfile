@@ -64,6 +64,10 @@ group :test do
   gem "selenium-webdriver"
 end
 
-gem 'engtagger'
-gem 'httparty'
-gem 'nokogiri'
+gem "engtagger", "~> 0.4.1"
+gem "httparty"
+gem "nokogiri"
+
+gem "dockerfile-rails", ">= 1.6", :group => :development
+
+gem "aws-sdk-s3", "~> 1.176", :require => false

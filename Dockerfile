@@ -39,6 +39,10 @@ RUN bundle install && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
     bundle exec bootsnap precompile --gemfile
 
+RUN gem install engtagger
+RUN chmod -R 755 /usr/local/bundle/ruby/3.2.0/gems/engtagger-0.4.1
+    
+
 # Copy application code
 COPY . .
 
