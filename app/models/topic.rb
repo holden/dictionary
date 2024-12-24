@@ -213,6 +213,24 @@ class Topic < ApplicationRecord
     end
   end
 
+  # Class method to fix existing records
+  def self.standardize_all_titles!
+    transaction do
+      find_each do |topic|
+        # Skip if already standardized
+        next if topic.title == topic.title.downcase
+
+        old_title = topic.title
+        topic.title = topic.title.downcase
+        if topic.save
+          Rails.logger.info "Standardized title: '#{old_title}' -> '#{topic.title}'"
+        else
+          Rails.logger.error "Failed to standardize title for topic #{topic.id}: #{topic.errors.full_messages.join(', ')}"
+        end
+      end
+    end
+  end
+
   private
 
   def generate_conceptnet_id
@@ -231,10 +249,10 @@ class Topic < ApplicationRecord
   end
 
   def standardize_title
-    return if title.blank?
+    # Handle special cases first (e.g., "iOS", "iPhone")
+    return if SPECIAL_CASES.key?(title&.downcase)
     
-    normalized = title.downcase.strip
-    self.title = SPECIAL_CASES[normalized] || title.titleize
+    self.title = title&.downcase
   end
 
   def normalize_title(title)
