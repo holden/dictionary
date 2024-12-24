@@ -1,4 +1,20 @@
 class Topic < ApplicationRecord
+  # Define special cases as a class constant at the very top
+  SPECIAL_CASES = {
+    'ios' => 'iOS',
+    'iphone' => 'iPhone',
+    'google' => 'Google',
+    'facebook' => 'Facebook',
+    'nasa' => 'NASA',
+    'fbi' => 'FBI',
+    'nsa' => 'NSA',
+    'cia' => 'CIA',
+    'foia' => 'FOIA',
+    'gmo' => 'GMO',
+    'edm' => 'EDM',
+    'ipo' => 'IPO'
+  }.freeze
+
   # Add EngTagger as a class-level service
   class << self
     def tagger
@@ -7,12 +23,14 @@ class Topic < ApplicationRecord
   end
 
   # Validations
-  validates :title, presence: true, uniqueness: true
+  validates :title, presence: true, 
+    uniqueness: { case_sensitive: false }
   validates :type, presence: true
   validates :conceptnet_id, uniqueness: true, allow_nil: true
 
   # Callbacks
   before_validation :generate_conceptnet_id, if: :new_record?
+  before_validation :standardize_title
   after_create :schedule_conceptnet_lookup
 
   # Relationships
@@ -146,10 +164,8 @@ class Topic < ApplicationRecord
   private
 
   def generate_conceptnet_id
-    # Only generate if not already set
     return if conceptnet_id.present?
 
-    # Generate a unique conceptnet_id by appending a number if needed
     base_id = "/c/en/#{title.downcase.gsub(/[^a-z0-9_]/, '_')}"
     candidate_id = base_id
     counter = 1
@@ -160,6 +176,13 @@ class Topic < ApplicationRecord
     end
 
     self.conceptnet_id = candidate_id
+  end
+
+  def standardize_title
+    return if title.blank?
+    
+    normalized = title.downcase.strip
+    self.title = SPECIAL_CASES[normalized] || title.titleize
   end
 
   def normalize_title(title)
