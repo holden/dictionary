@@ -12,7 +12,7 @@ class Topic < ApplicationRecord
   validates :conceptnet_id, uniqueness: true, allow_nil: true
 
   # Callbacks
-  before_validation :set_conceptnet_id, if: -> { conceptnet_id.blank? }
+  before_validation :generate_conceptnet_id, if: :new_record?
   after_create :schedule_conceptnet_lookup
 
   # Relationships
@@ -145,22 +145,21 @@ class Topic < ApplicationRecord
 
   private
 
-  def set_conceptnet_id
-    return if title.blank?
+  def generate_conceptnet_id
+    # Only generate if not already set
+    return if conceptnet_id.present?
 
-    Rails.logger.info "Looking up ConceptNet data for: #{title}"
-    concept_data = ConceptNetService.lookup(title)
-    
-    if concept_data && concept_data['@id'].present?
-      Rails.logger.info "Found ConceptNet ID: #{concept_data['@id']}"
-      self.conceptnet_id = concept_data['@id']
-    else
-      Rails.logger.info "No ConceptNet match found, using fallback"
-      self.conceptnet_id = "/c/en/#{title.downcase.gsub(/\s+/, '_')}"
+    # Generate a unique conceptnet_id by appending a number if needed
+    base_id = "/c/en/#{title.downcase.gsub(/[^a-z0-9_]/, '_')}"
+    candidate_id = base_id
+    counter = 1
+
+    while Topic.exists?(conceptnet_id: candidate_id)
+      candidate_id = "#{base_id}_#{counter}"
+      counter += 1
     end
-  rescue StandardError => e
-    Rails.logger.error "Error setting ConceptNet ID: #{e.message}"
-    self.conceptnet_id = "/c/en/#{title.downcase.gsub(/\s+/, '_')}"
+
+    self.conceptnet_id = candidate_id
   end
 
   def normalize_title(title)
