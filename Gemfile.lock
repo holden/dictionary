@@ -131,6 +131,8 @@ GEM
     et-orbi (1.2.11)
       tzinfo
     ffi (1.16.3)
+    friendly_id (5.5.1)
+      activerecord (>= 4.0.0)
     fugit (1.11.1)
       et-orbi (~> 1, >= 1.2.11)
       raabro (~> 1.4)
@@ -397,6 +399,7 @@ DEPENDENCIES
   debug
   dockerfile-rails (>= 1.6)
   engtagger (~> 0.4.1)
+  friendly_id (~> 5.5.0)
   httparty
   image_processing (~> 1.2)
   importmap-rails

@@ -1,0 +1,50 @@
+<%# Definitions with Gifs %>
+<div class="space-y-12">
+  <% topic.definitions.each_with_index do |definition, index| %>
+    <div>
+      <%# Definition %>
+      <div class="prose prose-lg max-w-none text-gray-700">
+        <%= definition.content %>
+        
+        <div class="mt-2 text-sm text-gray-500">
+          <% if definition.author %>
+            — <%= definition.author.title %>,
+          <% end %>
+          <% if definition.source %>
+            <%= definition.source.title %>
+            <% if definition.source.is_a?(Book) && definition.source.published_date %>
+              (<%= definition.source.published_date.year %>)
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+
+      <%# Gifs for this definition %>
+      <% if gifs&.any? %>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+          <% gifs.each do |gif| %>
+            <div class="aspect-w-16 aspect-h-9">
+              <%= image_tag gif[:url], 
+                  class: "rounded-lg shadow-md object-cover w-full h-full", 
+                  alt: "Illustration for #{topic.title}" %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<%# Related Topics %>
+<% if topic.related_topics.any? %>
+  <div class="mt-8 pt-6 border-t border-gray-200">
+    <h2 class="text-xl font-semibold mb-4">Related Topics</h2>
+    <div class="flex flex-wrap gap-2">
+      <% topic.related_topics.uniq.each do |related| %>
+        <%= link_to related.title, topic_path(related), 
+            class: "px-3 py-1 bg-blue-100 text-blue-700 rounded-full 
+                    hover:bg-blue-200 transition-colors" %>
+      <% end %>
+    </div>
+  </div>
+<% end %> 

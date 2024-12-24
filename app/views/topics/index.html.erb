@@ -29,10 +29,13 @@
               <article class="bg-white rounded-lg shadow-sm p-6 scroll-mt-24" id="topic-<%= topic.id %>">
                 <header class="mb-4">
                   <h3 class="text-xl font-bold text-gray-900">
-                    <%= topic.title %>
-                    <span class="text-sm font-normal text-gray-500">
-                      (<%= abbreviate_part_of_speech(topic.part_of_speech) %>.)
-                    </span>
+                    <%= link_to topic_path(topic), 
+                        class: "hover:text-blue-600 transition-colors" do %>
+                      <%= topic.title %>
+                      <span class="text-sm font-normal text-gray-500">
+                        (<%= abbreviate_part_of_speech(topic.part_of_speech) %>.)
+                      </span>
+                    <% end %>
                   </h3>
                 </header>
 
@@ -60,7 +63,7 @@
                     <p class="text-sm text-gray-600">
                       <span class="font-medium">See also:</span>&nbsp;
                       <% topic.related_topics.uniq.each_with_index do |related, index| %>
-                        <%= link_to related.title, "#topic-#{related.id}", 
+                        <%= link_to related.title, topic_path(related), 
                             class: "text-blue-600 hover:text-blue-800 hover:underline" %><%= index == topic.related_topics.uniq.size - 1 ? "" : "," %>&nbsp;
                       <% end %>
                     </p>
@@ -73,13 +76,13 @@
       <% end %>
     </div>
   </main>
-</div>
 
-<%# Vertical Alphabet Navigation %>
-<nav class="hidden lg:block fixed right-4 top-1/2 transform -translate-y-1/2 space-y-1">
-  <% @letters.each do |letter| %>
-    <%= link_to letter, "##{letter}", 
-        class: "block w-8 h-8 text-center leading-8 rounded hover:bg-gray-100 
-                transition-colors text-sm text-gray-600 hover:text-gray-900" %>
-  <% end %>
-</nav> 
+  <%# Vertical Alphabet Navigation %>
+  <nav class="hidden lg:block fixed right-4 top-1/2 transform -translate-y-1/2 space-y-1">
+    <% @letters.each do |letter| %>
+      <%= link_to letter, "##{letter}", 
+          class: "block w-8 h-8 text-center leading-8 rounded hover:bg-gray-100 
+                  transition-colors text-sm text-gray-600 hover:text-gray-900" %>
+    <% end %>
+  </nav>
+</div> 

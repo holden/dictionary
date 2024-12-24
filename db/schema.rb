@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_12_24_144954) do
+ActiveRecord::Schema[8.0].define(version: 2024_12_24_144958) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -97,7 +97,9 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_24_144954) do
     t.string "conceptnet_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "slug"
     t.index ["conceptnet_id"], name: "index_topics_on_conceptnet_id", unique: true, where: "(conceptnet_id IS NOT NULL)"
+    t.index ["slug"], name: "index_topics_on_slug", unique: true
     t.index ["title"], name: "index_topics_on_title", unique: true
     t.index ["type"], name: "index_topics_on_type"
     t.check_constraint "type::text = ANY (ARRAY['Person'::character varying::text, 'Place'::character varying::text, 'Concept'::character varying::text, 'Thing'::character varying::text, 'Event'::character varying::text, 'Action'::character varying::text, 'Other'::character varying::text])", name: "valid_type"

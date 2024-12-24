@@ -1,4 +1,7 @@
 class Topic < ApplicationRecord
+  extend FriendlyId
+  friendly_id :slug_candidates, use: :slugged
+
   # Define special cases as a class constant at the very top
   SPECIAL_CASES = {
     'ios' => 'iOS',
@@ -287,5 +290,18 @@ class Topic < ApplicationRecord
       Rails.logger.debug "ConceptNet detected part of speech for '#{title}': #{pos}"
       pos
     end
+  end
+
+  def slug_candidates
+    [
+      :title,
+      [:title, :type],
+      [:title, :type, -> { Topic.where(title: title).count }]
+    ]
+  end
+
+  # Regenerate slug when title changes
+  def should_generate_new_friendly_id?
+    title_changed? || super
   end
 end 
