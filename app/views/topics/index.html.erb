@@ -26,7 +26,7 @@
           
           <div class="space-y-8">
             <% topics.each do |topic| %>
-              <article class="bg-white rounded-lg shadow-sm p-6" id="topic-<%= topic.id %>">
+              <article class="bg-white rounded-lg shadow-sm p-6 scroll-mt-24" id="topic-<%= topic.id %>">
                 <header class="mb-4">
                   <h3 class="text-xl font-bold text-gray-900">
                     <%= topic.title %>
@@ -59,9 +59,9 @@
                   <div class="mt-4 pt-3 border-t border-gray-200">
                     <p class="text-sm text-gray-600">
                       <span class="font-medium">See also:</span>&nbsp;
-                      <% topic.related_topics.each_with_index do |related, index| %>
+                      <% topic.related_topics.uniq.each_with_index do |related, index| %>
                         <%= link_to related.title, "#topic-#{related.id}", 
-                            class: "text-blue-600 hover:text-blue-800 hover:underline" %><%= index == topic.related_topics.size - 1 ? "" : "," %>&nbsp;
+                            class: "text-blue-600 hover:text-blue-800 hover:underline" %><%= index == topic.related_topics.uniq.size - 1 ? "" : "," %>&nbsp;
                       <% end %>
                     </p>
                   </div>
