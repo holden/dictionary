@@ -17,7 +17,11 @@ class TopicsController < ApplicationController
   def show
     @gifs = GiphyService.search(@topic.title)
     
-    # Try to render type-specific template, fall back to show
+    # Redirect if accessed through wrong type's route
+    unless params[:type] == @topic.type
+      redirect_to polymorphic_path(@topic), status: :moved_permanently and return
+    end
+    
     type_template = @topic.type.underscore
     render type_template if lookup_context.exists?(type_template, ['topics'], true)
   end
@@ -27,6 +31,7 @@ class TopicsController < ApplicationController
   def set_topic
     @topic = Topic.friendly.includes(:definitions => [:source, :author])
                   .includes(:related_topics)
+                  .where(type: params[:type])
                   .find(params[:id])
   end
 end 

@@ -29,13 +29,11 @@
               <article class="bg-white rounded-lg shadow-sm p-6 scroll-mt-24" id="topic-<%= topic.id %>">
                 <header class="mb-4">
                   <h3 class="text-xl font-bold text-gray-900">
-                    <%= link_to topic_path(topic), 
-                        class: "hover:text-blue-600 transition-colors" do %>
-                      <%= topic.title %>
-                      <span class="text-sm font-normal text-gray-500">
-                        (<%= abbreviate_part_of_speech(topic.part_of_speech) %>.)
-                      </span>
-                    <% end %>
+                    <%= link_to topic.title, send("#{topic.route_key}_path", topic), 
+                        class: "hover:text-blue-600 transition-colors" %>
+                    <span class="text-sm font-normal text-gray-500">
+                      (<%= abbreviate_part_of_speech(topic.part_of_speech) %>.)
+                    </span>
                   </h3>
                 </header>
 
@@ -63,7 +61,7 @@
                     <p class="text-sm text-gray-600">
                       <span class="font-medium">See also:</span>&nbsp;
                       <% topic.related_topics.uniq.each_with_index do |related, index| %>
-                        <%= link_to related.title, topic_path(related), 
+                        <%= link_to related.title, send("#{related.route_key}_path", related), 
                             class: "text-blue-600 hover:text-blue-800 hover:underline" %><%= index == topic.related_topics.uniq.size - 1 ? "" : "," %>&nbsp;
                       <% end %>
                     </p>

@@ -11,5 +11,14 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root "topics#index"
-  resources :topics, only: [:index, :show]
+  resources :topics, only: [:index]
+  
+  # Add specific routes for each STI type
+  resources :people, controller: 'topics', type: 'Person'
+  resources :places, controller: 'topics', type: 'Place'
+  resources :concepts, controller: 'topics', type: 'Concept'
+  resources :things, controller: 'topics', type: 'Thing'
+  resources :events, controller: 'topics', type: 'Event'
+  resources :actions, controller: 'topics', type: 'Action'
+  resources :others, controller: 'topics', type: 'Other'
 end

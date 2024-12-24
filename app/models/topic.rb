@@ -164,6 +164,55 @@ class Topic < ApplicationRecord
     @part_of_speech
   end
 
+  def to_param
+    slug
+  end
+
+  # Override model_name to return the proper route key
+  def self.model_name
+    ActiveModel::Name.new(self, nil, self.name.split('::').last)
+  end
+
+  # Helper method to get the proper path
+  def to_path
+    case type
+    when 'Person'
+      [:person, self]
+    when 'Place'
+      [:place, self]
+    when 'Concept'
+      [:concept, self]
+    when 'Thing'
+      [:thing, self]
+    when 'Event'
+      [:event, self]
+    when 'Action'
+      [:action, self]
+    else
+      [:other, self]
+    end
+  end
+
+  # Helper method to get the route key based on type
+  def route_key
+    case type
+    when 'Person'
+      :person
+    when 'Place'
+      :place
+    when 'Concept'
+      :concept
+    when 'Thing'
+      :thing
+    when 'Event'
+      :event
+    when 'Action'
+      :action
+    else
+      :other
+    end
+  end
+
   private
 
   def generate_conceptnet_id

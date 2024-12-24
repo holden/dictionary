@@ -31,7 +31,7 @@
     <h2 class="text-xl font-semibold mb-4">Related Topics</h2>
     <div class="flex flex-wrap gap-2">
       <% topic.related_topics.uniq.each do |related| %>
-        <%= link_to related.title, topic_path(related), 
+        <%= link_to related.title, send("#{related.route_key}_path", related), 
             class: "px-3 py-1 bg-blue-100 text-blue-700 rounded-full 
                     hover:bg-blue-200 transition-colors" %>
       <% end %>
