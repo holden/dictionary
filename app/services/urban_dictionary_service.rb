@@ -2,7 +2,7 @@ class UrbanDictionaryService
   include HTTParty
   base_uri 'https://mashape-community-urban-dictionary.p.rapidapi.com'
 
-  def self.search(term, limit: 2)
+  def self.search(term, limit: 1)
     Rails.logger.info "Starting Urban Dictionary search for: #{term}"
     
     Rails.cache.fetch("urban_dictionary/#{term}", expires_in: 1.hour) do
@@ -15,23 +15,12 @@ class UrbanDictionaryService
           }
         })
 
-        Rails.logger.info "Urban Dictionary response status: #{response.code}"
-        Rails.logger.info "Urban Dictionary response headers: #{response.headers.inspect}"
-        Rails.logger.info "Urban Dictionary response body: #{response.body}"
-
-        if !response.success?
-          Rails.logger.error "Urban Dictionary API error: #{response.code} - #{response.body}"
-          return []
-        end
+        return [] unless response.success?
 
         parsed_response = response.parsed_response
-        if !parsed_response['list'].present?
-          Rails.logger.info "No definitions found for: #{term}"
-          return []
-        end
+        return [] unless parsed_response['list'].present?
 
         definitions = parsed_response['list'].sort_by { |d| -d['thumbs_up'].to_i }
-        Rails.logger.info "Found #{definitions.size} definitions, taking top #{limit}"
         
         definitions.take(limit).map do |definition|
           {
@@ -40,12 +29,12 @@ class UrbanDictionaryService
             author: definition['author'],
             thumbs_up: definition['thumbs_up'],
             thumbs_down: definition['thumbs_down'],
-            url: definition['permalink']
+            url: definition['permalink'],
+            term_url: "https://www.urbandictionary.com/define.php?term=#{URI.encode_www_form_component(term)}"
           }
         end
       rescue => e
         Rails.logger.error "Urban Dictionary API error: #{e.class} - #{e.message}"
-        Rails.logger.error e.backtrace.join("\n")
         []
       end
     end
