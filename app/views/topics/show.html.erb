@@ -45,6 +45,19 @@
               urban_definitions: @urban_definitions %>
         </div>
       </article>
+
+      <div class="mt-8">
+        <h2 class="text-2xl font-bold mb-4">Notable Quotes</h2>
+        
+        <%= render 'quotes', quotes: @quotes %>
+        
+        <%= button_to refresh_quotes_topic_path(@topic), 
+            method: :post,
+            class: "mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600",
+            data: { turbo: true } do %>
+          Refresh Quotes
+        <% end %>
+      </div>
     </div>
   </div>
 </div> 

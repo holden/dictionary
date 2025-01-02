@@ -1,0 +1,18 @@
+<div id="quotes" class="space-y-4">
+  <% if quotes.any? %>
+    <% quotes.each do |quote| %>
+      <blockquote class="border-l-4 border-gray-300 pl-4 italic">
+        <%= quote %>
+      </blockquote>
+    <% end %>
+  <% else %>
+    <p class="text-gray-500">No quotes found</p>
+    <%# Add debug info in development %>
+    <% if Rails.env.development? %>
+      <div class="mt-2 text-sm text-gray-400">
+        <p>Debug info:</p>
+        <pre><%= WikiQuotesService.new(@topic.title).debug_info.inspect %></pre>
+      </div>
+    <% end %>
+  <% end %>
+</div> 

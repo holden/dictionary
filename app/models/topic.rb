@@ -255,6 +255,10 @@ class Topic < ApplicationRecord
     end
   end
 
+  def fetch_quotes
+    WikiQuotesService.new(title).fetch_quotes
+  end
+
   private
 
   def generate_conceptnet_id

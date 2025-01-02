@@ -15,6 +15,7 @@ class TopicsController < ApplicationController
   end
 
   def show
+    @quotes = @topic.fetch_quotes
     @gifs = GiphyService.search(@topic.title)
     @artworks = ArtsyService.new.search(@topic.title)
     @urban_definitions = UrbanDictionaryService.search(@topic.title)
@@ -56,6 +57,22 @@ class TopicsController < ApplicationController
   rescue StandardError => e
     Rails.logger.error "Search error: #{e.message}\n#{e.backtrace.join("\n")}"
     render json: { error: "Search failed", message: e.message }, status: :internal_server_error
+  end
+
+  def refresh_quotes
+    @topic = Topic.friendly.find(params[:id])
+    @quotes = @topic.fetch_quotes
+    
+    respond_to do |format|
+      format.turbo_stream {
+        render turbo_stream: turbo_stream.replace(
+          'quotes',
+          partial: 'quotes',
+          locals: { quotes: @quotes }
+        )
+      }
+      format.html { redirect_to @topic }
+    end
   end
 
   private
