@@ -1,0 +1,10 @@
+<%= catalyst_form_with(model: @topic) do |f| %>
+  <div class="space-y-6">
+    <div>
+      <%= f.label :title, class: "block text-sm font-medium leading-6 text-gray-900" %>
+      <%= f.text_field :title %>
+    </div>
+
+    <%= f.submit %>
+  </div>
+<% end %> 
