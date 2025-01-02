@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_02_185021) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_02_231702) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -79,6 +79,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_02_185021) do
     t.index ["topic_id"], name: "index_definitions_on_topic_id"
   end
 
+  create_table "sessions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "ip_address"
+    t.string "user_agent"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_sessions_on_user_id"
+  end
+
   create_table "topic_relationships", force: :cascade do |t|
     t.bigint "topic_id", null: false
     t.bigint "related_topic_id", null: false
@@ -107,6 +116,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_02_185021) do
     t.check_constraint "type::text = ANY (ARRAY['Person'::character varying::text, 'Place'::character varying::text, 'Concept'::character varying::text, 'Thing'::character varying::text, 'Event'::character varying::text, 'Action'::character varying::text, 'Other'::character varying::text])", name: "valid_type"
   end
 
+  create_table "users", force: :cascade do |t|
+    t.string "email_address", null: false
+    t.string "password_digest", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email_address"], name: "index_users_on_email_address", unique: true
+  end
+
   create_table "websites", force: :cascade do |t|
     t.string "url", null: false
     t.string "title"
@@ -120,6 +137,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_02_185021) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "books", "topics", column: "author_id"
   add_foreign_key "definitions", "topics"
+  add_foreign_key "sessions", "users"
   add_foreign_key "topic_relationships", "topics"
   add_foreign_key "topic_relationships", "topics", column: "related_topic_id"
 end
