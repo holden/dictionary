@@ -2,6 +2,24 @@
   <%= @topic.display_title %>
 <% end %>
 
+<% content_for :description do %>
+  <%= @topic.first_definition&.content&.to_plain_text&.truncate(200) %>
+<% end %>
+
+<%# Open Graph Tags %>
+<% content_for :og_tags do %>
+  <% open_graph_tags(@topic).each do |property, content| %>
+    <% if content.present? %>
+      <meta property="<%= property %>" content="<%= content %>">
+    <% end %>
+  <% end %>
+<% end %>
+
+<%# JSON-LD Structured Data %>
+<% content_for :structured_data do %>
+  <%= JSON.pretty_generate(json_ld_data(@topic)) %>
+<% end %>
+
 <div class="min-h-full">
   <%# Main Content %>
   <div class="py-6">

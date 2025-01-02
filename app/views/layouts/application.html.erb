@@ -8,7 +8,34 @@
         Post-Modern Devil's Dictionary
       <% end %>
     </title>
+    
+    <%# Basic Meta Tags %>
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="<%= content_for?(:description) ? yield(:description) : "A modern take on Ambrose Bierce's Devil's Dictionary" %>">
+    
+    <%# Open Graph Meta Tags %>
+    <% if content_for?(:og_tags) %>
+      <%= yield(:og_tags) %>
+    <% else %>
+      <meta property="og:title" content="Post-Modern Devil's Dictionary">
+      <meta property="og:type" content="website">
+      <meta property="og:url" content="<%= root_url %>">
+      <meta property="og:description" content="A modern take on Ambrose Bierce's Devil's Dictionary">
+    <% end %>
+    
+    <%# Apple Messages Rich Preview Tags %>
+    <meta name="apple-mobile-web-app-title" content="<%= content_for?(:title) ? yield(:title) : "Post-Modern Devil's Dictionary" %>">
+    <meta property="og:image:width" content="300">
+    <meta property="og:image:height" content="300">
+    <meta property="og:image:type" content="image/gif">
+    
+    <%# JSON-LD Structured Data %>
+    <% if content_for?(:structured_data) %>
+      <script type="application/ld+json">
+        <%= yield(:structured_data).html_safe %>
+      </script>
+    <% end %>
+    
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
