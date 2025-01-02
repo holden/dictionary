@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <html class="h-full bg-gray-50 antialiased" lang="<%= I18n.locale %>">
   <head>
-    <title><%= content_for?(:title) ? yield(:title) : "Your App Name" %></title>
+    <title>
+      <% if content_for?(:title) %>
+        <%= content_for(:title) %> | Post-Modern Devil's Dictionary
+      <% else %>
+        Post-Modern Devil's Dictionary
+      <% end %>
+    </title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>

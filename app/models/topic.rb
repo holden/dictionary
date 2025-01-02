@@ -259,6 +259,13 @@ class Topic < ApplicationRecord
     WikiQuotesService.new(title).fetch_quotes
   end
 
+  def display_title
+    # Handle special cases first (e.g., "iOS", "iPhone")
+    return SPECIAL_CASES[title.downcase] if SPECIAL_CASES.key?(title.downcase)
+    
+    title.titleize
+  end
+
   private
 
   def generate_conceptnet_id
