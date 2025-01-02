@@ -30,7 +30,7 @@
   </div>
 
   <%# Alphabet Navigation %>
-  <nav class="hidden lg:block fixed right-4 top-1/2 transform -translate-y-1/2 space-y-1">
+  <nav class="hidden lg:block fixed right-4 space-y-1" style="top: calc(64px + 1.5rem)">
     <% @letters.each do |letter| %>
       <%= link_to letter, "##{letter}", 
           class: "block w-8 h-8 text-center leading-8 rounded hover:bg-gray-100 
