@@ -21,4 +21,10 @@ Rails.application.routes.draw do
   resources :events, controller: 'topics', type: 'Event'
   resources :actions, controller: 'topics', type: 'Action'
   resources :others, controller: 'topics', type: 'Other'
+
+  resources :topics do
+    collection do
+      get :search
+    end
+  end
 end

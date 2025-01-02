@@ -30,6 +30,34 @@ class TopicsController < ApplicationController
     render type_template if lookup_context.exists?(type_template, ['topics'], true)
   end
 
+  def search
+    @query = params[:query].to_s.strip
+    @topics = if @query.present? && @query.length >= 2
+      Topic.search_by_title(@query)
+           .includes(:definitions)
+           .limit(10)
+    else
+      Topic.none
+    end
+
+    respond_to do |format|
+      format.json do
+        render json: @topics.map { |topic|
+          {
+            id: topic.id,
+            title: topic.title,
+            url: send("#{topic.route_key}_path", topic),
+            part_of_speech: abbreviate_part_of_speech(topic.part_of_speech),
+            definition: topic.definitions.first&.content&.to_plain_text&.truncate(100)
+          }
+        }
+      end
+    end
+  rescue StandardError => e
+    Rails.logger.error "Search error: #{e.message}\n#{e.backtrace.join("\n")}"
+    render json: { error: "Search failed", message: e.message }, status: :internal_server_error
+  end
+
   private
 
   def set_topic
@@ -37,5 +65,16 @@ class TopicsController < ApplicationController
                   .includes(:related_topics)
                   .where(type: params[:type])
                   .find(params[:id])
+  end
+
+  def abbreviate_part_of_speech(pos)
+    return nil unless pos
+    case pos.to_s.downcase
+    when 'noun' then 'n'
+    when 'verb' then 'v'
+    when 'adjective' then 'adj'
+    when 'adverb' then 'adv'
+    else pos.to_s[0..2]
+    end
   end
 end 

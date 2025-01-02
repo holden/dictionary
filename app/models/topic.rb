@@ -1,6 +1,26 @@
 class Topic < ApplicationRecord
   extend FriendlyId
   friendly_id :slug_candidates, use: :slugged
+  include PgSearch::Model
+  
+  pg_search_scope :search_by_title,
+                  against: :title,
+                  using: {
+                    tsearch: { 
+                      prefix: true,
+                      dictionary: 'english',
+                      tsvector_column: 'tsv'
+                    }
+                  }
+
+  # Global search configuration for multisearch
+  multisearchable against: [:title, :part_of_speech],
+                  using: {
+                    tsearch: {
+                      prefix: true,
+                      dictionary: 'english'
+                    }
+                  }
 
   # Define special cases as a class constant at the very top
   SPECIAL_CASES = {
@@ -35,6 +55,7 @@ class Topic < ApplicationRecord
   before_validation :generate_conceptnet_id, if: :new_record?
   before_validation :standardize_title
   after_create :schedule_conceptnet_lookup
+  before_save :update_tsv, if: :will_save_change_to_title?
 
   # Relationships
   has_many :topic_relationships, dependent: :destroy
@@ -44,6 +65,9 @@ class Topic < ApplicationRecord
            class_name: 'Definition',
            foreign_key: :source_id,
            dependent: :nullify
+
+  # Add this if you want to search definitions too
+  has_one :first_definition, -> { order(created_at: :asc) }, class_name: 'Definition'
 
   def refresh_conceptnet_data!
     self.conceptnet_id = nil
@@ -370,5 +394,12 @@ class Topic < ApplicationRecord
   # Regenerate slug when title changes
   def should_generate_new_friendly_id?
     title_changed? || super
+  end
+
+  def update_tsv
+    sanitized_title = ActiveRecord::Base.sanitize_sql_array(['?', title])
+    self.tsv = Topic.connection.execute(
+      "SELECT to_tsvector('english', #{sanitized_title})"
+    ).first['to_tsvector']
   end
 end 
