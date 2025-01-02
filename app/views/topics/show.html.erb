@@ -10,10 +10,10 @@
         <% end %>
       </div>
 
-      <div class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
+      <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <%# Main content column %>
         <div class="lg:col-span-2">
-          <article class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
+          <article class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl h-full">
             <%# Header %>
             <header class="px-4 py-6 sm:px-6">
               <div class="flex items-start justify-between">
@@ -51,16 +51,8 @@
         </div>
 
         <%# Sidebar content %>
-        <div class="space-y-8">
-          <%# Quotes widget %>
-          <section>
-            <h2 class="text-base font-semibold leading-7 text-gray-900 mb-4">
-              Notable Quotes
-            </h2>
-            <%= render 'quotes', quotes: @quotes %>
-          </section>
-          
-          <%# Other sidebar widgets can go here %>
+        <div>
+          <%= render 'quotes', quotes: @quotes %>
         </div>
       </div>
     </div>

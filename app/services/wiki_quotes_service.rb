@@ -12,16 +12,10 @@ class WikiQuotesService
   end
 
   def fetch_quotes(limit = 3)
-    Rails.logger.debug "WikiQuotes: Fetching quotes for '#{@topic_title}'"
-    search_result = search_page
-    
-    Rails.logger.debug "WikiQuotes: Search result: #{search_result.inspect}"
-    return [] unless search_result['query']&.dig('search')&.first
-
-    page_id = search_result['query']['search'].first['pageid']
-    Rails.logger.debug "WikiQuotes: Found page ID: #{page_id}"
-    
-    fetch_page_quotes(page_id, limit)
+    Rails.cache.fetch("wikiquotes/#{@topic_title}", expires_in: 1.hour) do
+      Rails.logger.debug "WikiQuotes: Cache miss for '#{@topic_title}'"
+      fetch_quotes_from_api(limit)
+    end
   rescue StandardError => e
     Rails.logger.error "WikiQuotes Error: #{e.message}\nBacktrace:\n#{e.backtrace.join("\n")}"
     []
@@ -89,5 +83,16 @@ class WikiQuotesService
     sanitized = quote.gsub(/\[edit\]|\n/, '').strip
     Rails.logger.debug "WikiQuotes: Sanitized quote '#{quote}' to '#{sanitized}'"
     sanitized
+  end
+
+  def fetch_quotes_from_api(limit)
+    search_result = search_page
+    Rails.logger.debug "WikiQuotes: Search result: #{search_result.inspect}"
+    return [] unless search_result['query']&.dig('search')&.first
+
+    page_id = search_result['query']['search'].first['pageid']
+    Rails.logger.debug "WikiQuotes: Found page ID: #{page_id}"
+    
+    fetch_page_quotes(page_id, limit)
   end
 end 

@@ -1,4 +1,12 @@
-<div id="quotes" class="bg-white rounded-lg shadow-sm ring-1 ring-gray-900/5 overflow-hidden">
+<div id="quotes" class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl overflow-hidden">
+  <%# Header %>
+  <header class="px-4 py-4 sm:px-6 border-b border-gray-200">
+    <div class="flex items-center justify-between">
+      <h2 class="text-base font-semibold leading-7 text-gray-900">Notable Quotes</h2>
+      <span class="text-xs text-gray-500">Powered by WikiQuotes</span>
+    </div>
+  </header>
+
   <div class="px-4 py-5 sm:p-6">
     <% if quotes.any? %>
       <div class="space-y-8">
@@ -49,15 +57,23 @@
     <% end %>
   </div>
   
-  <div class="bg-gray-50 px-4 py-4 sm:px-6">
-    <%= button_to refresh_quotes_topic_path(@topic), 
-        method: :post,
-        class: "w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500",
-        data: { turbo: true } do %>
-      <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-      </svg>
-      Refresh Quotes
-    <% end %>
+  <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
+    <div class="flex items-center justify-between">
+      <%= button_to refresh_quotes_topic_path(@topic), 
+          method: :post,
+          class: "inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500",
+          data: { turbo: true } do %>
+        <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        Refresh Quotes
+      <% end %>
+      
+      <% if Rails.env.development? %>
+        <span class="text-xs text-gray-500">
+          Cache expires: <%= (Time.current + 1.hour).strftime("%H:%M") %>
+        </span>
+      <% end %>
+    </div>
   </div>
 </div> 
