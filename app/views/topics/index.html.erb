@@ -1,66 +1,35 @@
-<div class="min-h-screen bg-gray-50">
-  <%# Top Navigation %>
-  <%= render 'shared/nav' %>
+<div class="min-h-full">
+  <div class="py-6">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="sm:flex sm:items-center">
+        <div class="sm:flex-auto">
+          <h1 class="text-base font-semibold leading-7 text-gray-900">Topics</h1>
+          <p class="mt-2 text-sm text-gray-700">A list of all topics in the Devil's Dictionary.</p>
+        </div>
+      </div>
 
-  <%# Main Content %>
-  <main class="container mx-auto px-4 py-4">
-    <div class="space-y-12">
-      <% @topics.each do |letter, topics| %>
-        <section id="<%= letter %>" class="scroll-mt-16">
-          <h2 class="text-3xl font-bold mb-6 text-gray-800 border-b pb-2"><%= letter %></h2>
-          
-          <div class="space-y-8">
-            <% topics.each do |topic| %>
-              <article class="bg-white rounded-lg shadow-sm p-6 scroll-mt-24" id="topic-<%= topic.id %>">
-                <header class="mb-4">
-                  <h3 class="text-xl font-bold text-gray-900">
-                    <%= link_to topic.title, send("#{topic.route_key}_path", topic), 
-                        class: "hover:text-blue-600 transition-colors" %>
-                    <span class="text-sm font-normal text-gray-500">
-                      (<%= abbreviate_part_of_speech(topic.part_of_speech) %>.)
-                    </span>
-                  </h3>
-                </header>
-
-                <% topic.definitions.each do |definition| %>
-                  <div class="prose prose-lg max-w-none text-gray-700">
-                    <%= definition.content %>
-                    
-                    <div class="mt-2 text-sm text-gray-500">
-                      <% if definition.author %>
-                        — <%= definition.author.title %>,
-                      <% end %>
-                      <% if definition.source %>
-                        <%= definition.source.title %>
-                        <% if definition.source.is_a?(Book) && definition.source.published_date %>
-                          (<%= definition.source.published_date.year %>)
-                        <% end %>
-                      <% end %>
-                    </div>
+      <div class="mt-8 flow-root">
+        <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+            <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+              <div class="bg-white divide-y divide-gray-200">
+                <% @topics.each do |letter, topics| %>
+                  <div class="p-4 sm:p-6" id="<%= letter %>">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4"><%= letter %></h2>
+                    <ul role="list" class="divide-y divide-gray-100">
+                      <%= render partial: "topic", collection: topics %>
+                    </ul>
                   </div>
                 <% end %>
-
-                <%# Related Topics %>
-                <% if topic.related_topics.any? %>
-                  <div class="mt-4 pt-3 border-t border-gray-200">
-                    <p class="text-sm text-gray-600">
-                      <span class="font-medium">See also:</span>&nbsp;
-                      <% topic.related_topics.uniq.each_with_index do |related, index| %>
-                        <%= link_to related.title, send("#{related.route_key}_path", related), 
-                            class: "text-blue-600 hover:text-blue-800 hover:underline" %><%= index == topic.related_topics.uniq.size - 1 ? "" : "," %>&nbsp;
-                      <% end %>
-                    </p>
-                  </div>
-                <% end %>
-              </article>
-            <% end %>
+              </div>
+            </div>
           </div>
-        </section>
-      <% end %>
+        </div>
+      </div>
     </div>
-  </main>
+  </div>
 
-  <%# Vertical Alphabet Navigation %>
+  <%# Alphabet Navigation %>
   <nav class="hidden lg:block fixed right-4 top-1/2 transform -translate-y-1/2 space-y-1">
     <% @letters.each do |letter| %>
       <%= link_to letter, "##{letter}", 

@@ -1,10 +1,23 @@
 <%= catalyst_form_with(model: @topic) do |f| %>
-  <div class="space-y-6">
-    <div>
-      <%= f.label :title, class: "block text-sm font-medium leading-6 text-gray-900" %>
-      <%= f.text_field :title %>
+  <div class="space-y-8 divide-y divide-gray-200">
+    <div class="space-y-6">
+      <%= render "shared/components/form_field", 
+          form: f, 
+          field_name: :title, 
+          error: @topic.errors[:title].first %>
+          
+      <%= render "shared/components/form_field", 
+          form: f, 
+          field_name: :part_of_speech, 
+          error: @topic.errors[:part_of_speech].first %>
     </div>
 
-    <%= f.submit %>
+    <div class="pt-5">
+      <div class="flex justify-end gap-x-3">
+        <%= link_to "Cancel", topics_path, 
+            class: "rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" %>
+        <%= f.submit class: "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" %>
+      </div>
+    </div>
   </div>
 <% end %> 

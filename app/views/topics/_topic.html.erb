@@ -1,0 +1,47 @@
+<li class="relative py-5 hover:bg-gray-50" id="topic-<%= topic.id %>">
+  <div class="px-4 sm:px-6">
+    <div class="flex justify-between gap-x-4">
+      <div class="min-w-0 flex-auto">
+        <h3 class="text-lg font-semibold leading-6 text-gray-900">
+          <%= link_to topic.title, send("#{topic.route_key}_path", topic), 
+              class: "hover:text-indigo-600 transition-colors" %>
+          <span class="text-sm font-normal text-gray-500">
+            (<%= abbreviate_part_of_speech(topic.part_of_speech) %>.)
+          </span>
+        </h3>
+
+        <% topic.definitions.each do |definition| %>
+          <div class="mt-2 prose prose-sm max-w-none text-gray-600">
+            <%= definition.content %>
+            
+            <div class="mt-1 text-sm text-gray-500">
+              <% if definition.author %>
+                — <%= definition.author.title %>,
+              <% end %>
+              <% if definition.source %>
+                <%= definition.source.title %>
+                <% if definition.source.is_a?(Book) && definition.source.published_date %>
+                  (<%= definition.source.published_date.year %>)
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+        <%# Related Topics %>
+        <% if topic.related_topics.any? %>
+          <div class="mt-2 flex items-center gap-x-2 text-sm text-gray-500">
+            <span class="font-medium">See also:</span>
+            <div class="flex flex-wrap gap-2">
+              <% topic.related_topics.uniq.each do |related| %>
+                <%= link_to related.title, 
+                    send("#{related.route_key}_path", related),
+                    class: "text-indigo-600 hover:text-indigo-900 hover:underline" %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</li> 
