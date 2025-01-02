@@ -79,15 +79,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_02_185021) do
     t.index ["topic_id"], name: "index_definitions_on_topic_id"
   end
 
-  create_table "pg_search_documents", force: :cascade do |t|
-    t.text "content"
-    t.string "searchable_type"
-    t.bigint "searchable_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["searchable_type", "searchable_id"], name: "index_pg_search_documents_on_searchable"
-  end
-
   create_table "topic_relationships", force: :cascade do |t|
     t.bigint "topic_id", null: false
     t.bigint "related_topic_id", null: false
