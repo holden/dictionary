@@ -10,53 +10,58 @@
         <% end %>
       </div>
 
-      <article class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-        <%# Header %>
-        <header class="px-4 py-6 sm:px-6">
-          <div class="flex items-start justify-between">
-            <div>
-              <h1 class="text-4xl font-semibold text-gray-900">
-                <%= @topic.title %>
-                <span class="text-lg font-normal text-gray-500">
-                  (<%= abbreviate_part_of_speech(@topic.part_of_speech) %>.)
-                </span>
-              </h1>
-              <p class="mt-2 text-sm text-gray-500"><%= @topic.type %></p>
-            </div>
-            
-            <%# Topic illustration %>
-            <% if @gifs&.any? && gif = @gifs.first %>
-              <div class="w-48">
-                <%= image_tag gif[:url], 
-                    class: "rounded-lg shadow-sm ring-1 ring-gray-900/5", 
-                    alt: @topic.title,
-                    width: gif[:width],
-                    height: gif[:height] %>
+      <div class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <%# Main content column %>
+        <div class="lg:col-span-2">
+          <article class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
+            <%# Header %>
+            <header class="px-4 py-6 sm:px-6">
+              <div class="flex items-start justify-between">
+                <div>
+                  <h1 class="text-4xl font-semibold text-gray-900">
+                    <%= @topic.title %>
+                    <span class="text-lg font-normal text-gray-500">
+                      (<%= abbreviate_part_of_speech(@topic.part_of_speech) %>.)
+                    </span>
+                  </h1>
+                  <p class="mt-2 text-sm text-gray-500"><%= @topic.type %></p>
+                </div>
+                
+                <%# Topic illustration %>
+                <% if @gifs&.any? && gif = @gifs.first %>
+                  <div class="w-48">
+                    <%= image_tag gif[:url], 
+                        class: "rounded-lg shadow-sm ring-1 ring-gray-900/5", 
+                        alt: @topic.title,
+                        width: gif[:width],
+                        height: gif[:height] %>
+                  </div>
+                <% end %>
               </div>
-            <% end %>
-          </div>
-        </header>
+            </header>
 
-        <div class="px-4 py-6 sm:px-6">
-          <%= render 'shared/topic_content', 
-              topic: @topic, 
-              gifs: @gifs,
-              artworks: @artworks,
-              urban_definitions: @urban_definitions %>
+            <div class="px-4 py-6 sm:px-6">
+              <%= render 'shared/topic_content', 
+                  topic: @topic, 
+                  gifs: @gifs,
+                  artworks: @artworks,
+                  urban_definitions: @urban_definitions %>
+            </div>
+          </article>
         </div>
-      </article>
 
-      <div class="mt-8">
-        <h2 class="text-2xl font-bold mb-4">Notable Quotes</h2>
-        
-        <%= render 'quotes', quotes: @quotes %>
-        
-        <%= button_to refresh_quotes_topic_path(@topic), 
-            method: :post,
-            class: "mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600",
-            data: { turbo: true } do %>
-          Refresh Quotes
-        <% end %>
+        <%# Sidebar content %>
+        <div class="space-y-8">
+          <%# Quotes widget %>
+          <section>
+            <h2 class="text-base font-semibold leading-7 text-gray-900 mb-4">
+              Notable Quotes
+            </h2>
+            <%= render 'quotes', quotes: @quotes %>
+          </section>
+          
+          <%# Other sidebar widgets can go here %>
+        </div>
       </div>
     </div>
   </div>
