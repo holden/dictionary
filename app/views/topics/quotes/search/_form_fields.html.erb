@@ -1,0 +1,31 @@
+<%= f.hidden_field 'quote[content]', value: quote[:content] %>
+<%= f.hidden_field 'quote[original_text]', value: quote[:original_text] %>
+<%= f.hidden_field 'quote[source_url]', value: quote[:source_url] %>
+<%= f.hidden_field 'quote[attribution_text]', value: quote[:attribution_text] %>
+<%= f.hidden_field 'quote[context]', value: quote[:context] %>
+<%= f.hidden_field 'quote[section_title]', value: quote[:section_title] %>
+<%= f.hidden_field 'quote[wikiquote_section_id]', value: quote[:wikiquote_section_id] %>
+<%= f.hidden_field 'quote[citation]', value: quote[:citation] %>
+<%= f.hidden_field 'quote[original_language]', value: 'en' %>
+<%= f.hidden_field 'quote[disputed]', value: quote[:disputed] %>
+<%= f.hidden_field 'quote[misattributed]', value: quote[:misattributed] %>
+
+<%= f.hidden_field 'quote[metadata]', value: {
+  wikiquote: {
+    raw_content: quote[:content],
+    raw_html: quote[:original_text],
+    section: quote[:section],
+    author: quote[:author],
+    source_url: quote[:source_url],
+    context: quote[:context],
+    citation: quote[:citation],
+    speaker: quote[:attribution_text],
+    page_title: quote[:page_title],
+    extracted_at: Time.current.iso8601,
+    search_params: {
+      query: quote[:search_query],
+      author: quote[:search_author],
+      section: quote[:search_section]
+    }
+  }
+}.deep_stringify_keys.to_json %> 

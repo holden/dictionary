@@ -95,33 +95,73 @@ class WikiquotesService
         }
       end
 
-      # Look for quotes in various formats - direct quote containers
+      # Look for quotes in various formats
       doc.css('.mw-parser-output > ul li, .mw-parser-output > dl dd').each do |node|
         text = node.text.strip
         next if text.empty?
         next if params[:q].present? && !text.downcase.include?(params[:q].downcase)
         
-        # Skip non-English quotes (those containing foreign characters or translations)
+        # Skip non-English quotes
         next if text.match?(/[^\x00-\x7F]/) # Skip if contains non-ASCII characters
-        next if text.include?('.')  # Skip if contains translation markers
 
-        # Find the section this quote belongs to by checking previous h2 elements
+        # Find the current section
         current_section = sections.reverse.find do |section|
           node.path.match(/#{section[:element].path}\/following::/)
         end
 
-        # Skip if we're filtering by section and this isn't the right one
-        if params[:namespace].present? && params[:namespace] != '0'
-          requested_section = params[:namespace].split('|').last
-          next unless current_section && current_section[:title].include?(requested_section)
+        # Extract citation and context
+        citation_parts = []
+        context = []
+        
+        # Try to extract citation from the node's content
+        if node.css('ul li').any?
+          citation_parts << node.css('ul li').map(&:text).join(', ')
+        end
+        
+        # Look for links that might indicate sources
+        node.css('a').each do |link|
+          if link['href']&.include?('wikipedia.org')
+            citation_parts << link.text
+          end
+        end
+
+        # Extract date if present
+        if text =~ /\((\d{1,2}\s+[A-Za-z]+\s+\d{4})\)/
+          context << $1
+        end
+
+        # Add section as context if available
+        context << current_section[:title] if current_section
+
+        # Extract speaker/attribution
+        speaker = nil
+        content = text
+        
+        # Try different patterns for attribution
+        if text =~ /^([^:]+?):\s*(.+)/
+          speaker = $1.strip
+          content = $2.strip
+        elsif text =~ /—\s*([^,\n]+)/
+          speaker = $1.strip
         end
 
         quotes << {
-          content: text,
+          content: content,
           source_url: "https://en.wikiquote.org/wiki/#{CGI.escape(page_title)}##{CGI.escape(current_section ? current_section[:title] : '')}",
           section: current_section&.dig(:title),
           original_text: node.inner_html,
-          author: extract_author(node)
+          author: params[:author],
+          context: context.compact.join(' - '),
+          citation: citation_parts.compact.uniq.join(' - '),
+          attribution_text: speaker,
+          section_title: current_section&.dig(:title),
+          wikiquote_section_id: current_section&.dig(:title)&.parameterize,
+          disputed: current_section&.dig(:title)&.downcase == 'disputed',
+          misattributed: current_section&.dig(:title)&.downcase == 'misattributed',
+          page_title: page_title,
+          search_query: params[:q],
+          search_author: params[:author],
+          search_section: params[:namespace]
         }
       end
 
