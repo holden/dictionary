@@ -10,17 +10,16 @@ module Topics
 
     def create
       @quote = @topic.quotes.build(quote_params)
+      @quote.user = Current.user  # Set the current user
       
       if params[:quote][:author_name].present?
         begin
           author = AuthorLookupService.find_or_create_author(params[:quote][:author_name])
           @quote.author = author
         rescue AuthorLookupService::NotFoundError => e
-          # Fall back to just using the attribution text
           @quote.attribution_text = params[:quote][:author_name]
         end
       elsif @quote.metadata.dig('wikiquote', 'author').present?
-        # Try to get author from metadata if not explicitly provided
         author_name = @quote.metadata.dig('wikiquote', 'author').titleize
         begin
           author = AuthorLookupService.find_or_create_author(author_name)
@@ -30,7 +29,6 @@ module Topics
         end
       end
 
-      # If no author was found or provided, use the page title as attribution
       if @quote.author.nil? && @quote.attribution_text.blank?
         @quote.attribution_text = @quote.metadata.dig('wikiquote', 'page_title') || 'Anonymous'
       end
@@ -74,7 +72,6 @@ module Topics
     end
 
     def quote_params
-      # Parse the metadata JSON if it's a string
       params_with_parsed_metadata = params.require(:quote).tap do |quote_params|
         if quote_params[:metadata].is_a?(String)
           quote_params[:metadata] = JSON.parse(quote_params[:metadata])
@@ -82,8 +79,7 @@ module Topics
       end
 
       params_with_parsed_metadata.permit(
-        :content, :source_url, :context, :citation,
-        :said_on, :section_title, :wikiquote_section_id,
+        :content, :source_url, :citation,
         :original_text, :original_language, :disputed,
         :misattributed, :attribution_text, metadata: {}
       )
