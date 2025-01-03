@@ -1,0 +1,79 @@
+<div id="quotes" class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl overflow-hidden">
+  <%# Header %>
+  <header class="px-4 py-4 sm:px-6 border-b border-gray-200">
+    <div class="flex items-center justify-between">
+      <h2 class="text-base font-semibold leading-7 text-gray-900">Notable Quotes</h2>
+      <span class="text-xs text-gray-500">Powered by WikiQuotes</span>
+    </div>
+  </header>
+
+  <div class="px-4 py-5 sm:p-6">
+    <% if quotes.any? %>
+      <div class="space-y-8">
+        <% quotes.each do |quote| %>
+          <% quote_parts = parse_quote(quote) %>
+          <figure class="relative">
+            <%# Quote mark decoration %>
+            <div class="absolute -top-2 -left-2 text-gray-100 select-none pointer-events-none">
+              <svg class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
+              </svg>
+            </div>
+            
+            <blockquote class="relative pl-8">
+              <p class="text-gray-900 font-medium italic">
+                <%= quote_parts[:content] %>
+              </p>
+              
+              <% if quote_parts[:attribution].present? %>
+                <figcaption class="mt-4">
+                  <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                      <div class="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center">
+                        <span class="text-gray-500 text-sm font-medium">
+                          <%= quote_parts[:attribution][0].upcase %>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="ml-4">
+                      <div class="text-sm font-semibold text-gray-900">
+                        <%= quote_parts[:attribution] %>
+                      </div>
+                      <% if quote_parts[:source].present? %>
+                        <div class="text-sm text-gray-500">
+                          <%= quote_parts[:source] %>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                </figcaption>
+              <% end %>
+            </blockquote>
+          </figure>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="text-gray-500 text-center py-4">No quotes found</p>
+    <% end %>
+  </div>
+  
+  <div class="bg-gray-50 px-4 py-4 sm:px-6 border-t border-gray-200">
+    <div class="flex items-center justify-between">
+      <%= button_to refresh_quotes_topic_path(@topic), 
+          method: :post,
+          class: "inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500",
+          data: { turbo: true } do %>
+        <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        Refresh Quotes
+      <% end %>
+      
+      <% if Rails.env.development? %>
+        <span class="text-xs text-gray-500">
+          Cache expires: <%= (Time.current + 1.hour).strftime("%H:%M") %>
+        </span>
+      <% end %>
+    </div>
+  </div>
+</div> 
