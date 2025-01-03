@@ -29,7 +29,14 @@ module Topics
     end
 
     def quote_params
-      params.require(:quote).permit(
+      # Parse the metadata JSON if it's present
+      params_with_parsed_metadata = params.require(:quote).tap do |quote_params|
+        if quote_params[:metadata].present?
+          quote_params[:metadata] = JSON.parse(quote_params[:metadata])
+        end
+      end
+
+      params_with_parsed_metadata.permit(
         :content,
         :original_text, 
         :attribution_text, 
@@ -40,7 +47,8 @@ module Topics
         :disputed,
         :misattributed,
         :citation,
-        :context
+        :context,
+        metadata: {}  # Allow all metadata keys
       )
     end
   end
