@@ -11,10 +11,25 @@ module Topics
     def create
       @quote = @topic.quotes.build(quote_params)
       
+      # Try to get author name from metadata if not explicitly provided
+      author_name = params[:quote][:author_name].presence || 
+                    @quote.metadata.dig('wikiquote', 'author')&.titleize
+
+      if author_name.present?
+        begin
+          author = ::AuthorLookupService.find_or_create_author(author_name)
+          @quote.author = author
+        rescue ::AuthorLookupService::NotFoundError => e
+          # Fall back to just using the attribution text
+          @quote.attribution_text = author_name
+        end
+      end
+
       if @quote.save
-        redirect_to send("#{@topic.class.name.underscore}_quotes_path", @topic), notice: "Quote was successfully added."
+        redirect_to send("#{@topic.class.name.underscore}_quotes_path", @topic),
+          notice: 'Quote was successfully created.'
       else
-        render :index, status: :unprocessable_entity
+        render :new, status: :unprocessable_entity
       end
     end
 
@@ -49,26 +64,18 @@ module Topics
     end
 
     def quote_params
-      # Parse the metadata JSON if it's present
+      # Parse the metadata JSON if it's a string
       params_with_parsed_metadata = params.require(:quote).tap do |quote_params|
-        if quote_params[:metadata].present?
+        if quote_params[:metadata].is_a?(String)
           quote_params[:metadata] = JSON.parse(quote_params[:metadata])
         end
       end
 
       params_with_parsed_metadata.permit(
-        :content,
-        :original_text, 
-        :attribution_text, 
-        :source_url, 
-        :section_title, 
-        :original_language,
-        :wikiquote_section_id,
-        :disputed,
-        :misattributed,
-        :citation,
-        :context,
-        metadata: {}  # Allow all metadata keys
+        :content, :source_url, :context, :citation,
+        :said_on, :section_title, :wikiquote_section_id,
+        :original_text, :original_language, :disputed,
+        :misattributed, metadata: {}
       )
     end
   end

@@ -1,6 +1,6 @@
 class OpenLibraryService
   include HTTParty
-  base_uri 'https://openlibrary.org/api'
+  base_uri 'https://openlibrary.org'
 
   def self.search(title)
     response = get('/search.json', query: { q: title })
@@ -19,5 +19,20 @@ class OpenLibraryService
   rescue HTTParty::Error => e
     Rails.logger.error "OpenLibrary API error: #{e.message}"
     nil
+  end
+
+  def self.lookup_author(name)
+    response = get("/search/authors.json", query: { q: name })
+    return nil unless response.success?
+    
+    data = JSON.parse(response.body)
+    author = data["docs"]&.first
+    return nil unless author
+    
+    {
+      "key" => author["key"],
+      "name" => author["name"],
+      "bio" => author["bio"]
+    }
   end
 end 
