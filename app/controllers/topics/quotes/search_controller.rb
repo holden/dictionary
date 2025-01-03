@@ -8,12 +8,14 @@ module Topics
         @search_term = params[:q]
         @author = params[:author]
         @namespace = params[:namespace]
+        @language = params[:language] || 'english'
       end
 
       def create
         @search_term = search_params[:q]
         @author = search_params[:author]
         @namespace = search_params[:namespace]
+        @language = search_params[:language] || 'english'
         
         @results = WikiquotesService.search(search_params)
         @pagy, @results = pagy_array(@results, items: 20)
@@ -45,7 +47,14 @@ module Topics
       end
 
       def search_params
-        params.permit(:q, :author, :namespace).to_h.compact_blank
+        # Permit all expected parameters including route and form params
+        params.permit(
+          :q, :author, :namespace, :language,
+          # Route params
+          :type, :concept_id, :person_id, :place_id, :thing_id, :event_id, :action_id, :other_id,
+          # Form params
+          :commit, :authenticity_token
+        ).to_h.compact_blank
       end
     end
   end

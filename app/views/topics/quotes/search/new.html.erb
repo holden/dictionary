@@ -49,7 +49,19 @@
       </div>
 
       <div>
-        <%= f.submit "Search", 
+        <%= f.label :language, "Language", class: "block text-sm font-medium text-gray-700" %>
+        <div class="mt-1">
+          <%= f.select :language,
+                      options_for_select([
+                        ['English', 'english']
+                      ], 'english'),
+                      {},
+                      class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" %>
+        </div>
+      </div>
+
+      <div>
+        <%= f.submit "Search",
                     class: "inline-flex justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" %>
       </div>
     <% end %>

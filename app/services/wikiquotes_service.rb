@@ -37,7 +37,8 @@ class WikiquotesService
         srsearch: author,
         srlimit: 10,
         format: 'json',
-        utf8: 1
+        utf8: 1,
+        language: 'en'
       })
 
       handle_response(response) do |data|
@@ -99,6 +100,10 @@ class WikiquotesService
         text = node.text.strip
         next if text.empty?
         next if params[:q].present? && !text.downcase.include?(params[:q].downcase)
+        
+        # Skip non-English quotes (those containing foreign characters or translations)
+        next if text.match?(/[^\x00-\x7F]/) # Skip if contains non-ASCII characters
+        next if text.include?('.')  # Skip if contains translation markers
 
         # Find the section this quote belongs to by checking previous h2 elements
         current_section = sections.reverse.find do |section|
