@@ -1,33 +1,35 @@
 class PasswordsController < ApplicationController
-  allow_unauthenticated_access
-  before_action :set_user_by_token, only: %i[ edit update ]
+  skip_before_action :authenticate, only: [:new, :create, :edit, :update]
 
   def new
   end
 
   def create
     if user = User.find_by(email_address: params[:email_address])
-      PasswordsMailer.reset(user).deliver_later
+      PasswordMailer.with(user: user).reset.deliver_later
+      redirect_to root_path, notice: "Check your email for reset instructions"
+    else
+      redirect_to new_password_path, alert: "Email address not found"
     end
-
-    redirect_to new_session_path, notice: "Password reset instructions sent (if user with that email address exists)."
   end
 
   def edit
+    @user = User.find_signed!(params[:token], purpose: :password_reset)
+  rescue ActiveSupport::MessageVerifier::InvalidSignature
+    redirect_to new_password_path, alert: "That password reset link is invalid"
   end
 
   def update
-    if @user.update(params.permit(:password, :password_confirmation))
-      redirect_to new_session_path, notice: "Password has been reset."
+    @user = User.find_signed!(params[:token], purpose: :password_reset)
+    if @user.update(password_params)
+      redirect_to new_session_path, notice: "Your password has been reset successfully. Please sign in"
     else
-      redirect_to edit_password_path(params[:token]), alert: "Passwords did not match."
+      render :edit, status: :unprocessable_entity
     end
   end
 
   private
-    def set_user_by_token
-      @user = User.find_by_password_reset_token!(params[:token])
-    rescue ActiveSupport::MessageVerifier::InvalidSignature
-      redirect_to new_password_path, alert: "Password reset link is invalid or has expired."
+    def password_params
+      params.require(:password).permit(:password, :password_confirmation)
     end
 end
