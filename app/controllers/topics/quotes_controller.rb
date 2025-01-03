@@ -11,22 +11,32 @@ module Topics
     def create
       @quote = @topic.quotes.build(quote_params)
       
-      # Try to get author name from metadata if not explicitly provided
-      author_name = params[:quote][:author_name].presence || 
-                    @quote.metadata.dig('wikiquote', 'author')&.titleize
-
-      if author_name.present?
+      if params[:quote][:author_name].present?
         begin
-          author = ::AuthorLookupService.find_or_create_author(author_name)
+          author = AuthorLookupService.find_or_create_author(params[:quote][:author_name])
           @quote.author = author
-        rescue ::AuthorLookupService::NotFoundError => e
+        rescue AuthorLookupService::NotFoundError => e
           # Fall back to just using the attribution text
+          @quote.attribution_text = params[:quote][:author_name]
+        end
+      elsif @quote.metadata.dig('wikiquote', 'author').present?
+        # Try to get author from metadata if not explicitly provided
+        author_name = @quote.metadata.dig('wikiquote', 'author').titleize
+        begin
+          author = AuthorLookupService.find_or_create_author(author_name)
+          @quote.author = author
+        rescue AuthorLookupService::NotFoundError => e
           @quote.attribution_text = author_name
         end
       end
 
+      # If no author was found or provided, use the page title as attribution
+      if @quote.author.nil? && @quote.attribution_text.blank?
+        @quote.attribution_text = @quote.metadata.dig('wikiquote', 'page_title') || 'Anonymous'
+      end
+
       if @quote.save
-        redirect_to send("#{@topic.class.name.underscore}_quotes_path", @topic),
+        redirect_to send("#{@topic.route_key}_quotes_path", @topic),
           notice: 'Quote was successfully created.'
       else
         render :new, status: :unprocessable_entity
