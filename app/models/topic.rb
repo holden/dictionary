@@ -69,6 +69,9 @@ class Topic < ApplicationRecord
   # Add this if you want to search definitions too
   has_one :first_definition, -> { order(created_at: :asc) }, class_name: 'Definition'
 
+  # Scopes
+  scope :recent_first, -> { order(created_at: :desc) }
+
   def refresh_conceptnet_data!
     self.conceptnet_id = nil
     set_conceptnet_id

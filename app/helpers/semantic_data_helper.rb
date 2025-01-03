@@ -1,27 +1,15 @@
 module SemanticDataHelper
+  include Rails.application.routes.url_helpers
+
   def open_graph_tags(topic)
-    image_url = topic_image_url(topic)
-    
-    tags = {
+    {
       'og:title' => topic.display_title,
       'og:type' => 'article',
-      'og:url' => topic_url(topic),
+      'og:url' => topic_url(topic, host: request.base_url),
       'og:description' => topic.first_definition&.content&.to_plain_text&.truncate(200) || "Definition of #{topic.display_title}",
       'og:site_name' => "Post-Modern Devil's Dictionary",
       'og:locale' => 'en_US'
     }
-
-    # Add image tags only if we have an image
-    if image_url
-      tags.merge!({
-        'og:image' => image_url,
-        'og:image:width' => '300',
-        'og:image:height' => '300',
-        'og:image:type' => 'image/gif'
-      })
-    end
-
-    tags
   end
 
   def json_ld_data(topic)

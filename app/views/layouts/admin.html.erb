@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html class="h-full bg-gray-50">
+<head>
+  <title>Admin - <%= content_for?(:title) ? yield(:title) : 'Dashboard' %></title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
+  <%= javascript_importmap_tags %>
+</head>
+<body class="h-full">
+  <div>
+    <!-- Off-canvas menu for mobile -->
+    <div class="relative z-50 lg:hidden" role="dialog" aria-modal="true" data-controller="mobile-menu">
+      <div class="fixed inset-0 bg-gray-900/80" data-mobile-menu-target="overlay" data-action="click->mobile-menu#close"></div>
+
+      <div class="fixed inset-0 flex">
+        <div class="relative mr-16 flex w-full max-w-xs flex-1">
+          <div class="absolute left-full top-0 flex w-16 justify-center pt-5">
+            <button type="button" class="-m-2.5 p-2.5" data-action="mobile-menu#close">
+              <span class="sr-only">Close sidebar</span>
+              <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Mobile menu content -->
+          <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4">
+            <div class="flex h-16 shrink-0 items-center">
+              <%= link_to admin_root_path, class: "text-xl font-semibold" do %>
+                Devils Dictionary
+              <% end %>
+            </div>
+            <%= render "admin/shared/navigation" %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Static sidebar for desktop -->
+    <div class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
+      <div class="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4">
+        <div class="flex h-16 shrink-0 items-center">
+          <%= link_to admin_root_path, class: "text-xl font-semibold" do %>
+            Devils Dictionary
+          <% end %>
+        </div>
+        <%= render "admin/shared/navigation" %>
+      </div>
+    </div>
+
+    <div class="lg:pl-72">
+      <!-- Top bar -->
+      <div class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+        <button type="button" class="-m-2.5 p-2.5 text-gray-700 lg:hidden" data-action="mobile-menu#open">
+          <span class="sr-only">Open sidebar</span>
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          </svg>
+        </button>
+
+        <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
+          <div class="flex items-center gap-x-4 lg:gap-x-6">
+            <div class="flex-1">
+              <h1 class="text-2xl font-semibold text-gray-900">
+                <%= content_for?(:title) ? yield(:title) : 'Dashboard' %>
+              </h1>
+            </div>
+
+            <!-- Profile dropdown -->
+            <div class="relative flex-shrink-0">
+              <div class="flex items-center gap-x-4 py-3 text-sm font-semibold leading-6 text-gray-900">
+                <div class="relative h-8 w-8 rounded-full bg-gray-50">
+                  <%= image_tag gravatar_url_for(current_user.email), class: "h-8 w-8 rounded-full" %>
+                  <div class="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-green-400 ring-1 ring-white"></div>
+                </div>
+                <span class="hidden lg:flex lg:items-center">
+                  <span class="ml-4 text-sm font-semibold leading-6 text-gray-900" aria-hidden="true">
+                    <%= current_user.email %>
+                  </span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <main class="py-10">
+        <div class="px-4 sm:px-6 lg:px-8">
+          <%= yield %>
+        </div>
+      </main>
+    </div>
+  </div>
+</body>
+</html> 

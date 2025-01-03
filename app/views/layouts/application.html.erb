@@ -1,67 +1,44 @@
 <!DOCTYPE html>
-<html class="h-full bg-gray-50 antialiased" lang="<%= I18n.locale %>">
+<html class="h-full bg-gray-50">
   <head>
-    <title>
-      <% if content_for?(:title) %>
-        <%= content_for(:title) %> | Post-Modern Devil's Dictionary
-      <% else %>
-        Post-Modern Devil's Dictionary
-      <% end %>
-    </title>
-    
-    <%# Basic Meta Tags %>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="description" content="<%= content_for?(:description) ? yield(:description) : "A modern take on Ambrose Bierce's Devil's Dictionary" %>">
-    
-    <%# Open Graph Meta Tags %>
-    <% if content_for?(:og_tags) %>
-      <%= yield(:og_tags) %>
-    <% else %>
-      <meta property="og:title" content="Post-Modern Devil's Dictionary">
-      <meta property="og:type" content="website">
-      <meta property="og:url" content="<%= root_url %>">
-      <meta property="og:description" content="A modern take on Ambrose Bierce's Devil's Dictionary">
-    <% end %>
-    
-    <%# Apple Messages Rich Preview Tags %>
-    <meta name="apple-mobile-web-app-title" content="<%= content_for?(:title) ? yield(:title) : "Post-Modern Devil's Dictionary" %>">
-    <meta property="og:image:width" content="300">
-    <meta property="og:image:height" content="300">
-    <meta property="og:image:type" content="image/gif">
-    
-    <%# JSON-LD Structured Data %>
-    <% if content_for?(:structured_data) %>
-      <script type="application/ld+json">
-        <%= yield(:structured_data).html_safe %>
-      </script>
-    <% end %>
-    
+    <title><%= content_for?(:title) ? yield(:title) : "Devil's Dictionary" %></title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-
     <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
   <body class="h-full">
-    <div class="min-h-full">
-      <%= render "shared/header" %>
-      
-      <%= turbo_frame_tag "search_results", target: "_top" %>
-      
-      <main>
-        <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-          <%= yield %>
-        </div>
-      </main>
-    </div>
-
-    <% if Current.user %>
+    <% if authenticated? %>
       <div>
-        Logged in as: <%= Current.user.email_address %>
-        <%= button_to "Logout", session_path, method: :delete %>
+        <!-- Off-canvas menu for mobile -->
+        <div class="relative z-50 lg:hidden" role="dialog" aria-modal="true" data-controller="mobile-menu">
+          <div class="fixed inset-0 bg-gray-900/80" data-mobile-menu-target="overlay" data-action="click->mobile-menu#close"></div>
+          <div class="fixed inset-0 flex">
+            <%= render "shared/admin_mobile_menu" %>
+          </div>
+        </div>
+
+        <!-- Static sidebar for desktop -->
+        <div class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
+          <%= render "shared/admin_sidebar" %>
+        </div>
+
+        <div class="lg:pl-72">
+          <%= render "shared/admin_header" %>
+          <main class="py-10">
+            <div class="px-4 sm:px-6 lg:px-8">
+              <%= yield %>
+            </div>
+          </main>
+        </div>
       </div>
+    <% else %>
+      <!-- Regular layout for non-authenticated users -->
+      <%= render "shared/header" %>
+      <main>
+        <%= yield %>
+      </main>
     <% end %>
   </body>
 </html>
