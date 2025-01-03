@@ -1,74 +1,35 @@
-<% content_for :title, "#{@topic.title} - Quotes" %>
+<% content_for :title, "Quotes - #{@topic.title}" %>
 
 <div class="px-4 sm:px-6 lg:px-8">
   <div class="sm:flex sm:items-center">
     <div class="sm:flex-auto">
-      <h1 class="text-base font-semibold leading-6 text-gray-900">Quotes for <%= @topic.title %></h1>
-      <p class="mt-2 text-sm text-gray-700">Add and manage quotes for this topic.</p>
+      <h1 class="text-base font-semibold leading-6 text-gray-900">Quotes</h1>
+      <p class="mt-2 text-sm text-gray-700">
+        A list of all quotes related to <%= @topic.title %>
+      </p>
     </div>
     <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
       <%= link_to send("search_wikiquotes_#{@topic.class.name.underscore}_quotes_path", @topic),
-          class: "block rounded-md bg-blue-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-blue-500" do %>
-        Search Wikiquotes
+          class: "inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" do %>
+        <svg class="-ml-0.5 mr-1.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+        </svg>
+        Add Quote
       <% end %>
     </div>
   </div>
 
-  <div class="mt-8 flow-root">
-    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-      <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-        <table class="min-w-full divide-y divide-gray-300">
-          <thead>
-            <tr>
-              <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Quote</th>
-              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Author</th>
-              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Source</th>
-              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Added</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-200">
-            <% @quotes.each do |quote| %>
-              <tr>
-                <td class="py-4 pl-4 pr-3 text-sm sm:pl-0">
-                  <div class="font-medium text-gray-900"><%= quote.content %></div>
-                </td>
-                <td class="px-3 py-4 text-sm text-gray-500"><%= quote.author %></td>
-                <td class="px-3 py-4 text-sm text-gray-500">
-                  <% if quote.source_url.present? %>
-                    <%= link_to "Source", quote.source_url, class: "text-blue-600 hover:text-blue-900", target: "_blank" %>
-                  <% end %>
-                </td>
-                <td class="px-3 py-4 text-sm text-gray-500"><%= time_ago_in_words(quote.created_at) %> ago</td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
+  <%= turbo_frame_tag "quotes" do %>
+    <div class="mt-8 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+            <div class="divide-y divide-gray-200 bg-white">
+              <%= render @quotes %>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
-
-<%= render "shared/modal", title: "Add Quote" do %>
-  <%= form_with model: [@topic], 
-                url: send("#{@topic.route_key}_quotes_path", @topic),
-                class: "space-y-4" do |f| %>
-    <div>
-      <%= f.label :content, class: "block text-sm font-medium text-gray-700" %>
-      <%= f.text_area :content, rows: 4, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" %>
-    </div>
-
-    <div>
-      <%= f.label :author, class: "block text-sm font-medium text-gray-700" %>
-      <%= f.text_field :author, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" %>
-    </div>
-
-    <div>
-      <%= f.label :source_url, "Source URL", class: "block text-sm font-medium text-gray-700" %>
-      <%= f.url_field :source_url, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" %>
-    </div>
-
-    <div class="mt-5 sm:mt-6">
-      <%= f.submit "Add Quote", class: "inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" %>
-    </div>
   <% end %>
-<% end %> 
+</div> 

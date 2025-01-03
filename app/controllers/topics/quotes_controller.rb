@@ -2,6 +2,7 @@ module Topics
   class QuotesController < ApplicationController
     before_action :authenticate
     before_action :set_topic
+    before_action :set_quote, only: [:destroy]
 
     def index
       @quotes = @topic.quotes.order(created_at: :desc)
@@ -17,7 +18,26 @@ module Topics
       end
     end
 
+    def destroy
+      @quote.destroy
+      
+      respond_to do |format|
+        format.html { redirect_to send("#{@topic.class.name.underscore}_quotes_path", @topic), notice: "Quote was successfully removed." }
+        format.turbo_stream { 
+          flash.now[:notice] = "Quote was successfully removed."
+          render turbo_stream: [
+            turbo_stream.remove(@quote),
+            turbo_stream.update("flash", partial: "shared/flash")
+          ]
+        }
+      end
+    end
+
     private
+
+    def set_quote
+      @quote = @topic.quotes.find(params[:id])
+    end
 
     def set_topic
       @topic = Topic.friendly.find(params[:concept_id] || params[:person_id] || params[:place_id] || 

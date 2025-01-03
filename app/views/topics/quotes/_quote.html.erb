@@ -1,0 +1,39 @@
+<%= turbo_frame_tag quote do %>
+  <div class="p-4 sm:px-6">
+    <div class="flex items-center justify-between gap-x-6">
+      <div class="flex-1">
+        <div class="text-sm font-medium text-gray-900">
+          <%= quote.content %>
+        </div>
+        
+        <div class="mt-1 flex items-center gap-x-4 text-xs text-gray-500">
+          <% if quote.attribution_text.present? %>
+            <span>By <%= quote.attribution_text %></span>
+          <% end %>
+          
+          <% if quote.section_title.present? %>
+            <span>Section: <%= quote.section_title %></span>
+          <% end %>
+          
+          <% if quote.source_url.present? %>
+            <%= link_to "Source", quote.source_url, 
+                class: "text-blue-600 hover:text-blue-900",
+                target: "_blank" %>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="flex-none">
+        <%= button_to send("#{quote.topic.class.name.underscore}_quote_path", quote.topic, quote),
+            method: :delete,
+            class: "rounded-md bg-red-50 px-2.5 py-1.5 text-sm font-semibold text-red-600 shadow-sm hover:bg-red-100",
+            data: { 
+              turbo_confirm: "Are you sure you want to remove this quote?",
+              turbo_frame: "_top"
+            } do %>
+          Delete
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %> 

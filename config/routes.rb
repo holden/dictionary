@@ -26,7 +26,7 @@ Rails.application.routes.draw do
   %w[people places concepts things events actions others].each do |type|
     resources type, controller: 'topics', type: type.singularize.classify do
       scope module: :topics do
-        resources :quotes, only: [:index, :create] do
+        resources :quotes, only: [:index, :create, :destroy] do
           collection do
             get 'search/wikiquotes', to: 'quotes/search#new'
             post 'search/wikiquotes', to: 'quotes/search#create'

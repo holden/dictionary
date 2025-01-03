@@ -9,6 +9,8 @@
   </head>
 
   <body class="h-full">
+    <%= render "shared/flash" if flash.any? %>
+    <div id="flash"></div>
     <% if authenticated? %>
       <div>
         <!-- Off-canvas menu for mobile -->
