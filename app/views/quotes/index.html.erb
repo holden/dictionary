@@ -1,0 +1,51 @@
+<% content_for :title, "Quotes" %>
+
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="sm:flex sm:items-center">
+    <div class="sm:flex-auto">
+      <h1 class="text-base font-semibold leading-6 text-gray-900">Quotes</h1>
+      <p class="mt-2 text-sm text-gray-700">A list of all quotes in the system.</p>
+    </div>
+  </div>
+
+  <div class="mt-8 flow-root">
+    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+        <table class="min-w-full divide-y divide-gray-300">
+          <thead>
+            <tr>
+              <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Quote</th>
+              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Topic</th>
+              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Author</th>
+              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Source</th>
+              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Added</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <% @quotes.each do |quote| %>
+              <tr>
+                <td class="py-4 pl-4 pr-3 text-sm sm:pl-0">
+                  <div class="font-medium text-gray-900"><%= quote.content %></div>
+                </td>
+                <td class="px-3 py-4 text-sm text-gray-500">
+                  <%= link_to quote.topic.title, send("#{quote.topic.route_key}_path", quote.topic), class: "text-blue-600 hover:text-blue-900" %>
+                </td>
+                <td class="px-3 py-4 text-sm text-gray-500"><%= quote.author %></td>
+                <td class="px-3 py-4 text-sm text-gray-500">
+                  <% if quote.source_url.present? %>
+                    <%= link_to "Source", quote.source_url, class: "text-blue-600 hover:text-blue-900", target: "_blank" %>
+                  <% end %>
+                </td>
+                <td class="px-3 py-4 text-sm text-gray-500"><%= time_ago_in_words(quote.created_at) %> ago</td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-6">
+    <%= paginate @quotes %>
+  </div>
+</div> 
