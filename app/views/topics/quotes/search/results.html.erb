@@ -5,24 +5,15 @@
     <div class="sm:flex-auto">
       <h1 class="text-base font-semibold leading-6 text-gray-900">Search Results</h1>
       <p class="mt-2 text-sm text-gray-700">
-        <% if @results.any? %>
-          Found <%= @pagy.count %> quotes
-          <%= "for \"#{@search_term}\"" if @search_term.present? %>
-          <%= "by #{@author}" if @author.present? %>
-        <% else %>
-          No quotes found. Try adjusting your search terms.
-        <% end %>
+        Found <%= pluralize(@results.size, 'quote') %> by <%= @author %>
       </p>
     </div>
     <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-      <%= link_to send("search_wikiquotes_#{@topic.class.name.underscore}_quotes_path", @topic),
-          class: "text-sm font-semibold leading-6 text-blue-600 hover:text-blue-500" do %>
-        ← New Search
-      <% end %>
+      <%= link_to "← New Search", 
+                  send("search_wikiquotes_#{@topic.class.name.underscore}_quotes_path", @topic),
+                  class: "block rounded-md bg-blue-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" %>
     </div>
   </div>
 
-  <%= turbo_frame_tag "search_results" do %>
-    <%= render 'results_content', results: @results, pagy: @pagy, topic: @topic %>
-  <% end %>
+  <%= render "results_content", results: @results, topic: @topic %>
 </div> 

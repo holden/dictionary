@@ -17,16 +17,26 @@ module Topics
         @namespace = search_params[:namespace]
         @language = search_params[:language] || 'english'
         
-        @results = WikiquotesService.search(search_params)
-        @pagy, @results = pagy_array(@results, items: 20)
+        # Get raw results from WikiquotesService
+        raw_results = WikiquotesService.search(search_params)
         
+        # Deduplicate and clean up results
+        @results = raw_results.uniq { |quote| 
+          # Use content as deduplication key
+          quote[:content].strip.downcase
+        }.reject { |quote|
+          # Remove entries that are just metadata
+          quote[:content].blank? || 
+          quote[:content].match?(/^(See|Compare|Source|Note|Reference):/i)
+        }
+
         respond_to do |format|
           format.html { render :results }
           format.turbo_stream { 
             render turbo_stream: turbo_stream.update(
               'search_results',
               partial: 'topics/quotes/search/results_content',
-              locals: { results: @results, pagy: @pagy, topic: @topic }
+              locals: { results: @results, topic: @topic }
             )
           }
         end
