@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_02_231702) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_02_231704) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -79,6 +79,31 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_02_231702) do
     t.index ["topic_id"], name: "index_definitions_on_topic_id"
   end
 
+  create_table "quotes", force: :cascade do |t|
+    t.bigint "topic_id", null: false
+    t.bigint "author_id"
+    t.string "attribution_text"
+    t.text "context"
+    t.string "source_url"
+    t.date "said_on"
+    t.string "section_title"
+    t.string "wikiquote_section_id"
+    t.text "original_text"
+    t.string "original_language"
+    t.text "citation"
+    t.boolean "disputed", default: false
+    t.boolean "misattributed", default: false
+    t.jsonb "metadata", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["attribution_text"], name: "index_quotes_on_attribution_text"
+    t.index ["author_id"], name: "index_quotes_on_author_id"
+    t.index ["metadata"], name: "index_quotes_on_metadata", using: :gin
+    t.index ["topic_id", "created_at"], name: "index_quotes_on_topic_id_and_created_at"
+    t.index ["topic_id"], name: "index_quotes_on_topic_id"
+    t.index ["wikiquote_section_id"], name: "index_quotes_on_wikiquote_section_id"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "ip_address"
@@ -108,7 +133,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_02_231702) do
     t.datetime "updated_at", null: false
     t.string "slug"
     t.tsvector "tsv"
+    t.string "openlibrary_id"
     t.index ["conceptnet_id"], name: "index_topics_on_conceptnet_id", unique: true, where: "(conceptnet_id IS NOT NULL)"
+    t.index ["openlibrary_id"], name: "index_topics_on_openlibrary_id"
     t.index ["slug"], name: "index_topics_on_slug", unique: true
     t.index ["title"], name: "index_topics_on_title", unique: true
     t.index ["tsv"], name: "topics_tsv_idx", using: :gin
@@ -137,6 +164,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_02_231702) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "books", "topics", column: "author_id"
   add_foreign_key "definitions", "topics"
+  add_foreign_key "quotes", "topics"
+  add_foreign_key "quotes", "topics", column: "author_id"
   add_foreign_key "sessions", "users"
   add_foreign_key "topic_relationships", "topics"
   add_foreign_key "topic_relationships", "topics", column: "related_topic_id"
