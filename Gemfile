@@ -76,5 +76,5 @@ gem 'friendly_id', '~> 5.5.0'
 
 gem 'pg_search'
 
-# Add pagination
-gem 'kaminari'
+# Pagination
+gem 'pagy'

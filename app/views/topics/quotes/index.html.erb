@@ -7,13 +7,10 @@
       <p class="mt-2 text-sm text-gray-700">Add and manage quotes for this topic.</p>
     </div>
     <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-      <button type="button" 
-              class="block rounded-md bg-blue-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-blue-500"
-              data-controller="modal"
-              data-action="click->modal#open"
-              data-modal-target="add-quote">
-        Add quote
-      </button>
+      <%= link_to send("search_wikiquotes_#{@topic.class.name.underscore}_quotes_path", @topic),
+          class: "block rounded-md bg-blue-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-blue-500" do %>
+        Search Wikiquotes
+      <% end %>
     </div>
   </div>
 

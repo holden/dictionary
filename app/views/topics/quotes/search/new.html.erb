@@ -1,0 +1,61 @@
+<% content_for :title, "Search Wikiquotes - #{@topic.title}" %>
+
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="sm:flex sm:items-center">
+    <div class="sm:flex-auto">
+      <h1 class="text-base font-semibold leading-6 text-gray-900">Search Wikiquotes</h1>
+      <p class="mt-2 text-sm text-gray-700">Search for quotes related to <%= @topic.title %></p>
+    </div>
+  </div>
+
+  <div class="mt-8">
+    <%= form_with url: send("search_wikiquotes_#{@topic.class.name.underscore}_quotes_path", @topic), 
+                  method: :post,
+                  data: { turbo: true },
+                  class: "space-y-6" do |f| %>
+      <div>
+        <%= f.label :q, "Search Term", class: "block text-sm font-medium text-gray-700" %>
+        <div class="mt-1">
+          <%= f.text_field :q, value: @search_term, 
+                          class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
+                          placeholder: "Enter search terms..." %>
+        </div>
+        <p class="mt-1 text-xs text-gray-500">Search within quote content</p>
+      </div>
+
+      <div>
+        <%= f.label :author, "Author", class: "block text-sm font-medium text-gray-700" %>
+        <div class="mt-1">
+          <%= f.text_field :author, value: @author,
+                          class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm",
+                          placeholder: "Search by author..." %>
+        </div>
+      </div>
+
+      <div>
+        <%= f.label :namespace, "Section", class: "block text-sm font-medium text-gray-700" %>
+        <div class="mt-1">
+          <%= f.select :namespace, 
+                      options_for_select([
+                        ['All Sections', '0'],
+                        ['Sourced', '0|Sourced'],
+                        ['Attributed', '0|Attributed'],
+                        ['Disputed', '0|Disputed'],
+                        ['Misattributed', '0|Misattributed']
+                      ], @namespace),
+                      {},
+                      class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" %>
+        </div>
+      </div>
+
+      <div>
+        <%= f.submit "Search", 
+                    class: "inline-flex justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" %>
+      </div>
+    <% end %>
+  </div>
+
+  <%= turbo_frame_tag "search_results" do %>
+    <%# Initial empty state %>
+  <% end %>
+</div> 

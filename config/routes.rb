@@ -25,8 +25,14 @@ Rails.application.routes.draw do
   # STI routes with nested quotes
   %w[people places concepts things events actions others].each do |type|
     resources type, controller: 'topics', type: type.singularize.classify do
-      get 'quotes', to: 'topics/quotes#index'
-      post 'quotes', to: 'topics/quotes#create'
+      scope module: :topics do
+        resources :quotes, only: [:index, :create] do
+          collection do
+            get 'search/wikiquotes', to: 'quotes/search#new'
+            post 'search/wikiquotes', to: 'quotes/search#create'
+          end
+        end
+      end
     end
   end
 end

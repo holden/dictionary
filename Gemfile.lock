@@ -231,6 +231,7 @@ GEM
     nokogiri (1.17.2-x86_64-linux)
       racc (~> 1.4)
     ostruct (0.6.1)
+    pagy (9.3.3)
     parallel (1.26.3)
     parser (3.3.6.0)
       ast (~> 2.4.1)
@@ -424,6 +425,7 @@ DEPENDENCIES
   kamal
   kaminari
   nokogiri
+  pagy
   pg (~> 1.1)
   pg_search
   propshaft
