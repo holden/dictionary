@@ -9,7 +9,19 @@
 #   end
 
 # Load all seed files
-Dir[Rails.root.join('db/seeds/*.rb')].sort.each do |file|
-  puts "Loading seed file: #{file}"
-  load file
-end
+#Dir[Rails.root.join('db/seeds/*.rb')].sort.each do |file|
+#  puts "Loading seed file: #{file}"
+#  load file
+#end
+
+# Clear existing users first
+User.destroy_all
+
+# Create test user
+User.create!(
+  email_address: "holden@hey.com",
+  password: "sawyer69",
+  password_confirmation: "sawyer69"
+)
+
+puts "Created test user: holden@hey.com"

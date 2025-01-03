@@ -3,47 +3,55 @@
     <div class="flex h-16 justify-between">
       <div class="flex">
         <div class="flex flex-shrink-0 items-center">
-          <%= link_to root_path, class: "text-xl font-bold text-gray-900" do %>
+          <%= link_to root_path, class: "text-xl font-bold" do %>
             Devil's Dictionary
           <% end %>
         </div>
-        
         <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-          <%= link_to "Home", root_path, 
-              class: "inline-flex items-center border-b-2 #{current_page?(root_path) ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'} px-1 pt-1 text-sm font-medium" %>
-          
-          <%= link_to "Topics", topics_path,
-              class: "inline-flex items-center border-b-2 #{current_page?(topics_path) ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'} px-1 pt-1 text-sm font-medium" %>
+          <%= link_to "Home", root_path, class: "inline-flex items-center border-b-2 #{current_page?(root_path) ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'} px-1 pt-1 text-sm font-medium" %>
         </div>
       </div>
-
-      <%# Add search form %>
-      <div class="flex flex-1 justify-center px-2 lg:ml-6 lg:justify-end items-center">
-        <div class="relative w-full max-w-lg lg:max-w-xs" data-controller="autocomplete">
-          <div class="flex h-9">
-            <div class="pointer-events-none absolute inset-y-0 flex items-center left-3 h-9">
-              <svg class="h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
-              </svg>
-            </div>
-            <%= text_field_tag :search, nil,
-                class: "block w-full h-9 rounded-md border-0 py-1.5 pl-9 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-                placeholder: "Search topics...",
-                autocomplete: "off",
-                data: { 
-                  autocomplete_target: "input",
-                  action: "input->autocomplete#search"
-                } %>
-          </div>
-          <div data-autocomplete-target="results" class="hidden absolute top-full left-0 right-0 z-50 mt-1 bg-white rounded-md shadow-lg ring-1 ring-black/5"></div>
-        </div>
+      
+      <div class="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
+        <%= render "shared/search_form" %>
+        
+        <% if Current.user %>
+          <%= button_to "Logout", session_path, 
+              method: :delete, 
+              class: "inline-flex items-center border-b-2 border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 px-1 pt-1 text-sm font-medium" %>
+        <% else %>
+          <%= link_to "Login", new_session_path, 
+              class: "inline-flex items-center border-b-2 #{current_page?(new_session_path) ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'} px-1 pt-1 text-sm font-medium" %>
+        <% end %>
       </div>
 
-      <div class="hidden sm:ml-6 sm:flex sm:items-center">
-        <%# User authentication will be added here later %>
-        <%= link_to "About", "#", 
-            class: "rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" %>
+      <div class="-mr-2 flex items-center sm:hidden">
+        <button type="button" class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500" aria-controls="mobile-menu" aria-expanded="false" data-action="click->mobile-menu#toggle">
+          <span class="sr-only">Open main menu</span>
+          <svg class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          </svg>
+          <svg class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
       </div>
     </div>
   </nav>
+
+  <div class="sm:hidden" id="mobile-menu" data-mobile-menu-target="menu">
+    <div class="space-y-1 pb-3 pt-2">
+      <%= link_to "Home", root_path, class: "block border-l-4 #{current_page?(root_path) ? 'border-indigo-500 bg-indigo-50 text-indigo-700' : 'border-transparent text-gray-500 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700'} py-2 pl-3 pr-4 text-base font-medium" %>
+      
+      <% if Current.user %>
+        <%= button_to "Logout", session_path, 
+            method: :delete, 
+            class: "w-full text-left block border-l-4 border-transparent text-gray-500 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700 py-2 pl-3 pr-4 text-base font-medium" %>
+      <% else %>
+        <%= link_to "Login", new_session_path, 
+            class: "block border-l-4 #{current_page?(new_session_path) ? 'border-indigo-500 bg-indigo-50 text-indigo-700' : 'border-transparent text-gray-500 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700'} py-2 pl-3 pr-4 text-base font-medium" %>
+      <% end %>
+    </div>
+  </div>
+</header> 
 </header> 

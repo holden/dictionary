@@ -56,5 +56,12 @@
         </div>
       </main>
     </div>
+
+    <% if Current.user %>
+      <div>
+        Logged in as: <%= Current.user.email_address %>
+        <%= button_to "Logout", session_path, method: :delete %>
+      </div>
+    <% end %>
   </body>
 </html>
