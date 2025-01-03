@@ -55,12 +55,12 @@
     <li class="mt-auto">
       <div class="flex items-center gap-x-4 py-3 text-sm font-semibold leading-6 text-gray-900">
         <div class="relative h-8 w-8 rounded-full bg-gray-50">
-          <%= image_tag gravatar_url_for(current_user.email), class: "h-8 w-8 rounded-full" %>
+          <%= image_tag gravatar_url_for(Current.user.email_address), class: "h-8 w-8 rounded-full" %>
           <div class="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-green-400 ring-1 ring-white"></div>
         </div>
         <div class="flex flex-col">
-          <span aria-hidden="true"><%= current_user.email %></span>
-          <%= button_to "Sign out", sign_out_path, method: :delete, 
+          <span aria-hidden="true"><%= Current.user.email_address %></span>
+          <%= button_to "Sign out", session_path, method: :delete, 
               class: "text-sm font-semibold leading-6 text-red-600 hover:text-red-500" %>
         </div>
       </div>

@@ -24,15 +24,22 @@ Rails.application.routes.draw do
     end
   end
   
-  # STI routes
-  resources :people, controller: 'topics', type: 'Person'
-  resources :places, controller: 'topics', type: 'Place'
-  resources :concepts, controller: 'topics', type: 'Concept'
-  resources :things, controller: 'topics', type: 'Thing'
-  resources :events, controller: 'topics', type: 'Event'
-  resources :actions, controller: 'topics', type: 'Action'
-  resources :others, controller: 'topics', type: 'Other'
+  # STI routes with nested quotes
+  %w[people places concepts things events actions others].each do |type|
+    resources type, controller: 'topics', type: type.singularize.classify do
+      get 'quotes', to: 'topics/quotes#index'
+      post 'quotes', to: 'topics/quotes#create'
+    end
+  end
 
   # Redirect unauthenticated users
   get 'admin', to: redirect('/sign_in')
+
+  namespace :admin do
+    resources :quotes, only: [:index] do
+      collection do
+        get :search
+      end
+    end
+  end
 end

@@ -65,6 +65,7 @@ class Topic < ApplicationRecord
            class_name: 'Definition',
            foreign_key: :source_id,
            dependent: :nullify
+  has_many :quotes, dependent: :destroy
 
   # Add this if you want to search definitions too
   has_one :first_definition, -> { order(created_at: :asc) }, class_name: 'Definition'

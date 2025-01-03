@@ -7,7 +7,7 @@ module Admin
     before_action do
       Rails.logger.info "=== ADMIN CONTROLLER HIT ==="
       Rails.logger.info "Layout being used: #{self.send(:_layout)}"
-      Rails.logger.info "Current user: #{Current.user&.email}"
+      Rails.logger.info "Current user: #{Current.user&.email_address}"
     end
 
     def current_page?(path)
