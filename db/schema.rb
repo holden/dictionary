@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_03_195643) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_03_205519) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -174,7 +174,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_03_195643) do
   add_foreign_key "books", "topics", column: "author_id"
   add_foreign_key "definitions", "topics"
   add_foreign_key "quotes", "topics"
-  add_foreign_key "quotes", "topics", column: "author_id"
+  add_foreign_key "quotes", "topics", column: "author_id", on_delete: :cascade
   add_foreign_key "sessions", "users"
   add_foreign_key "topic_relationships", "topics"
   add_foreign_key "topic_relationships", "topics", column: "related_topic_id"

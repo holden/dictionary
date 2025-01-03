@@ -85,7 +85,7 @@ module Topics
         :content, :source_url, :context, :citation,
         :said_on, :section_title, :wikiquote_section_id,
         :original_text, :original_language, :disputed,
-        :misattributed, metadata: {}
+        :misattributed, :attribution_text, metadata: {}
       )
     end
   end

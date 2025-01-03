@@ -6,7 +6,20 @@ class AuthorLookupService
     author = Person.find_by("lower(title) = ?", name.downcase)
     return author if author.present?
 
-    # Try ConceptNet first
+    # Try OpenLibrary first
+    author_data = OpenLibraryService.lookup_author(name)
+    if author_data.present?
+      # Get ConceptNet data as well
+      concept = ConceptNetService.lookup_person(name)
+      
+      return Person.create!(
+        title: author_data.fetch("name"),
+        openlibrary_id: author_data.fetch("key"),
+        conceptnet_id: concept&.fetch("id")
+      )
+    end
+
+    # If OpenLibrary fails, try ConceptNet
     concept = ConceptNetService.lookup_person(name)
     if concept.present?
       return Person.create!(
@@ -15,16 +28,11 @@ class AuthorLookupService
       )
     end
 
-    # Try OpenLibrary as fallback
-    author_data = OpenLibraryService.lookup_author(name)
-    if author_data.present?
-      return Person.create!(
-        title: author_data.fetch("name"),
-        openlibrary_id: author_data.fetch("key")
-      )
-    end
-
-    # If we got here, we couldn't find the author in either service
-    raise NotFoundError, "Could not verify author '#{name}' in external services"
+    # If both fail, create basic record
+    Person.create!(
+      title: name.titleize
+    )
+  rescue ActiveRecord::RecordInvalid => e
+    raise NotFoundError, "Could not create author record for '#{name}'"
   end
 end 

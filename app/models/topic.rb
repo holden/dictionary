@@ -66,6 +66,10 @@ class Topic < ApplicationRecord
            foreign_key: :source_id,
            dependent: :nullify
   has_many :quotes, dependent: :destroy
+  has_many :authored_quotes, 
+           class_name: 'Quote',
+           foreign_key: :author_id,
+           dependent: :destroy
 
   # Add this if you want to search definitions too
   has_one :first_definition, -> { order(created_at: :asc) }, class_name: 'Definition'
@@ -75,7 +79,7 @@ class Topic < ApplicationRecord
 
   def refresh_conceptnet_data!
     self.conceptnet_id = nil
-    set_conceptnet_id
+    generate_conceptnet_id
     save!
   end
 
@@ -275,16 +279,32 @@ class Topic < ApplicationRecord
   def generate_conceptnet_id
     return if conceptnet_id.present?
 
-    base_id = "/c/en/#{title.downcase.gsub(/[^a-z0-9_]/, '_')}"
-    candidate_id = base_id
-    counter = 1
+    # For authors/people, try OpenLibrary first
+    if type == "Person"
+      # Clean up the title first - remove any media/company suffixes
+      clean_title = title.downcase
+                        .gsub(/ media$/, '')
+                        .gsub(/ company$/, '')
+                        .gsub(/ corporation$/, '')
+                        .strip
 
-    while Topic.exists?(conceptnet_id: candidate_id)
-      candidate_id = "#{base_id}_#{counter}"
-      counter += 1
+      author_data = OpenLibraryService.lookup_author(clean_title)
+      if author_data.present?
+        self.title = author_data.fetch("name")
+        self.openlibrary_id = author_data.fetch("key")
+        return # Skip ConceptNet for authors
+      end
+
+      # If OpenLibrary fails, still use the cleaned title
+      self.title = clean_title.titleize
+      return # Skip ConceptNet for authors entirely
     end
 
-    self.conceptnet_id = candidate_id
+    # Only use ConceptNet for non-authors
+    concept = ConceptNetService.lookup(title)
+    if concept.present?
+      self.conceptnet_id = concept.fetch("id")
+    end
   end
 
   def standardize_title
