@@ -1,15 +1,17 @@
-<div class="absolute top-full left-0 right-0 z-50 mt-1 bg-white rounded-md shadow-lg ring-1 ring-black/5">
-  <ul class="max-h-72 py-2 overflow-y-auto text-sm divide-y divide-gray-100">
-    <% if @topics.any? %>
+<% if @topics.present? %>
+  <div class="absolute z-10 mt-2 w-full overflow-hidden rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+    <ul role="list" class="divide-y divide-gray-200">
       <% @topics.each do |topic| %>
         <li>
           <%= link_to send("#{topic.route_key}_path", topic), 
               class: "block px-4 py-2 hover:bg-gray-50 focus:bg-gray-50" do %>
             <div class="flex items-center">
               <span class="font-medium text-gray-900"><%= topic.title %></span>
-              <span class="ml-2 text-sm text-gray-500">
-                (<%= abbreviate_part_of_speech(topic.part_of_speech) %>.)
-              </span>
+              <% if topic.part_of_speech.present? %>
+                <span class="ml-2 text-sm text-gray-500">
+                  (<%= abbreviate_part_of_speech(topic.part_of_speech) %>.)
+                </span>
+              <% end %>
             </div>
             <% if topic.definitions.first %>
               <p class="mt-1 text-sm text-gray-500 line-clamp-2">
@@ -19,14 +21,6 @@
           <% end %>
         </li>
       <% end %>
-    <% elsif @query.present? %>
-      <li class="px-4 py-2 text-sm text-gray-500">
-        No results found for "<%= @query %>"
-      </li>
-    <% else %>
-      <li class="px-4 py-2 text-sm text-gray-500">
-        Start typing to search...
-      </li>
-    <% end %>
-  </ul>
-</div> 
+    </ul>
+  </div>
+<% end %> 
