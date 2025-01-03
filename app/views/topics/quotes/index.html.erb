@@ -4,32 +4,83 @@
   <div class="sm:flex sm:items-center">
     <div class="sm:flex-auto">
       <h1 class="text-base font-semibold leading-6 text-gray-900">Quotes</h1>
-      <p class="mt-2 text-sm text-gray-700">
-        A list of all quotes related to <%= @topic.title %>
-      </p>
+      <p class="mt-2 text-sm text-gray-700">A collection of quotes about <%= @topic.display_title %></p>
     </div>
     <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-      <%= link_to send("search_wikiquotes_#{@topic.class.name.underscore}_quotes_path", @topic),
-          class: "inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" do %>
-        <svg class="-ml-0.5 mr-1.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-          <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
-        </svg>
-        Add Quote
+      <%= link_to send("search_wikiquotes_#{@topic.route_key}_quotes_path", @topic),
+          class: "block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" do %>
+        <span class="flex items-center gap-x-1">
+          <svg class="-ml-0.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+          </svg>
+          Add quote
+        </span>
       <% end %>
     </div>
   </div>
 
-  <%= turbo_frame_tag "quotes" do %>
-    <div class="mt-8 flow-root">
-      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-          <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
-            <div class="divide-y divide-gray-200 bg-white">
-              <%= render @quotes %>
+  <div class="mt-6 divide-y divide-gray-100 border-t border-gray-200">
+    <% @quotes.each do |quote| %>
+      <%= turbo_frame_tag quote do %>
+        <div class="relative py-5 hover:bg-gray-50">
+          <div class="px-4 sm:px-6 lg:px-8">
+            <div class="mx-auto max-w-4xl">
+              <div class="flex gap-x-3">
+                <!-- Author avatar placeholder -->
+                <div class="flex-none">
+                  <div class="h-10 w-10 rounded-full bg-gray-50 flex items-center justify-center ring-1 ring-inset ring-gray-200">
+                    <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.23 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 00-13.074.003z" />
+                    </svg>
+                  </div>
+                </div>
+
+                <!-- Quote content -->
+                <div class="flex-1 space-y-1">
+                  <div class="text-sm text-gray-900">
+                    <%= quote.content.to_plain_text %>
+                  </div>
+
+                  <!-- Attribution and metadata -->
+                  <div class="flex items-center gap-x-2 text-xs text-gray-500">
+                    <% if quote.author %>
+                      <%= link_to quote.author.display_title,
+                          send("#{quote.author.route_key}_path", quote.author),
+                          class: "font-medium text-gray-900 hover:text-gray-700" %>
+                    <% else %>
+                      <span class="font-medium text-gray-900"><%= quote.attribution_text %></span>
+                    <% end %>
+
+                    <% if quote.citation.present? %>
+                      <span class="text-gray-500">•</span>
+                      <span><%= quote.citation %></span>
+                    <% end %>
+                  </div>
+
+                  <div class="text-xs text-gray-500">
+                    Added by <%= quote.user.email_address %> • <%= time_ago_in_words(quote.created_at) %> ago
+                  </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex-none flex items-center gap-x-2">
+                  <% if quote.source_url.present? %>
+                    <%= link_to "Source", quote.source_url,
+                        class: "rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50",
+                        target: "_blank" %>
+                  <% end %>
+                  <%= button_to send("#{@topic.route_key}_quote_path", @topic, quote),
+                      method: :delete,
+                      class: "rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-red-600 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50",
+                      data: { turbo_confirm: "Are you sure?" } do %>
+                    Delete
+                  <% end %>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  <% end %>
+      <% end %>
+    <% end %>
+  </div>
 </div> 

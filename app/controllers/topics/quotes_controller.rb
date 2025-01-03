@@ -42,10 +42,11 @@ module Topics
     end
 
     def destroy
+      @quote = @topic.quotes.find(params[:id])
       @quote.destroy
-      
+
       respond_to do |format|
-        format.html { redirect_to send("#{@topic.class.name.underscore}_quotes_path", @topic), notice: "Quote was successfully removed." }
+        format.html { redirect_to send("#{@topic.route_key}_quotes_path", @topic), notice: "Quote was successfully removed." }
         format.turbo_stream { 
           flash.now[:notice] = "Quote was successfully removed."
           render turbo_stream: [
