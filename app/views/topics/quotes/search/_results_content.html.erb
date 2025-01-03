@@ -21,10 +21,32 @@
                     </div>
                   </div>
                   <%= form_with url: send("#{topic.class.name.underscore}_quotes_path", topic), 
-                              class: "ml-4 flex-shrink-0" do |f| %>
-                    <%= f.hidden_field :content, value: quote[:content] %>
-                    <%= f.hidden_field :source_url, value: quote[:source_url] %>
-                    <%= f.hidden_field :author, value: quote[:author] %>
+                              class: "ml-4 flex-shrink-0",
+                              data: { turbo_frame: "_top" } do |f| %>
+                    <%= f.hidden_field 'quote[content]', value: quote[:content] %>
+                    <%= f.hidden_field 'quote[original_text]', value: quote[:content] %>
+                    <%= f.hidden_field 'quote[source_url]', value: quote[:source_url] %>
+                    <%= f.hidden_field 'quote[attribution_text]', value: quote[:author] %>
+                    <%= f.hidden_field 'quote[section_title]', value: quote[:section] if quote[:section].present? %>
+                    <%= f.hidden_field 'quote[original_language]', value: 'en' %>
+                    
+                    <%# Add metadata for wikiquote-specific fields %>
+                    <%= f.hidden_field 'quote[wikiquote_section_id]', value: quote[:section]&.parameterize %>
+                    
+                    <%# Add disputed/misattributed based on section %>
+                    <%= f.hidden_field 'quote[disputed]', value: quote[:section]&.downcase == 'disputed' %>
+                    <%= f.hidden_field 'quote[misattributed]', value: quote[:section]&.downcase == 'misattributed' %>
+                    
+                    <%# Add citation if we have author or section %>
+                    <% citation = [
+                      quote[:author].presence,
+                      quote[:section].presence
+                    ].compact.join(' - ') %>
+                    <%= f.hidden_field 'quote[citation]', value: citation if citation.present? %>
+                    
+                    <%# Add context from the section %>
+                    <%= f.hidden_field 'quote[context]', value: quote[:section] if quote[:section].present? %>
+                    
                     <%= f.submit "Add Quote", 
                         class: "rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500" %>
                   <% end %>

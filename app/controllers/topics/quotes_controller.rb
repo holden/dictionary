@@ -11,7 +11,7 @@ module Topics
       @quote = @topic.quotes.build(quote_params)
       
       if @quote.save
-        redirect_to send("#{@topic.route_key}_path", @topic), notice: "Quote was successfully added."
+        redirect_to send("#{@topic.class.name.underscore}_quotes_path", @topic), notice: "Quote was successfully added."
       else
         render :index, status: :unprocessable_entity
       end
@@ -29,7 +29,19 @@ module Topics
     end
 
     def quote_params
-      params.require(:quote).permit(:content, :author, :source_url)
+      params.require(:quote).permit(
+        :content,
+        :original_text, 
+        :attribution_text, 
+        :source_url, 
+        :section_title, 
+        :original_language,
+        :wikiquote_section_id,
+        :disputed,
+        :misattributed,
+        :citation,
+        :context
+      )
     end
   end
 end 
