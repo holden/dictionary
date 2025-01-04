@@ -17,8 +17,8 @@ module Topics
         @namespace = search_params[:namespace]
         @language = search_params[:language] || 'english'
         
-        # Get raw results from WikiquotesService
-        raw_results = WikiquotesService.search(search_params)
+        # Get raw results from WikiQuotesService
+        raw_results = WikiQuotesService.search(search_params)
         
         # Deduplicate and clean up results
         @results = raw_results.uniq { |quote| 
@@ -40,7 +40,7 @@ module Topics
             )
           }
         end
-      rescue WikiquotesService::Error => e
+      rescue WikiQuotesService::Error => e
         flash.now[:alert] = "Search failed: #{e.message}"
         render :new, status: :unprocessable_entity
       end

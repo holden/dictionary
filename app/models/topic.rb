@@ -264,6 +264,7 @@ class Topic < ApplicationRecord
   end
 
   def fetch_quotes
+    Rails.cache.delete("wikiquotes/#{title}") # Clear the specific cache key first
     WikiQuotesService.new(title).fetch_quotes
   end
 

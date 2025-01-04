@@ -1,6 +1,7 @@
 <% content_for :title, "Quotes - #{@topic.title}" %>
 
 <div class="px-4 sm:px-6 lg:px-8">
+  <!-- Header section -->
   <div class="sm:flex sm:items-center">
     <div class="sm:flex-auto">
       <h1 class="text-base font-semibold leading-6 text-gray-900">Quotes</h1>
@@ -19,51 +20,48 @@
     </div>
   </div>
 
+  <!-- Quotes list -->
   <div class="mt-6 space-y-4">
     <% @quotes.each do |quote| %>
       <%= turbo_frame_tag quote do %>
         <div class="bg-white px-4 py-5 sm:px-6 shadow rounded-lg">
-          <div class="grid grid-cols-[1fr,200px,auto] gap-6 items-start">
-            <!-- Quote content -->
-            <div>
-              <div class="text-sm text-gray-900">
-                <%= quote.content.to_plain_text %>
-              </div>
-              <div class="mt-2 text-xs text-gray-500">
-                Added by <%= quote.user.email_address %> • <%= time_ago_in_words(quote.created_at) %> ago
-              </div>
-            </div>
+          <!-- Title/Quote -->
+          <div class="text-base font-medium text-gray-900 mb-1">
+            <%= quote.content.to_plain_text %>
+          </div>
 
-            <!-- Author and citation -->
-            <div class="text-sm">
-              <div class="font-medium text-gray-900">
-                <% if quote.author %>
-                  <%= link_to quote.author.display_title,
-                      send("#{quote.author.route_key}_path", quote.author),
-                      class: "hover:underline" %>
-                <% else %>
-                  <%= quote.attribution_text %>
-                <% end %>
-              </div>
-              <% if quote.citation.present? %>
-                <div class="mt-1 text-gray-500"><%= quote.citation %></div>
+          <!-- Author and actions -->
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-x-3 text-sm text-gray-500">
+              <% if quote.author %>
+                <%= link_to quote.author.display_title,
+                    send("#{quote.author.route_key}_path", quote.author),
+                    class: "hover:underline" %>
+              <% else %>
+                <%= quote.attribution_text %>
               <% end %>
+
               <% if quote.source_url.present? %>
                 <%= link_to "View on Wikiquote", quote.source_url,
-                    class: "mt-1 inline-block text-indigo-600 hover:text-indigo-900",
+                    class: "text-indigo-600 hover:text-indigo-900",
                     target: "_blank" %>
               <% end %>
             </div>
 
-            <!-- Actions -->
-            <div class="flex justify-end">
-              <%= button_to send("#{@topic.route_key}_quote_path", @topic, quote),
-                  method: :delete,
-                  class: "rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-red-600 shadow-sm ring-1 ring-inset ring-red-300 hover:bg-red-50",
-                  data: { turbo_confirm: "Are you sure?" } do %>
-                Delete
-              <% end %>
-            </div>
+            <%= button_to "Delete",
+                send("#{@topic.route_key}_quote_path", @topic, quote),
+                method: :delete,
+                class: "rounded-md bg-white px-3 py-2 text-sm font-semibold text-red-600 shadow-sm ring-1 ring-inset ring-red-300 hover:bg-red-50",
+                data: { turbo_confirm: "Are you sure?" } %>
+          </div>
+
+          <!-- Metadata -->
+          <div class="mt-1 text-xs text-gray-500">
+            <% if quote.citation.present? %>
+              <%= quote.citation %>
+              <span class="mx-2">•</span>
+            <% end %>
+            Added by <%= quote.user.email_address %> • <%= time_ago_in_words(quote.created_at) %> ago
           </div>
         </div>
       <% end %>

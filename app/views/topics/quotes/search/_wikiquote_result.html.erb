@@ -1,1 +1,40 @@
- 
+<div class="bg-white px-4 py-5 sm:px-6 shadow rounded-lg">
+  <!-- Column headers -->
+  <div class="grid grid-cols-[1fr,200px,auto] gap-6 mb-3">
+    <div class="text-xs font-medium text-gray-500 uppercase">Quote</div>
+    <div class="text-xs font-medium text-gray-500 uppercase">Author</div>
+    <div></div>
+  </div>
+
+  <!-- Content -->
+  <div class="grid grid-cols-[1fr,200px,auto] gap-6 items-start">
+    <!-- Quote content -->
+    <div class="text-sm text-gray-900">
+      <%= result.content %>
+      <% if result.citation.present? %>
+        <div class="mt-1 text-xs text-gray-500">
+          <%= result.citation %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Author -->
+    <div class="text-sm text-gray-600">
+      <%= result.author %>
+      <div class="mt-1">
+        <%= link_to "View on Wikiquote", result.source_url,
+            class: "text-xs text-indigo-600 hover:text-indigo-900",
+            target: "_blank" %>
+      </div>
+    </div>
+
+    <!-- Action -->
+    <div class="flex justify-end">
+      <%= button_to "Add Quote",
+          send("#{@topic.route_key}_quotes_path", @topic),
+          method: :post,
+          class: "rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500",
+          params: { quote: result.to_params } %>
+    </div>
+  </div>
+</div> 
