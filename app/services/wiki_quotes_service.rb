@@ -60,7 +60,13 @@ class WikiQuotesService
       end
 
       Rails.logger.info "Found #{results.size} quotes"
-      results
+      
+      # Only limit results if specifically requested (for show page)
+      if params[:limit]
+        results.first(params[:limit].to_i)
+      else
+        results
+      end
     rescue StandardError => e
       Rails.logger.error "Wikiquotes API error: #{e.message}"
       raise Error, "Wikiquotes API error: #{e.message}"
