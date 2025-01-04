@@ -139,12 +139,19 @@ class WikiQuotesService
         text = node.text.strip
         next if text.empty?
         
+        # Skip non-English quotes when language is specified
+        if params[:language] == 'english'
+          next if text.match?(/[^\x00-\x7F]/) || # Skip non-ASCII
+                  text.match?(/^[A-Z][a-z]+:/) || # Skip language prefixes like "French:"
+                  text.match?(/\([A-Z][a-z]+ translation\)/) # Skip translation markers
+        end
+        
         if params[:q].present?
           next unless text.downcase.include?(params[:q].downcase)
         end
         
         current_section = find_current_section(sections, node)
-        citation_parts, context, extracted_author = extract_metadata(node, current_section)
+        citation_parts, context, extracted_author = extract_metadata(node, current_section, page_title, params)
         speaker, content = extract_content_and_speaker(text)
 
         # Use the citation or extracted author for attribution
@@ -194,7 +201,7 @@ class WikiQuotesService
       end
     end
 
-    def extract_metadata(node, current_section)
+    def extract_metadata(node, current_section, page_title, params)
       citation_parts = []
       context = []
       author = nil
@@ -203,22 +210,8 @@ class WikiQuotesService
       if node.css('ul li').any?
         citation_text = node.css('ul li').map(&:text).join(', ')
         citation_parts << citation_text
-        
-        # Try to extract author from citation
-        if citation_text =~ /^([^,]+?)(?:,|\s+\()/
-          author = $1.strip
-        end
       end
       
-      # Look for links that might indicate author
-      node.css('a').each do |link|
-        if link['title']&.present? && !link['href']&.include?('wikipedia.org')
-          possible_author = link.text.strip
-          # Less strict author matching - just check for reasonable length
-          author ||= possible_author if possible_author.length < 50 && possible_author.match?(/^[A-Z]/)
-        end
-      end
-
       # Extract date if present
       if node.text =~ /\((\d{1,2}\s+[A-Za-z]+\s+\d{4})\)/
         context << $1
