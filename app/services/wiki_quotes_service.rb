@@ -1,6 +1,6 @@
 class WikiQuotesService
   include HTTParty
-  base_uri 'https://en.wikiquotes.org/w/api.php'
+  base_uri 'https://en.wikiquote.org/w/api.php'
   
   class Error < StandardError; end
   
@@ -43,18 +43,23 @@ class WikiQuotesService
 
   class << self
     def search(params)
-      # First search for pages based on author
+      Rails.logger.info "Searching Wikiquotes with params: #{params.inspect}"
+      
+      # First search for pages based on author or term
       pages = if params[:author].present?
         fetch_author_pages(params[:author])
       else
         fetch_pages(params[:q])
       end
       
+      Rails.logger.info "Found #{pages.size} pages"
+      
       # Then get quotes from each page with filters
       results = pages.flat_map do |page|
         fetch_quotes_from_page(page, params)
       end
 
+      Rails.logger.info "Found #{results.size} quotes"
       results
     rescue StandardError => e
       Rails.logger.error "Wikiquotes API error: #{e.message}"
@@ -86,7 +91,7 @@ class WikiQuotesService
         action: 'query',
         list: 'search',
         srnamespace: '0',
-        srsearch: "\"#{author}\"", # Exact phrase match
+        srsearch: author,
         srlimit: 10,
         format: 'json',
         utf8: 1,
@@ -134,11 +139,7 @@ class WikiQuotesService
         text = node.text.strip
         next if text.empty?
         
-        # When searching by both author and content, check content match
-        if params[:author].present? && params[:q].present?
-          next unless text.downcase.include?(params[:q].downcase)
-        # When searching by content only
-        elsif params[:q].present?
+        if params[:q].present?
           next unless text.downcase.include?(params[:q].downcase)
         end
         
@@ -146,9 +147,20 @@ class WikiQuotesService
         citation_parts, context, extracted_author = extract_metadata(node, current_section)
         speaker, content = extract_content_and_speaker(text)
 
+        # Use the citation or extracted author for attribution
+        author = if citation_parts.first =~ /^([^,]+)/
+          $1.strip  # Extract author from citation
+        elsif extracted_author
+          extracted_author
+        elsif params[:author].present?
+          params[:author].titleize
+        else
+          page_title
+        end
+
         quotes << Result.new(
           content: content,
-          author: page_title, # Use page title as author for author pages
+          author: author,
           citation: citation_parts.compact.uniq.join(' - '),
           source_url: "https://en.wikiquote.org/wiki/#{CGI.escape(page_title)}",
           original_text: node.inner_html,
