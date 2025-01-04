@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_03_211800) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_03_195643) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -98,14 +98,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_03_211800) do
     t.text "citation"
     t.boolean "disputed", default: false
     t.boolean "misattributed", default: false
+    t.bigint "user_id", null: false
     t.jsonb "metadata", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "user_id", null: false
-    t.index ["attribution_text"], name: "index_quotes_on_attribution_text"
     t.index ["author_id"], name: "index_quotes_on_author_id"
-    t.index ["metadata"], name: "index_quotes_on_metadata", using: :gin
-    t.index ["topic_id", "created_at"], name: "index_quotes_on_topic_id_and_created_at"
     t.index ["topic_id"], name: "index_quotes_on_topic_id"
     t.index ["user_id"], name: "index_quotes_on_user_id"
   end
@@ -171,7 +168,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_03_211800) do
   add_foreign_key "books", "topics", column: "author_id"
   add_foreign_key "definitions", "topics"
   add_foreign_key "quotes", "topics"
-  add_foreign_key "quotes", "topics", column: "author_id", on_delete: :cascade
+  add_foreign_key "quotes", "topics", column: "author_id"
   add_foreign_key "quotes", "users"
   add_foreign_key "sessions", "users"
   add_foreign_key "topic_relationships", "topics"
