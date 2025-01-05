@@ -14,8 +14,8 @@ class AuthorLookupService
       
       return Person.create!(
         title: author_data.fetch("name"),
-        openlibrary_id: author_data.fetch("key"),
-        conceptnet_id: concept&.fetch("id")
+        open_library_id: author_data.fetch("key"),
+        concept_net_id: concept&.fetch("@id")
       )
     end
 
@@ -24,7 +24,7 @@ class AuthorLookupService
     if concept.present?
       return Person.create!(
         title: concept.fetch("name"),
-        conceptnet_id: concept.fetch("id")
+        concept_net_id: concept.fetch("@id")
       )
     end
 

@@ -16,4 +16,16 @@ class ConceptNetService
     Rails.logger.error "ConceptNet API error for '#{term}': #{e.message}"
     nil
   end
+
+  def self.lookup_person(name)
+    # Try to find as a person first
+    response = get("/c/en/person/#{name.downcase.gsub(/\s+/, '_')}")
+    return response.parsed_response if response.success?
+
+    # If that fails, try the general lookup
+    lookup(name)
+  rescue StandardError => e
+    Rails.logger.error "ConceptNet API error for person '#{name}': #{e.message}"
+    nil
+  end
 end 
