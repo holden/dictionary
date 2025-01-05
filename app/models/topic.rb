@@ -49,13 +49,11 @@ class Topic < ApplicationRecord
   validates :title, presence: true, 
     uniqueness: { case_sensitive: false }
   validates :type, presence: true
-  validates :conceptnet_id, uniqueness: true, allow_nil: true
 
   # Callbacks
   before_validation :standardize_title
-  after_create :schedule_conceptnet_lookup
+  after_create :create_word_relationships
   before_save :update_tsv, if: :will_save_change_to_title?
-  after_create :ensure_conceptnet_id
 
   # Relationships
   has_many :topic_relationships, dependent: :destroy
@@ -296,38 +294,50 @@ class Topic < ApplicationRecord
 
   # This is the only method that should handle relationships
   def update_relationships!
-    return unless conceptnet_id.present?
-    
-    # Get the ConceptNet data
-    data = ConceptNetService.lookup(title)
-    return unless data && data['edges'].is_a?(Array)
+    # Get related words from Datamuse
+    related_words = DatamuseService.related_words(title)
+    return if related_words.empty?
 
-    # Get existing topics for matching
-    existing_topics = Topic.pluck(:title, :id).to_h { |title, id| [title.downcase, id] }
-    
+    # Get existing topics that match any of the related words
+    existing_topics = Topic.where(
+      title: related_words.map { |w| w['word'].downcase }
+    ).pluck(:title, :id).to_h { |title, id| [title.downcase, id] }
+
+    Rails.logger.info "Found #{existing_topics.size} matching topics for '#{title}'"
+
     # Clear existing relationships
     topic_relationships.destroy_all
 
-    # Only create relationships between existing topics
-    data['edges'].each do |edge|
-      next if edge['start'] == edge['end'] # Skip self-references
-      
-      related_term = if edge['start'] == conceptnet_id
-        edge['end']['label']
-      else
-        edge['start']['label']
-      end
+    # Find the maximum score for normalization
+    max_score = related_words.map { |w| w['score'] }.max.to_f
 
-      # Only create relationship if the topic exists
-      if related_id = existing_topics[related_term.downcase]
-        TopicRelationship.create!(
-          topic: self,
-          related_topic_id: related_id,
-          relationship_type: edge['rel']['label'],
-          weight: edge['weight']
-        )
-      end
+    # Create new relationships for existing topics
+    created = 0
+    related_words.each do |word_data|
+      word = word_data['word'].downcase
+      next unless related_topic_id = existing_topics[word]
+      next if related_topic_id == id # Skip self-relationships
+
+      # Normalize score to be between 0 and 1
+      normalized_weight = max_score.zero? ? 0.5 : word_data['score'] / max_score
+
+      relationship = TopicRelationship.create!(
+        topic: self,
+        related_topic_id: related_topic_id,
+        relationship_type: 'related',
+        weight: normalized_weight
+      )
+      created += 1
     end
+
+    Rails.logger.info "Created #{created} relationships for '#{title}'"
+  rescue StandardError => e
+    Rails.logger.error "Error creating relationships for '#{title}': #{e.message}"
+  end
+
+  # Add new callback for relationship creation
+  def create_word_relationships
+    CreateTopicRelationshipsJob.perform_later(id)
   end
 
   private
