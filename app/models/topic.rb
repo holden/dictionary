@@ -86,12 +86,11 @@ class Topic < ApplicationRecord
   def fetch_conceptnet_details
     return unless conceptnet_id
     data = ConceptNetService.lookup(title)
-    return unless data
+    return unless data && data['edges'].is_a?(Array)
 
     {
-      edges: data['edges'],
-      weight: data.dig('weight'),
-      related_terms: extract_related_terms(data)
+      edges: data['edges'].select { |e| e['start'].is_a?(Hash) && e['end'].is_a?(Hash) },
+      weight: data.dig('weight')
     }
   end
 
@@ -101,33 +100,40 @@ class Topic < ApplicationRecord
 
     Rails.logger.info "Processing relationships for #{title}"
 
-    # Also try querying for relationships where this term is the object
-    query_uri = URI("#{ConceptNetService::BASE_URL}/query?end=/c/en/#{title.downcase.gsub(/\s+/, '_')}&rel=/r/IsA&limit=50")
-    additional_data = ConceptNetService.new.make_request(query_uri)
-    
-    if additional_data && additional_data['edges']
-      details[:related_terms] += extract_related_terms(additional_data)
-    end
-    
-    details[:related_terms].each do |term_data|
-      # Only look for existing topics
-      related_topic = Topic.where.not(id: id)
-                          .find_by("conceptnet_id LIKE ?", "#{term_data[:id]}%")
-      
-      # Skip if no existing topic found
-      unless related_topic
-        Rails.logger.debug "Skipping #{term_data[:label]}: no existing topic found"
-        next
+    # Get ONLY our existing topics for matching
+    existing_topics = Topic.pluck(:title, :id).to_h { |title, id| [title.downcase, id] }
+
+    # Clear existing relationships for this topic
+    topic_relationships.destroy_all
+
+    # Process each edge, but ONLY create relationships with existing topics
+    details[:edges].each do |edge|
+      # Skip self-referential relationships
+      next if edge['start'] == edge['end']
+
+      # Get the term we want to relate to
+      related_term = if edge['start'] == conceptnet_id
+        edge['end']['label']
+      else
+        edge['start']['label']
       end
 
-      # Create bidirectional relationship
-      Rails.logger.info "Creating bidirectional relationship between #{title} and #{related_topic.title}"
-      create_bidirectional_relationship!(
-        related_topic,
-        term_data[:relationship],
-        term_data[:weight]
+      # ONLY proceed if this term exists in our database
+      related_topic_id = existing_topics[related_term.downcase]
+      next unless related_topic_id
+
+      # Create relationship only between existing topics
+      TopicRelationship.create!(
+        topic: self,
+        related_topic_id: related_topic_id,
+        relationship_type: edge['rel']['label'],
+        weight: edge['weight']
       )
     end
+
+    Rails.logger.info "Created #{topic_relationships.reload.count} relationships for #{title}"
+  rescue StandardError => e
+    Rails.logger.error "Error updating relationships for #{title}: #{e.message}"
   end
 
   def set_part_of_speech_from_conceptnet
@@ -275,38 +281,63 @@ class Topic < ApplicationRecord
     title.titleize
   end
 
-  private
-
+  # This runs only when a topic is first created
   def generate_conceptnet_id
     return if conceptnet_id.present?
 
     # For authors/people, try OpenLibrary first
     if type == "Person"
-      # Clean up the title first - remove any media/company suffixes
-      clean_title = title.downcase
-                        .gsub(/ media$/, '')
-                        .gsub(/ company$/, '')
-                        .gsub(/ corporation$/, '')
-                        .strip
-
-      author_data = OpenLibraryService.lookup_author(clean_title)
+      author_data = OpenLibraryService.lookup_author(title.downcase)
       if author_data.present?
-        self.title = author_data.fetch("name")
         self.openlibrary_id = author_data.fetch("key")
-        return # Skip ConceptNet for authors
       end
-
-      # If OpenLibrary fails, still use the cleaned title
-      self.title = clean_title.titleize
-      return # Skip ConceptNet for authors entirely
+      return # Skip ConceptNet for authors
     end
 
-    # Only use ConceptNet for non-authors
+    # For non-authors, just get the ConceptNet ID
     concept = ConceptNetService.lookup(title)
     if concept.present?
       self.conceptnet_id = concept.fetch("id")
     end
   end
+
+  # This is the only method that should handle relationships
+  def update_relationships!
+    return unless conceptnet_id.present?
+    
+    # Get the ConceptNet data
+    data = ConceptNetService.lookup(title)
+    return unless data && data['edges'].is_a?(Array)
+
+    # Get existing topics for matching
+    existing_topics = Topic.pluck(:title, :id).to_h { |title, id| [title.downcase, id] }
+    
+    # Clear existing relationships
+    topic_relationships.destroy_all
+
+    # Only create relationships between existing topics
+    data['edges'].each do |edge|
+      next if edge['start'] == edge['end'] # Skip self-references
+      
+      related_term = if edge['start'] == conceptnet_id
+        edge['end']['label']
+      else
+        edge['start']['label']
+      end
+
+      # Only create relationship if the topic exists
+      if related_id = existing_topics[related_term.downcase]
+        TopicRelationship.create!(
+          topic: self,
+          related_topic_id: related_id,
+          relationship_type: edge['rel']['label'],
+          weight: edge['weight']
+        )
+      end
+    end
+  end
+
+  private
 
   def standardize_title
     # Handle special cases first (e.g., "iOS", "iPhone")
@@ -324,41 +355,15 @@ class Topic < ApplicationRecord
   end
 
   def extract_related_terms(data)
-    return [] unless data['edges'].is_a?(Array)
+    return [] unless data['edges'].present?
 
-    Rails.logger.info "Processing #{data['edges'].size} edges for #{title}"
-    
     data['edges'].map do |edge|
-      # Get the IDs we're working with
-      start_id = edge['start']['@id'].split('/')[0..3].join('/')  # Get base concept ID
-      end_id = edge['end']['@id'].split('/')[0..3].join('/')      # Get base concept ID
-      current_id = conceptnet_id || "/c/en/#{title.downcase.gsub(/\s+/, '_')}"
-      
-      # Skip non-English edges
-      next unless edge['start']['language'] == 'en' && edge['end']['language'] == 'en'
-      
-      # We're particularly interested in IsA relationships
-      relationship = edge['rel']['label']
-      
-      # Handle both incoming and outgoing edges
-      if start_id == current_id
-        {
-          id: end_id,
-          label: edge['end']['label'],
-          relationship: relationship,
-          weight: edge['weight'] || 1.0,
-          direction: 'outgoing'
-        }
-      elsif end_id == current_id
-        {
-          id: start_id,
-          label: edge['start']['label'],
-          relationship: "#{relationship} of",
-          weight: edge['weight'] || 1.0,
-          direction: 'incoming'
-        }
+      if edge['start'] == conceptnet_id
+        edge['end'].split('/').last
+      else
+        edge['start'].split('/').last
       end
-    end.compact
+    end.compact.uniq
   end
 
   def schedule_conceptnet_lookup
