@@ -55,23 +55,38 @@ else
   entries.each do |entry|
     puts "Importing: #{entry[:title]} (#{entry[:type]})"
     
-    # Find existing topic regardless of type
-    topic = Topic.find_by(title: entry[:title])
+    # Find or initialize topic with case-insensitive lookup
+    topic = Topic.where("LOWER(title) = LOWER(?)", entry[:title]).first
     
     if topic
-      puts "  Topic already exists as #{topic.type}, keeping existing type"
+      # If topic exists but has different type, skip it
+      if topic.type != entry[:type]
+        puts "  Skipping: Topic exists with different type (#{topic.type})"
+        next
+      end
     else
+      # Create new topic if it doesn't exist
       topic = Topic.create!(
         title: entry[:title],
         type: entry[:type]
       )
+      puts "  Created new topic: #{topic.title}"
     end
 
-    Definition.create!(
-      topic: topic,
-      source: the_verge,
-      content: entry[:definition]
-    )
+    # Create definition only if it doesn't exist for this source
+    existing_definition = Definition.joins(:rich_text_content)
+                                  .where(topic: topic, source: the_verge)
+                                  .where("action_text_rich_texts.body = ?", entry[:definition])
+                                  .first
+
+    unless existing_definition
+      Definition.create!(
+        topic: topic,
+        source: the_verge,
+        content: entry[:definition]
+      )
+      puts "  Added new definition"
+    end
   end
 end
 

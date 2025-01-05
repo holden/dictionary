@@ -52,10 +52,10 @@ class Topic < ApplicationRecord
   validates :conceptnet_id, uniqueness: true, allow_nil: true
 
   # Callbacks
-  before_validation :generate_conceptnet_id, if: :new_record?
   before_validation :standardize_title
   after_create :schedule_conceptnet_lookup
   before_save :update_tsv, if: :will_save_change_to_title?
+  after_create :ensure_conceptnet_id
 
   # Relationships
   has_many :topic_relationships, dependent: :destroy
@@ -285,18 +285,11 @@ class Topic < ApplicationRecord
   def generate_conceptnet_id
     return if conceptnet_id.present?
 
-    # For authors/people, try OpenLibrary first
-    if type == "Person"
-      author_data = OpenLibraryService.lookup_author(title.downcase)
-      if author_data.present?
-        self.openlibrary_id = author_data.fetch("key")
-      end
-      return # Skip ConceptNet for authors
-    end
+    # Skip for authors/people
+    return if type == "Person"
 
-    # For non-authors, just get the ConceptNet ID
-    concept = ConceptNetService.lookup(title)
-    if concept.present?
+    # Try to get ConceptNet data
+    if concept = ConceptNetService.lookup(title)
       self.conceptnet_id = concept.fetch("id")
     end
   end
@@ -442,5 +435,13 @@ class Topic < ApplicationRecord
     self.tsv = Topic.connection.execute(
       "SELECT to_tsvector('english', #{sanitized_title})"
     ).first['to_tsvector']
+  end
+
+  def ensure_conceptnet_id
+    return if conceptnet_id.present? || type == "Person"
+    
+    if result = ConceptNetService.lookup(title)
+      update_column(:conceptnet_id, result['id'])
+    end
   end
 end 

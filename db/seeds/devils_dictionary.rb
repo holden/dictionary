@@ -34,7 +34,6 @@ puts "Found #{dictionary_entries.length} potential entries"
 dictionary_entries.each do |entry|
   text = entry.text.strip
   
-  # Parse the entry
   if text =~ /^([A-Z]+),\s+([a-z\.]+)\.\s+(.+)/m
     word = $1.strip
     part_of_speech = $2.strip
@@ -52,11 +51,20 @@ dictionary_entries.each do |entry|
 
     puts "Importing: #{word} (#{type})"
     
-    # Create the topic
-    topic = Topic.find_or_create_by!(
+    # Create the topic and immediately look up ConceptNet ID
+    topic = Topic.find_or_initialize_by(
       title: word,
       type: type
     )
+
+    # Only look up ConceptNet ID if it's a new record or missing ID
+    if topic.new_record? || topic.conceptnet_id.nil?
+      if result = ConceptNetService.lookup(word)
+        topic.conceptnet_id = result['id']
+      end
+    end
+
+    topic.save!
 
     # Create the definition
     Definition.create!(
