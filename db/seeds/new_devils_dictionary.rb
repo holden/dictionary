@@ -93,3 +93,15 @@ end
 total_definitions = Definition.where(source: the_verge).count
 puts "\nNew Devil's Dictionary import completed!"
 puts "Total definitions imported: #{total_definitions}" 
+
+def process_entry(title, definition_text)
+  topic = Topic.find_or_initialize_by(title: title.downcase)
+  topic.type ||= determine_topic_type(title)
+  
+  if topic.save
+    create_definition(topic, definition_text)
+    puts "Processed: #{topic.title}"
+  else
+    puts "Failed to process #{title}: #{topic.errors.full_messages.join(', ')}"
+  end
+end 

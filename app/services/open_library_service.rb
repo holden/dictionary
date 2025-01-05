@@ -2,75 +2,62 @@ class OpenLibraryService
   include HTTParty
   base_uri 'https://openlibrary.org'
 
-  def self.search(title)
-    response = get('/search.json', query: { q: title })
+  def self.lookup_author(name)
+    # Try both search endpoints for better results
+    author = search_authors(name) || search_authors_alt(name)
+    return nil unless author
+
+    # Return the key in the format we want
+    {
+      'key' => author['key']&.sub('/authors/', ''),
+      'name' => author['name'],
+      'birth_date' => author['birth_date'],
+      'death_date' => author['death_date']
+    }
+  end
+
+  def self.lookup_book(title, author_name = nil)
+    query = { q: title }
+    query[:author] = author_name if author_name.present?
+
+    response = get("/search.json", query: query)
     return nil unless response.success?
 
     docs = response.parsed_response['docs']
     return nil if docs.empty?
 
-    book = docs.first
+    # Try to find exact match first
+    exact_match = docs.find { |doc| doc['title']&.downcase == title.downcase }
+    book = exact_match || docs.first
+
     {
-      title: book['title'],
-      openlibrary_id: book['key'],
-      published_date: book['first_publish_date']&.to_date,
-      author_name: book['author_name']&.first
+      'key' => book['key'],
+      'title' => book['title'],
+      'publish_date' => book['publish_date']
     }
-  rescue HTTParty::Error => e
-    Rails.logger.error "OpenLibrary API error: #{e.message}"
-    nil
-  end
-
-  def self.lookup_author(name)
-    # First try direct author search
-    response = get("/search/authors.json", query: {
-      q: name,
-      limit: 10
-    })
-
-    if response.success? && response["docs"].present?
-      # Try exact match first
-      exact_match = response["docs"].find { |doc| doc["name"].downcase == name.downcase }
-      return format_author(exact_match) if exact_match
-
-      # Try fuzzy match if no exact match
-      best_match = response["docs"].find do |doc|
-        doc_name = doc["name"].downcase
-        name_parts = name.downcase.split
-        name_parts.all? { |part| doc_name.include?(part) } &&
-          !doc_name.include?("media") &&
-          !doc_name.include?("company") &&
-          !doc_name.include?("corporation")
-      end
-      
-      return format_author(best_match) if best_match
-    end
-
-    # If no match found, try alternative author endpoint
-    alt_response = get("/authors/search.json", query: {
-      q: name,
-      limit: 1
-    })
-
-    if alt_response.success? && alt_response["docs"].present?
-      author = alt_response["docs"].first
-      return format_author(author) unless author["name"].downcase.include?("media")
-    end
-
-    nil
   end
 
   private
 
-  def self.format_author(author)
-    return nil unless author
+  def self.search_authors(name)
+    response = get("/search/authors.json", query: { q: name })
+    return nil unless response.success?
 
-    {
-      "key" => author["key"],
-      "name" => author["name"],
-      "birth_date" => author["birth_date"],
-      "death_date" => author["death_date"],
-      "bio" => author["bio"]
-    }
+    docs = response.parsed_response['docs']
+    return nil if docs.empty?
+
+    # Try exact match first
+    docs.find { |doc| doc['name']&.downcase == name.downcase } || docs.first
+  end
+
+  def self.search_authors_alt(name)
+    # Try alternative endpoint
+    response = get("/authors/_search", query: { q: name })
+    return nil unless response.success?
+
+    docs = response.parsed_response['docs']
+    return nil if docs.empty?
+
+    docs.first
   end
 end 

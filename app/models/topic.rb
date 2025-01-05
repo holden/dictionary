@@ -52,8 +52,9 @@ class Topic < ApplicationRecord
 
   # Callbacks
   before_validation :standardize_title
-  after_create :create_word_relationships
   before_save :update_tsv, if: :will_save_change_to_title?
+  after_create :ensure_external_ids
+  after_commit :create_word_relationships, on: :create
 
   # Relationships
   has_many :topic_relationships, dependent: :destroy
@@ -76,13 +77,13 @@ class Topic < ApplicationRecord
   scope :recent_first, -> { order(created_at: :desc) }
 
   def refresh_conceptnet_data!
-    self.conceptnet_id = nil
-    generate_conceptnet_id
+    self.concept_net_id = nil
+    generate_concept_net_id
     save!
   end
 
   def fetch_conceptnet_details
-    return unless conceptnet_id
+    return unless concept_net_id
     data = ConceptNetService.lookup(title)
     return unless data && data['edges'].is_a?(Array)
 
@@ -238,63 +239,73 @@ class Topic < ApplicationRecord
   end
 
   # This runs only when a topic is first created
-  def generate_conceptnet_id
-    return if conceptnet_id.present?
+  def generate_concept_net_id
+    return if concept_net_id.present?
 
     # Skip for authors/people
     return if type == "Person"
 
     # Try to get ConceptNet data
     if concept = ConceptNetService.lookup(title)
-      self.conceptnet_id = concept.fetch("id")
+      self.concept_net_id = concept.fetch("id")
     end
   end
 
   # This is the only method that should handle relationships
   def update_relationships!
-    # Get related words from Datamuse
-    related_words = DatamuseService.related_words(title)
-    return if related_words.empty?
+    Rails.logger.tagged("TopicRelationships") do
+      # Get related words from Datamuse
+      related_words = DatamuseService.related_words(title)
+      if related_words.empty?
+        Rails.logger.info "No related words found for '#{title}'"
+        return
+      end
 
-    # Get existing topics that match any of the related words
-    existing_topics = Topic.where(
-      title: related_words.map { |w| w['word'].downcase }
-    ).pluck(:title, :id).to_h { |title, id| [title.downcase, id] }
+      # Get existing topics that match any of the related words
+      existing_topics = Topic.where(
+        title: related_words.map { |w| w['word'].downcase }
+      ).pluck(:title, :id).to_h { |title, id| [title.downcase, id] }
 
-    Rails.logger.info "Found #{existing_topics.size} matching topics for '#{title}'"
+      Rails.logger.info "Found #{existing_topics.size} matching topics for '#{title}'"
 
-    # Clear existing relationships
-    topic_relationships.destroy_all
+      ActiveRecord::Base.transaction do
+        # Clear existing relationships
+        topic_relationships.destroy_all
 
-    # Find the maximum score for normalization
-    max_score = related_words.map { |w| w['score'] }.max.to_f
+        # Find the maximum score for normalization
+        max_score = related_words.map { |w| w['score'] }.max.to_f
 
-    # Create new relationships for existing topics
-    created = 0
-    related_words.each do |word_data|
-      word = word_data['word'].downcase
-      next unless related_topic_id = existing_topics[word]
-      next if related_topic_id == id # Skip self-relationships
+        # Create new relationships for existing topics
+        created = 0
+        related_words.each do |word_data|
+          word = word_data['word'].downcase
+          next unless related_topic_id = existing_topics[word]
+          next if related_topic_id == id # Skip self-relationships
 
-      # Normalize score to be between 0 and 1
-      normalized_weight = max_score.zero? ? 0.5 : word_data['score'] / max_score
+          # Normalize score to be between 0 and 1
+          normalized_weight = max_score.zero? ? 0.5 : word_data['score'] / max_score
 
-      relationship = TopicRelationship.create!(
-        topic: self,
-        related_topic_id: related_topic_id,
-        relationship_type: 'related',
-        weight: normalized_weight
-      )
-      created += 1
+          TopicRelationship.create!(
+            topic: self,
+            related_topic_id: related_topic_id,
+            relationship_type: 'related',
+            weight: normalized_weight
+          )
+          created += 1
+        end
+
+        Rails.logger.info "Created #{created} relationships for '#{title}'"
+      end
     end
-
-    Rails.logger.info "Created #{created} relationships for '#{title}'"
   rescue StandardError => e
     Rails.logger.error "Error creating relationships for '#{title}': #{e.message}"
+    Rails.logger.error e.backtrace.join("\n")
+    raise e # Re-raise to allow job retry
   end
 
   # Add new callback for relationship creation
   def create_word_relationships
+    Rails.logger.info "Scheduling relationship creation for Topic ##{id} (#{title})"
     CreateTopicRelationshipsJob.perform_later(id)
   end
 
@@ -319,7 +330,7 @@ class Topic < ApplicationRecord
     return [] unless data['edges'].present?
 
     data['edges'].map do |edge|
-      if edge['start'] == conceptnet_id
+      if edge['start'] == concept_net_id
         edge['end'].split('/').last
       else
         edge['start'].split('/').last
@@ -405,11 +416,27 @@ class Topic < ApplicationRecord
     ).first['to_tsvector']
   end
 
-  def ensure_conceptnet_id
-    return if conceptnet_id.present? || type == "Person"
+  def ensure_external_ids
+    ensure_concept_net_id unless type == 'Person'
+    ensure_open_library_id if type == 'Person'
+  end
+
+  def ensure_concept_net_id
+    return if concept_net_id.present?
     
-    if result = ConceptNetService.lookup(title)
-      update_column(:conceptnet_id, result['id'])
+    if concept = ConceptNetService.lookup(title)
+      update_column(:concept_net_id, concept['@id'])
+    end
+  end
+
+  def ensure_open_library_id
+    return if open_library_id.present?
+    
+    if author = OpenLibraryService.lookup_author(title)
+      Rails.logger.info "Found OpenLibrary author: #{author.inspect}"
+      update_column(:open_library_id, author['key'])
+    else
+      Rails.logger.warn "No OpenLibrary match found for author: #{title}"
     end
   end
 end 

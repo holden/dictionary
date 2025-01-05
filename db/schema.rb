@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_03_195643) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_04_000002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -56,12 +56,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_03_195643) do
   create_table "books", force: :cascade do |t|
     t.string "title", null: false
     t.bigint "author_id"
-    t.string "openlibrary_id"
+    t.string "open_library_id"
     t.date "published_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["author_id"], name: "index_books_on_author_id"
-    t.index ["openlibrary_id"], name: "index_books_on_openlibrary_id", unique: true, where: "(openlibrary_id IS NOT NULL)"
+    t.index ["open_library_id"], name: "index_books_on_open_library_id", unique: true, where: "(open_library_id IS NOT NULL)"
   end
 
   create_table "definitions", force: :cascade do |t|
@@ -131,14 +131,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_03_195643) do
   create_table "topics", force: :cascade do |t|
     t.string "title", null: false
     t.string "type", null: false
-    t.string "conceptnet_id"
+    t.string "concept_net_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "slug"
     t.tsvector "tsv"
-    t.string "openlibrary_id"
-    t.index ["conceptnet_id"], name: "index_topics_on_conceptnet_id", unique: true, where: "(conceptnet_id IS NOT NULL)"
-    t.index ["openlibrary_id"], name: "index_topics_on_openlibrary_id"
+    t.string "open_library_id"
+    t.index ["concept_net_id"], name: "index_topics_on_concept_net_id", unique: true, where: "(concept_net_id IS NOT NULL)"
+    t.index ["open_library_id"], name: "index_topics_on_open_library_id"
     t.index ["slug"], name: "index_topics_on_slug", unique: true
     t.index ["title"], name: "index_topics_on_title", unique: true
     t.index ["tsv"], name: "topics_tsv_idx", using: :gin

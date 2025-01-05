@@ -31,6 +31,17 @@ end
 
 puts "Found #{dictionary_entries.length} potential entries"
 
+def fetch_concept_data(title)
+  return nil if title.blank?
+  
+  if concept = ConceptNetService.lookup(title)
+    {
+      'id' => concept['@id'],
+      'edges' => concept['edges']
+    }
+  end
+end
+
 dictionary_entries.each do |entry|
   text = entry.text.strip
   
@@ -51,28 +62,27 @@ dictionary_entries.each do |entry|
 
     puts "Importing: #{word} (#{type})"
     
-    # Create the topic and immediately look up ConceptNet ID
-    topic = Topic.find_or_initialize_by(
-      title: word,
-      type: type
+    # Create the topic
+    topic = Topic.new(
+      title: word.downcase,
+      type: type,
+      # Don't set concept_net_id here - let the callback handle it
     )
 
-    # Only look up ConceptNet ID if it's a new record or missing ID
-    if topic.new_record? || topic.conceptnet_id.nil?
-      if result = ConceptNetService.lookup(word)
-        topic.conceptnet_id = result['id']
-      end
+    if topic.save
+      puts "Created topic: #{topic.title} (#{topic.type})"
+      # Create definition and other associations...
+
+      # Create the definition
+      Definition.create!(
+        topic: topic,
+        author: ambrose_bierce,
+        source: devils_dictionary,
+        content: definition
+      )
+    else
+      puts "Failed to create topic: #{topic.errors.full_messages.join(', ')}"
     end
-
-    topic.save!
-
-    # Create the definition
-    Definition.create!(
-      topic: topic,
-      author: ambrose_bierce,
-      source: devils_dictionary,
-      content: definition
-    )
   end
 end
 
