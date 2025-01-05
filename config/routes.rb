@@ -30,6 +30,8 @@ Rails.application.routes.draw do
           collection do
             get 'search/wikiquotes', to: 'quotes/search#new'
             post 'search/wikiquotes', to: 'quotes/search#create'
+            get 'search/brainyquotes', to: 'quotes/brainy_search#new'
+            post 'search/brainyquotes', to: 'quotes/brainy_search#create'
           end
         end
       end

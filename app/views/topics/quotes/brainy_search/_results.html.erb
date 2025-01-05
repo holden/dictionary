@@ -1,0 +1,55 @@
+<div id="search_results">
+  <% if results.any? %>
+    <div class="mt-4 space-y-4">
+      <% results.each do |quote| %>
+        <div class="p-4 bg-white rounded-lg shadow">
+          <%# Quote Content %>
+          <div class="text-gray-900 text-lg">
+            <%= quote[:content] %>
+          </div>
+
+          <%# Metadata and Context %>
+          <div class="mt-2 space-y-2 text-sm text-gray-600">
+            <%# Attribution %>
+            <div>
+              <span class="font-medium">By:</span> <%= quote[:attribution_text] %>
+            </div>
+
+            <%# Topics %>
+            <% if quote[:metadata][:brainyquote][:topics].any? %>
+              <div class="flex flex-wrap gap-2">
+                <% quote[:metadata][:brainyquote][:topics].each do |topic| %>
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                    <%= topic %>
+                  </span>
+                <% end %>
+              </div>
+            <% end %>
+
+            <%# Source Link %>
+            <div>
+              <span class="font-medium">Source:</span>
+              <%= link_to "View on BrainyQuotes", quote[:source_url], 
+                         target: "_blank",
+                         class: "text-blue-600 hover:text-blue-800" %>
+            </div>
+          </div>
+
+          <%# Add Quote Button %>
+          <%= button_to send("#{@topic.class.name.underscore}_quotes_path", @topic), 
+                      params: { quote: quote },
+                      class: "mt-4 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" do %>
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Add Quote
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="mt-4 p-4 bg-gray-50 rounded-lg text-gray-600">
+      No quotes found for "<%= @author %>" <%= "matching '#{@search_term}'" if @search_term.present? %>
+    </div>
+  <% end %>
+</div> 
