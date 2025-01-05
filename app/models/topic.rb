@@ -92,48 +92,6 @@ class Topic < ApplicationRecord
     }
   end
 
-  def update_conceptnet_relationships!
-    details = fetch_conceptnet_details
-    return unless details
-
-    Rails.logger.info "Processing relationships for #{title}"
-
-    # Get ONLY our existing topics for matching
-    existing_topics = Topic.pluck(:title, :id).to_h { |title, id| [title.downcase, id] }
-
-    # Clear existing relationships for this topic
-    topic_relationships.destroy_all
-
-    # Process each edge, but ONLY create relationships with existing topics
-    details[:edges].each do |edge|
-      # Skip self-referential relationships
-      next if edge['start'] == edge['end']
-
-      # Get the term we want to relate to
-      related_term = if edge['start'] == conceptnet_id
-        edge['end']['label']
-      else
-        edge['start']['label']
-      end
-
-      # ONLY proceed if this term exists in our database
-      related_topic_id = existing_topics[related_term.downcase]
-      next unless related_topic_id
-
-      # Create relationship only between existing topics
-      TopicRelationship.create!(
-        topic: self,
-        related_topic_id: related_topic_id,
-        relationship_type: edge['rel']['label'],
-        weight: edge['weight']
-      )
-    end
-
-    Rails.logger.info "Created #{topic_relationships.reload.count} relationships for #{title}"
-  rescue StandardError => e
-    Rails.logger.error "Error updating relationships for #{title}: #{e.message}"
-  end
-
   def set_part_of_speech_from_conceptnet
     return unless conceptnet_data = ConceptNetService.lookup(title)
     
