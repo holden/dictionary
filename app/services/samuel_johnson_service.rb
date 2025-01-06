@@ -11,14 +11,19 @@ class SamuelJohnsonService
   class << self
     def lookup_definition(word)
       normalized_term = normalize_term(word)
+      cache_key = cache_key_for(normalized_term)
       retries = 0
       
       begin
         Rails.logger.info "Fetching Johnson's Dictionary definition for: #{normalized_term}"
         
         # First try to get from cache
-        cached = Rails.cache.read("johnson_dictionary/#{normalized_term}")
-        return cached if cached
+        Rails.logger.debug "Checking cache for key: #{cache_key}"
+        cached = Rails.cache.read(cache_key)
+        if cached
+          Rails.logger.debug "Cache hit for #{cache_key}"
+          return cached
+        end
 
         # Fetch the search results page
         html = fetch_page(SEARCH_URL, {
@@ -32,8 +37,8 @@ class SamuelJohnsonService
         result = parse_definition(html, normalized_term)
         
         if result
-          # Cache successful results
-          Rails.cache.write("johnson_dictionary/#{normalized_term}", result, expires_in: 1.week)
+          Rails.logger.debug "Caching result for #{cache_key}"
+          Rails.cache.write(cache_key, result, expires_in: 1.week)
         end
 
         result
@@ -85,7 +90,7 @@ class SamuelJohnsonService
       
       # Find the definition content
       definition_div = doc.css('div').find do |div|
-        div.text.include?(term) && 
+        div.text.include?(term) || 
         (div.at_css('headword') || div.at_css('sense') || div.at_css('.sjddef'))
       end
 
@@ -95,7 +100,7 @@ class SamuelJohnsonService
       # Extract the definition components
       headword = definition_div.at_css('headword')&.text&.strip
       pos = definition_div.at_css('.gramGrp pos, .gramGrp')&.text&.gsub(/[\[\]]/, '')&.strip
-      etymology = definition_div.at_css('.etym')&.text&.gsub(/[\[\]]/, '')&.strip
+      etymology = definition_div.at_css('.etym')&.text&.strip
       definition = definition_div.at_css('.sjddef')&.text&.strip
       quotes = definition_div.css('quotebibl').map do |q| 
         {
@@ -105,27 +110,41 @@ class SamuelJohnsonService
         }
       end
 
-      # Get both 1755 and 1773 image URLs
-      image_urls = {
-        '1755' => "https://johnsonsdictionaryonline.com/img/words/f1755-#{term}-1.png",
-        '1773' => "https://johnsonsdictionaryonline.com/img/words/f1773-#{term}-1.png"
-      }
+      # Format the content HTML
+      content_html = format_content_html(headword, pos, etymology, definition, quotes, term)
 
-      # Store metadata
-      metadata = {
-        johnson_dictionary: {
-          headword: headword,
-          part_of_speech: pos,
-          etymology: etymology,
-          quotes: quotes,
-          image_urls: image_urls,
-          raw_html: definition_div.to_html,
-          extracted_at: Time.current.iso8601
+      {
+        headword: headword,
+        part_of_speech: pos,
+        etymology: etymology,
+        definition: definition,
+        quotes: quotes,
+        image_url: "https://johnsonsdictionaryonline.com/img/words/f1773-#{term}-1.png",
+        raw_data: definition_div.to_html,
+        content_html: content_html,
+        metadata: {
+          johnson_dictionary: {
+            headword: headword,
+            part_of_speech: pos,
+            etymology: etymology,
+            quotes: quotes,
+            image_urls: {
+              '1755' => "https://johnsonsdictionaryonline.com/img/words/f1755-#{term}-1.png",
+              '1773' => "https://johnsonsdictionaryonline.com/img/words/f1773-#{term}-1.png"
+            },
+            raw_html: definition_div.to_html,
+            extracted_at: Time.current.iso8601
+          }
         }
       }
+    end
 
-      # Format the content HTML
-      content_html = <<~HTML
+    def normalize_term(term)
+      term.downcase.gsub(/[^a-z0-9]/, '')
+    end
+
+    def format_content_html(headword, pos, etymology, definition, quotes, term)
+      <<~HTML
         <div class="johnson-definition">
           <div class="headword">
             <h3>#{headword}</h3>
@@ -150,26 +169,14 @@ class SamuelJohnsonService
           end.join("\n")}
           
           <figure class="dictionary-image">
-            <img src="#{image_urls['1773']}" alt="Johnson's Dictionary entry for #{headword}">
+            <img src="https://johnsonsdictionaryonline.com/img/words/f1773-#{term}-1.png" alt="Johnson's Dictionary entry for #{headword}">
           </figure>
         </div>
       HTML
-
-      {
-        headword: headword,
-        part_of_speech: pos,
-        etymology: etymology,
-        definition: definition,
-        quotes: quotes,
-        image_url: image_urls['1773'],
-        raw_data: definition_div.to_html,
-        content_html: content_html,
-        metadata: metadata
-      }
     end
 
-    def normalize_term(term)
-      term.downcase.gsub(/[^a-z0-9]/, '')
+    def cache_key_for(term)
+      "johnson_dictionary/#{term.downcase}"
     end
   end
 end 
