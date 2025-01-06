@@ -121,44 +121,25 @@ class TopicTest < ActiveSupport::TestCase
   test "fetch_johnson_definition creates new definition" do
     topic = topics(:one)
     
-    stub_request(:post, "https://api.zyte.com/v1/extract")
-      .to_return(
-        status: 200,
-        body: {
-          'browserHtml' => <<~HTML
-            <div>
-              <headword>TEST WORD</headword>
-              <span class="gramGrp pos">n.s.</span>
-              <span class="etym">[Lat.]</span>
-              <div class="sjddef">A test definition</div>
-            </div>
-          HTML
-        }.to_json,
-        headers: { 'Content-Type' => 'application/json' }
-      )
-    
-    assert_difference -> { topic.definitions.count } do
-      topic.fetch_johnson_definition
+    VCR.use_cassette("samuel_johnson/#{topic.title.downcase}") do
+      assert_difference -> { topic.definitions.count } do
+        topic.fetch_johnson_definition
+      end
+      
+      definition = topic.definitions.find_by(source: 'johnson')
+      assert definition
+      assert definition.text.present?
+      assert definition.source_url.present?
     end
-    
-    definition = topic.definitions.last
-    assert definition
-    assert definition.content.present?
-    assert_equal 'Website', definition.source_type
-    assert_equal 'Johnson\'s Dictionary', definition.source.title
   end
 
   test "fetch_johnson_definition doesn't duplicate definitions" do
     topic = topics(:one)
-    website = Website.find_or_create_by!(
-      title: 'Johnson\'s Dictionary',
-      url: 'https://johnsonsdictionaryonline.com'
-    )
     
     # Create an existing Johnson definition
     topic.definitions.create!(
-      content: "Existing definition",
-      source: website
+      text: "Existing definition",
+      source: "johnson"
     )
     
     assert_no_difference -> { topic.definitions.count } do

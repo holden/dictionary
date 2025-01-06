@@ -2,18 +2,10 @@
 
 # Empty or minimal fixtures - we'll create test data in the tests
 
-one:
-  title: "test_word"
-  type: "Concept"
-
-two:
-  title: "another_word"
-  type: "Concept"
-
 mark_twain:
-  title: "Mark Twain"
-  type: "Person"
+  title: Mark Twain
+  type: Person
 
 other_author:
-  title: "Other Author"
-  type: "Person"
+  title: Other Author
+  type: Person
