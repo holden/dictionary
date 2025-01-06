@@ -1,4 +1,4 @@
-# fly.toml app configuration file generated for devils-dictionary on 2024-12-24T09:46:16-06:00
+# fly.toml app configuration file generated for devils-dictionary on 2025-01-06T13:29:58-06:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
@@ -9,16 +9,6 @@ console_command = '/rails/bin/rails console'
 
 [build]
 
-[deploy]
-  release_command = './bin/rails db:prepare'
-
-[env]
-  PORT = '8080'
-
-[processes]
-  app = './bin/rails server'
-  solidq = 'bundle exec rake solid_queue:start'
-
 [http_service]
   internal_port = 8080
   force_https = true
@@ -26,18 +16,6 @@ console_command = '/rails/bin/rails console'
   auto_start_machines = true
   min_machines_running = 0
   processes = ['app']
-
-  [[http_service.checks]]
-    interval = '10s'
-    timeout = '2s'
-    grace_period = '5s'
-    method = 'GET'
-    path = '/up'
-    protocol = 'http'
-    tls_skip_verify = false
-
-    [http_service.checks.headers]
-      X-Forwarded-Proto = 'https'
 
 [[vm]]
   memory = '1gb'
