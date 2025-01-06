@@ -1,0 +1,37 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.datamuse.com/words?rel_trg=money
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 06 Jan 2025 20:04:10 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '677'
+      Connection:
+      - keep-alive
+      Cache-Control:
+      - no-transform, max-age=86400
+      Vary:
+      - Accept-Encoding
+    body:
+      encoding: ASCII-8BIT
+      string: '[{"word":"laundering","score":1566},{"word":"charities","score":1325},{"word":"buy","score":1322},{"word":"pga","score":1312},{"word":"pay","score":1268},{"word":"expenses","score":1261},{"word":"invested","score":1260},{"word":"currency","score":1256},{"word":"charity","score":1250},{"word":"cash","score":1244},{"word":"fund","score":1240},{"word":"loans","score":1238},{"word":"debt","score":1224},{"word":"payment","score":1219},{"word":"paid","score":1217},{"word":"funds","score":1208},{"word":"purchase","score":1207},{"word":"bills","score":1201},{"word":"donated","score":1197},{"word":"spend","score":1195},{"word":"coins","score":1191},{"word":"bank","score":1181}]'
+  recorded_at: Mon, 06 Jan 2025 20:04:10 GMT
+recorded_with: VCR 6.3.1

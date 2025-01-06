@@ -1,0 +1,9 @@
+one:
+  title: Example Book
+  author: mark_twain
+  open_library_id: OL12345W
+
+two:
+  title: Another Book
+  author: other_author
+  open_library_id: OL67890W 

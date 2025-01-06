@@ -1,0 +1,81 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://openlibrary.org/search/authors.json?q=ambrose%20bierce
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Host:
+      - openlibrary.org
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.18.0 (Ubuntu)
+      Date:
+      - Mon, 06 Jan 2025 20:04:09 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Method:
+      - GET, OPTIONS
+      Access-Control-Max-Age:
+      - '86400'
+      X-Ol-Stats:
+      - '"SR 1 1.976 TT 0 1.977"'
+      Referrer-Policy:
+      - no-referrer-when-downgrade
+    body:
+      encoding: UTF-8
+      string: '{"numFound": 6, "start": 0, "numFoundExact": true, "docs": [{"alternate_names":
+        ["Ambrose Bierce", "Dod Grile", "William Herman", "J. Milton Sloluck", "Ambrose
+        Gwinnett Bierce", "Ambrose Gwinett Bierce", "Ambrose Ambrose Bierce", "Ambrose
+        Bierce Bierce", "Bierce, Ambrose", "Ambrose Gwinneth Bierce", "Ambrose BIERCE",
+        "Bierce Ambrose", "AMBROSE GWINETT BIERCE", "Ambrose G. Bierce", "Ambrose,
+        Bierce", "Biyeersi", "Ambroce Bierce", "Abrose Bierce", "Ambroise Bierce",
+        "Bierce a.", "A. Bierce", "Bierce A.", "Mr Ambrose Bierce", "Ambrose AMBROSE
+        BIERCE", "BIERCE AMBROSE", "Ambrose 1842-1914? Bierce", "Ambrose [Gwinett]
+        (1842-1914) Bierce", "Ambrose (adapted Bierce", "Ambroce Ambroce Bierce",
+        "Amrbose Bierce"], "birth_date": "1842", "death_date": "1914?", "key": "OL21093A",
+        "name": "Ambrose Bierce", "top_subjects": ["Fiction", "United States", "Classic
+        Literature", "History", "Owl Creek Bridge", "hanging", "Peyton Farquhar",
+        "Alabama", "Union", "American Civil War"], "top_work": "The Devil''s Dictionary",
+        "type": "author", "work_count": 818, "ratings_average": 3.8730159, "ratings_sortable":
+        3.6946442, "ratings_count": 126, "ratings_count_1": 4, "ratings_count_2":
+        6, "ratings_count_3": 27, "ratings_count_4": 54, "ratings_count_5": 35, "want_to_read_count":
+        1849, "already_read_count": 156, "currently_reading_count": 70, "readinglog_count":
+        2075, "_version_": 1819164993514373120}, {"birth_date": "(1842", "death_date":
+        "1919).", "key": "OL7201736A", "name": "Ambrose Bierce", "type": "author",
+        "work_count": 0, "_version_": 1806637436886843392}, {"key": "OL7474271A",
+        "name": "Ambrose Bierce", "type": "author", "work_count": 0, "_version_":
+        1806637442907766784}, {"key": "OL11550497A", "name": "Adolphe ands Ambrose
+        Bierce de Castro", "top_subjects": ["Monks", "Fiction", "Accessible book"],
+        "top_work": "The Monk and the Hangman''s Daughter", "type": "author", "work_count":
+        1, "_version_": 1805667556308025344}, {"key": "OL14666391A", "name": "Ambrose
+        Gwinnett Bierce", "type": "author", "work_count": 0, "ratings_average": 0.0,
+        "ratings_sortable": 2.047372, "ratings_count": 0, "ratings_count_1": 0, "ratings_count_2":
+        0, "ratings_count_3": 0, "ratings_count_4": 0, "ratings_count_5": 0, "want_to_read_count":
+        0, "already_read_count": 0, "currently_reading_count": 0, "readinglog_count":
+        0, "_version_": 1811820413473259520}, {"key": "OL14678625A", "name": "Ambrose
+        G. Bierce", "type": "author", "work_count": 0, "ratings_average": 0.0, "ratings_sortable":
+        2.047372, "ratings_count": 0, "ratings_count_1": 0, "ratings_count_2": 0,
+        "ratings_count_3": 0, "ratings_count_4": 0, "ratings_count_5": 0, "want_to_read_count":
+        0, "already_read_count": 0, "currently_reading_count": 0, "readinglog_count":
+        0, "_version_": 1811887522465185792}]}'
+  recorded_at: Mon, 06 Jan 2025 20:04:09 GMT
+recorded_with: VCR 6.3.1

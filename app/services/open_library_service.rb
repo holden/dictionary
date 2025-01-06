@@ -33,6 +33,35 @@ class OpenLibraryService
       nil
     end
 
+    def lookup_book(title, author = nil)
+      query = build_book_query(title, author)
+      url = "#{BASE_URL}/search.json?#{query}"
+      
+      Rails.logger.info "Searching OpenLibrary for book: #{title} by #{author}"
+      
+      response = fetch_json(url)
+      return nil unless response && response['docs'].present?
+
+      # Find best match
+      book = find_best_book_match(response['docs'], title, author)
+      return nil unless book
+
+      Rails.logger.debug "Found book in search results: #{book.inspect}"
+
+      {
+        title: book['title'],
+        author_names: book['author_name'],
+        first_publish_year: book['first_publish_year'],
+        open_library_id: extract_book_id(book),
+        isbn: book['isbn']&.first,
+        raw_data: book  # Include all the raw data
+      }
+    rescue => e
+      Rails.logger.error "OpenLibrary API error: #{e.message}"
+      Rails.logger.error "Backtrace: #{e.backtrace.join("\n")}"
+      nil
+    end
+
     private
 
     def fetch_json(url)
@@ -67,6 +96,41 @@ class OpenLibraryService
       return nil if date_str.blank?
       Date.parse(date_str)
     rescue
+      nil
+    end
+
+    def build_book_query(title, author)
+      query_parts = ["title=#{URI.encode_www_form_component(title)}"]
+      query_parts << "author=#{URI.encode_www_form_component(author)}" if author.present?
+      query_parts.join('&')
+    end
+
+    def find_best_book_match(docs, search_title, search_author)
+      search_title = search_title.downcase
+      search_author = search_author&.downcase
+      
+      Rails.logger.debug "Searching through #{docs.length} results for: #{search_title}"
+      
+      docs.find do |doc|
+        title_match = doc['title']&.downcase == search_title
+        
+        author_match = if search_author && doc['author_name']
+          doc['author_name'].any? { |name| name.downcase.include?(search_author) }
+        else
+          true # If no author specified, don't filter by author
+        end
+
+        Rails.logger.debug "Checking #{doc['title']}: title match: #{title_match}, author match: #{author_match}"
+        
+        title_match && author_match
+      end
+    end
+
+    def extract_book_id(book)
+      # Try different possible locations of the book ID
+      return book['key']&.split('/')&.last if book['key']
+      return book['edition_key']&.first if book['edition_key']&.any?
+      return book['seed']&.first&.split('/')&.last if book['seed']&.any?
       nil
     end
   end

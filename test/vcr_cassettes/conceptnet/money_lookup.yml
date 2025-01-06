@@ -1,0 +1,372 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: http://api.conceptnet.io/c/en/money
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      Server:
+      - awselb/2.0
+      Date:
+      - Mon, 06 Jan 2025 20:03:55 GMT
+      Content-Type:
+      - text/html
+      Content-Length:
+      - '134'
+      Connection:
+      - keep-alive
+      Location:
+      - https://api.conceptnet.io:443/c/en/money
+    body:
+      encoding: UTF-8
+      string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body>\r\n<center><h1>301
+        Moved Permanently</h1></center>\r\n</body>\r\n</html>\r\n"
+  recorded_at: Mon, 06 Jan 2025 20:03:55 GMT
+- request:
+    method: get
+    uri: https://api.conceptnet.io/c/en/money
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 06 Jan 2025 20:04:00 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Server:
+      - nginx/1.14.0 (Ubuntu)
+      Access-Control-Allow-Origin:
+      - "*"
+    body:
+      encoding: ASCII-8BIT
+      string: '{"@context": ["http://api.conceptnet.io/ld/conceptnet5.7/context.ld.json"],
+        "@id": "/c/en/money", "edges": [{"@id": "/a/[/r/RelatedTo/,/c/en/bank/,/c/en/money/]",
+        "@type": "Edge", "dataset": "/d/verbosity", "end": {"@id": "/c/en/money",
+        "@type": "Node", "label": "money", "language": "en", "term": "/c/en/money"},
+        "license": "cc:by/4.0", "rel": {"@id": "/r/RelatedTo", "@type": "Relation",
+        "label": "RelatedTo"}, "sources": [{"@id": "/and/[/s/process/split_words/,/s/resource/verbosity/]",
+        "@type": "Source", "contributor": "/s/resource/verbosity", "process": "/s/process/split_words"},
+        {"@id": "/s/resource/verbosity", "@type": "Source", "contributor": "/s/resource/verbosity"}],
+        "start": {"@id": "/c/en/bank", "@type": "Node", "label": "bank", "language":
+        "en", "term": "/c/en/bank"}, "surfaceText": "[[bank]] is related to [[money]]",
+        "weight": 12.580461040836301}, {"@id": "/a/[/r/RelatedTo/,/c/en/wallet/,/c/en/money/]",
+        "@type": "Edge", "dataset": "/d/verbosity", "end": {"@id": "/c/en/money",
+        "@type": "Node", "label": "money", "language": "en", "term": "/c/en/money"},
+        "license": "cc:by/4.0", "rel": {"@id": "/r/RelatedTo", "@type": "Relation",
+        "label": "RelatedTo"}, "sources": [{"@id": "/and/[/s/process/split_words/,/s/resource/verbosity/]",
+        "@type": "Source", "contributor": "/s/resource/verbosity", "process": "/s/process/split_words"},
+        {"@id": "/s/resource/verbosity", "@type": "Source", "contributor": "/s/resource/verbosity"}],
+        "start": {"@id": "/c/en/wallet", "@type": "Node", "label": "wallet", "language":
+        "en", "term": "/c/en/wallet"}, "surfaceText": "[[wallet]] is related to [[money]]",
+        "weight": 9.827308889009238}, {"@id": "/a/[/r/RelatedTo/,/c/en/profit/,/c/en/money/]",
+        "@type": "Edge", "dataset": "/d/verbosity", "end": {"@id": "/c/en/money",
+        "@type": "Node", "label": "money", "language": "en", "term": "/c/en/money"},
+        "license": "cc:by/4.0", "rel": {"@id": "/r/RelatedTo", "@type": "Relation",
+        "label": "RelatedTo"}, "sources": [{"@id": "/and/[/s/process/split_words/,/s/resource/verbosity/]",
+        "@type": "Source", "contributor": "/s/resource/verbosity", "process": "/s/process/split_words"},
+        {"@id": "/s/resource/verbosity", "@type": "Source", "contributor": "/s/resource/verbosity"}],
+        "start": {"@id": "/c/en/profit", "@type": "Node", "label": "profit", "language":
+        "en", "term": "/c/en/profit"}, "surfaceText": "[[profit]] is related to [[money]]",
+        "weight": 8.530416168042448}, {"@id": "/a/[/r/RelatedTo/,/c/en/dollar/,/c/en/money/]",
+        "@type": "Edge", "dataset": "/d/verbosity", "end": {"@id": "/c/en/money",
+        "@type": "Node", "label": "money", "language": "en", "term": "/c/en/money"},
+        "license": "cc:by/4.0", "rel": {"@id": "/r/RelatedTo", "@type": "Relation",
+        "label": "RelatedTo"}, "sources": [{"@id": "/and/[/s/process/split_words/,/s/resource/verbosity/]",
+        "@type": "Source", "contributor": "/s/resource/verbosity", "process": "/s/process/split_words"},
+        {"@id": "/s/resource/verbosity", "@type": "Source", "contributor": "/s/resource/verbosity"}],
+        "start": {"@id": "/c/en/dollar", "@type": "Node", "label": "dollar", "language":
+        "en", "term": "/c/en/dollar"}, "surfaceText": "[[dollar]] is related to [[money]]",
+        "weight": 7.866638418028376}, {"@id": "/a/[/r/AtLocation/,/c/en/money/,/c/en/bank/]",
+        "@type": "Edge", "dataset": "/d/conceptnet/4/en", "end": {"@id": "/c/en/bank",
+        "@type": "Node", "label": "a bank", "language": "en", "term": "/c/en/bank"},
+        "license": "cc:by/4.0", "rel": {"@id": "/r/AtLocation", "@type": "Relation",
+        "label": "AtLocation"}, "sources": [{"@id": "/and/[/s/activity/omcs/omcs1_possibly_free_text/,/s/contributor/omcs/chazryt/]",
+        "@type": "Source", "activity": "/s/activity/omcs/omcs1_possibly_free_text",
+        "contributor": "/s/contributor/omcs/chazryt"}, {"@id": "/and/[/s/activity/omcs/omcs1_possibly_free_text/,/s/contributor/omcs/tedswart/]",
+        "@type": "Source", "activity": "/s/activity/omcs/omcs1_possibly_free_text",
+        "contributor": "/s/contributor/omcs/tedswart"}, {"@id": "/and/[/s/activity/omcs/template/,/s/contributor/omcs/avenger/]",
+        "@type": "Source", "activity": "/s/activity/omcs/template", "contributor":
+        "/s/contributor/omcs/avenger"}, {"@id": "/and/[/s/activity/omcs/template/,/s/contributor/omcs/carfin/]",
+        "@type": "Source", "activity": "/s/activity/omcs/template", "contributor":
+        "/s/contributor/omcs/carfin"}, {"@id": "/and/[/s/activity/omcs/template/,/s/contributor/omcs/tmichael/]",
+        "@type": "Source", "activity": "/s/activity/omcs/template", "contributor":
+        "/s/contributor/omcs/tmichael"}, {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/browni/]",
+        "@type": "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/browni"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/carfin/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/carfin"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/chazryt/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/chazryt"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/hobbes/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/hobbes"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/jasongross/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/jasongross"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/jbbdude/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/jbbdude"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/knizz/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/knizz"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/swordfishdata/]",
+        "@type": "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/swordfishdata"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/tedswart/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/tedswart"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/tmichael/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/tmichael"}],
+        "start": {"@id": "/c/en/money", "@type": "Node", "label": "a money", "language":
+        "en", "term": "/c/en/money"}, "surfaceText": "You are likely to find [[a money]]
+        in [[a bank]]", "weight": 7.745966692414834}, {"@id": "/a/[/r/AtLocation/,/c/en/money/,/c/en/wallet/]",
+        "@type": "Edge", "dataset": "/d/conceptnet/4/en", "end": {"@id": "/c/en/wallet",
+        "@type": "Node", "label": "a wallet", "language": "en", "term": "/c/en/wallet"},
+        "license": "cc:by/4.0", "rel": {"@id": "/r/AtLocation", "@type": "Relation",
+        "label": "AtLocation"}, "sources": [{"@id": "/and/[/s/activity/omcs/commons_manual_entry/,/s/contributor/omcs/abernoodle/]",
+        "@type": "Source", "activity": "/s/activity/omcs/commons_manual_entry", "contributor":
+        "/s/contributor/omcs/abernoodle"}, {"@id": "/and/[/s/activity/omcs/omcs1_possibly_free_text/,/s/contributor/omcs/eldalamber/]",
+        "@type": "Source", "activity": "/s/activity/omcs/omcs1_possibly_free_text",
+        "contributor": "/s/contributor/omcs/eldalamber"}, {"@id": "/and/[/s/activity/omcs/template/,/s/contributor/omcs/cffrost/]",
+        "@type": "Source", "activity": "/s/activity/omcs/template", "contributor":
+        "/s/contributor/omcs/cffrost"}, {"@id": "/and/[/s/activity/omcs/template/,/s/contributor/omcs/perkl/]",
+        "@type": "Source", "activity": "/s/activity/omcs/template", "contributor":
+        "/s/contributor/omcs/perkl"}, {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/browni/]",
+        "@type": "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/browni"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/cffrost/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/cffrost"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/cirus/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/cirus"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/eldalamber/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/eldalamber"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/hongster/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/hongster"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/jasongross/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/jasongross"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/jbbdude/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/jbbdude"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/knizz/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/knizz"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/swordfishdata/]",
+        "@type": "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/swordfishdata"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/westleyd/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/westleyd"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/zenkatz/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/zenkatz"}],
+        "start": {"@id": "/c/en/money", "@type": "Node", "label": "money", "language":
+        "en", "term": "/c/en/money"}, "surfaceText": "You are likely to find [[money]]
+        in [[a wallet]].", "weight": 7.483314773547882}, {"@id": "/a/[/r/RelatedTo/,/c/en/payment/,/c/en/money/]",
+        "@type": "Edge", "dataset": "/d/verbosity", "end": {"@id": "/c/en/money",
+        "@type": "Node", "label": "money", "language": "en", "term": "/c/en/money"},
+        "license": "cc:by/4.0", "rel": {"@id": "/r/RelatedTo", "@type": "Relation",
+        "label": "RelatedTo"}, "sources": [{"@id": "/and/[/s/process/split_words/,/s/resource/verbosity/]",
+        "@type": "Source", "contributor": "/s/resource/verbosity", "process": "/s/process/split_words"},
+        {"@id": "/s/resource/verbosity", "@type": "Source", "contributor": "/s/resource/verbosity"}],
+        "start": {"@id": "/c/en/payment", "@type": "Node", "label": "payment", "language":
+        "en", "term": "/c/en/payment"}, "surfaceText": "[[payment]] is related to
+        [[money]]", "weight": 6.765500720567548}, {"@id": "/a/[/r/RelatedTo/,/c/en/pay/,/c/en/money/]",
+        "@type": "Edge", "dataset": "/d/verbosity", "end": {"@id": "/c/en/money",
+        "@type": "Node", "label": "money", "language": "en", "term": "/c/en/money"},
+        "license": "cc:by/4.0", "rel": {"@id": "/r/RelatedTo", "@type": "Relation",
+        "label": "RelatedTo"}, "sources": [{"@id": "/and/[/s/process/split_words/,/s/resource/verbosity/]",
+        "@type": "Source", "contributor": "/s/resource/verbosity", "process": "/s/process/split_words"},
+        {"@id": "/s/resource/verbosity", "@type": "Source", "contributor": "/s/resource/verbosity"}],
+        "start": {"@id": "/c/en/pay", "@type": "Node", "label": "pay", "language":
+        "en", "term": "/c/en/pay"}, "surfaceText": "[[pay]] is related to [[money]]",
+        "weight": 6.154997969130454}, {"@id": "/a/[/r/MotivatedByGoal/,/c/en/sell_new_book/,/c/en/money/]",
+        "@type": "Edge", "dataset": "/d/conceptnet/4/en", "end": {"@id": "/c/en/money",
+        "@type": "Node", "label": "money", "language": "en", "term": "/c/en/money"},
+        "license": "cc:by/4.0", "rel": {"@id": "/r/MotivatedByGoal", "@type": "Relation",
+        "label": "MotivatedByGoal"}, "sources": [{"@id": "/and/[/s/activity/omcs/omcs1_possibly_free_text/,/s/contributor/omcs/eoliveri/]",
+        "@type": "Source", "activity": "/s/activity/omcs/omcs1_possibly_free_text",
+        "contributor": "/s/contributor/omcs/eoliveri"}, {"@id": "/and/[/s/activity/omcs/omcs1_possibly_free_text/,/s/contributor/omcs/jeeno/]",
+        "@type": "Source", "activity": "/s/activity/omcs/omcs1_possibly_free_text",
+        "contributor": "/s/contributor/omcs/jeeno"}, {"@id": "/and/[/s/activity/omcs/omcs1_possibly_free_text/,/s/contributor/omcs/shaleane/]",
+        "@type": "Source", "activity": "/s/activity/omcs/omcs1_possibly_free_text",
+        "contributor": "/s/contributor/omcs/shaleane"}, {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/guru1/]",
+        "@type": "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/guru1"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/haxwell/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/haxwell"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/jbbdude/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/jbbdude"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/jeeno/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/jeeno"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/knizz/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/knizz"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/rspeer/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/rspeer"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/shaleane/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/shaleane"}],
+        "start": {"@id": "/c/en/sell_new_book", "@type": "Node", "label": "sell your
+        new book", "language": "en", "term": "/c/en/sell_new_book"}, "surfaceText":
+        "You would [[sell your new book]] because you want [[money]]", "weight": 6.0},
+        {"@id": "/a/[/r/HasPrerequisite/,/c/en/buying_shirt/,/c/en/money/]", "@type":
+        "Edge", "dataset": "/d/conceptnet/4/en", "end": {"@id": "/c/en/money", "@type":
+        "Node", "label": "money", "language": "en", "term": "/c/en/money"}, "license":
+        "cc:by/4.0", "rel": {"@id": "/r/HasPrerequisite", "@type": "Relation", "label":
+        "HasPrerequisite"}, "sources": [{"@id": "/and/[/s/activity/omcs/omcs1_possibly_free_text/,/s/contributor/omcs/drinkypoo/]",
+        "@type": "Source", "activity": "/s/activity/omcs/omcs1_possibly_free_text",
+        "contributor": "/s/contributor/omcs/drinkypoo"}, {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/browni/]",
+        "@type": "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/browni"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/diveden/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/diveden"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/haxwell/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/haxwell"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/jasongross/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/jasongross"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/jbbdude/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/jbbdude"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/lsuvas/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/lsuvas"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/polymatrix/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/polymatrix"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/swordfishdata/]",
+        "@type": "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/swordfishdata"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/wergel/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/wergel"}],
+        "start": {"@id": "/c/en/buying_shirt", "@type": "Node", "label": "buying a
+        shirt", "language": "en", "term": "/c/en/buying_shirt"}, "surfaceText": "[[buying
+        a shirt]] requires [[money]]", "weight": 6.0}, {"@id": "/a/[/r/HasPrerequisite/,/c/en/buying_presents_for_others/,/c/en/money/]",
+        "@type": "Edge", "dataset": "/d/conceptnet/4/en", "end": {"@id": "/c/en/money",
+        "@type": "Node", "label": "money", "language": "en", "term": "/c/en/money"},
+        "license": "cc:by/4.0", "rel": {"@id": "/r/HasPrerequisite", "@type": "Relation",
+        "label": "HasPrerequisite"}, "sources": [{"@id": "/and/[/s/activity/omcs/omcs1_possibly_free_text/,/s/contributor/omcs/rosa/]",
+        "@type": "Source", "activity": "/s/activity/omcs/omcs1_possibly_free_text",
+        "contributor": "/s/contributor/omcs/rosa"}, {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/boosman/]",
+        "@type": "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/boosman"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/browni/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/browni"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/jasongross/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/jasongross"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/jbbdude/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/jbbdude"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/polymatrix/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/polymatrix"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/swordfishdata/]",
+        "@type": "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/swordfishdata"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/terrygibson/]",
+        "@type": "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/terrygibson"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/vampy/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/vampy"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/wdanda/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/wdanda"}],
+        "start": {"@id": "/c/en/buying_presents_for_others", "@type": "Node", "label":
+        "buying presents for others", "language": "en", "term": "/c/en/buying_presents_for_others"},
+        "surfaceText": "[[buying presents for others]] requires [[money]]", "weight":
+        6.0}, {"@id": "/a/[/r/RelatedTo/,/c/en/tax/,/c/en/money/]", "@type": "Edge",
+        "dataset": "/d/verbosity", "end": {"@id": "/c/en/money", "@type": "Node",
+        "label": "money", "language": "en", "term": "/c/en/money"}, "license": "cc:by/4.0",
+        "rel": {"@id": "/r/RelatedTo", "@type": "Relation", "label": "RelatedTo"},
+        "sources": [{"@id": "/and/[/s/process/split_words/,/s/resource/verbosity/]",
+        "@type": "Source", "contributor": "/s/resource/verbosity", "process": "/s/process/split_words"},
+        {"@id": "/s/resource/verbosity", "@type": "Source", "contributor": "/s/resource/verbosity"}],
+        "start": {"@id": "/c/en/tax", "@type": "Node", "label": "tax", "language":
+        "en", "term": "/c/en/tax"}, "surfaceText": "[[tax]] is related to [[money]]",
+        "weight": 5.542923416393194}, {"@id": "/a/[/r/RelatedTo/,/c/en/coin/,/c/en/money/]",
+        "@type": "Edge", "dataset": "/d/verbosity", "end": {"@id": "/c/en/money",
+        "@type": "Node", "label": "money", "language": "en", "term": "/c/en/money"},
+        "license": "cc:by/4.0", "rel": {"@id": "/r/RelatedTo", "@type": "Relation",
+        "label": "RelatedTo"}, "sources": [{"@id": "/and/[/s/process/split_words/,/s/resource/verbosity/]",
+        "@type": "Source", "contributor": "/s/resource/verbosity", "process": "/s/process/split_words"},
+        {"@id": "/s/resource/verbosity", "@type": "Source", "contributor": "/s/resource/verbosity"}],
+        "start": {"@id": "/c/en/coin", "@type": "Node", "label": "coin", "language":
+        "en", "term": "/c/en/coin"}, "surfaceText": "[[coin]] is related to [[money]]",
+        "weight": 5.396295025292817}, {"@id": "/a/[/r/RelatedTo/,/c/en/cent/,/c/en/money/]",
+        "@type": "Edge", "dataset": "/d/verbosity", "end": {"@id": "/c/en/money",
+        "@type": "Node", "label": "money", "language": "en", "term": "/c/en/money"},
+        "license": "cc:by/4.0", "rel": {"@id": "/r/RelatedTo", "@type": "Relation",
+        "label": "RelatedTo"}, "sources": [{"@id": "/and/[/s/process/split_words/,/s/resource/verbosity/]",
+        "@type": "Source", "contributor": "/s/resource/verbosity", "process": "/s/process/split_words"},
+        {"@id": "/s/resource/verbosity", "@type": "Source", "contributor": "/s/resource/verbosity"}],
+        "start": {"@id": "/c/en/cent", "@type": "Node", "label": "cent", "language":
+        "en", "term": "/c/en/cent"}, "surfaceText": "[[cent]] is related to [[money]]",
+        "weight": 5.378475620470915}, {"@id": "/a/[/r/RelatedTo/,/c/en/money/,/c/en/cash/]",
+        "@type": "Edge", "dataset": "/d/verbosity", "end": {"@id": "/c/en/cash", "@type":
+        "Node", "label": "cash", "language": "en", "term": "/c/en/cash"}, "license":
+        "cc:by/4.0", "rel": {"@id": "/r/RelatedTo", "@type": "Relation", "label":
+        "RelatedTo"}, "sources": [{"@id": "/and/[/s/process/split_words/,/s/resource/verbosity/]",
+        "@type": "Source", "contributor": "/s/resource/verbosity", "process": "/s/process/split_words"},
+        {"@id": "/s/resource/verbosity", "@type": "Source", "contributor": "/s/resource/verbosity"}],
+        "start": {"@id": "/c/en/money", "@type": "Node", "label": "money", "language":
+        "en", "term": "/c/en/money"}, "surfaceText": "[[money]] is related to [[cash]]",
+        "weight": 5.338164478545036}, {"@id": "/a/[/r/RelatedTo/,/c/en/change/,/c/en/money/]",
+        "@type": "Edge", "dataset": "/d/verbosity", "end": {"@id": "/c/en/money",
+        "@type": "Node", "label": "money", "language": "en", "term": "/c/en/money"},
+        "license": "cc:by/4.0", "rel": {"@id": "/r/RelatedTo", "@type": "Relation",
+        "label": "RelatedTo"}, "sources": [{"@id": "/and/[/s/process/split_words/,/s/resource/verbosity/]",
+        "@type": "Source", "contributor": "/s/resource/verbosity", "process": "/s/process/split_words"},
+        {"@id": "/s/resource/verbosity", "@type": "Source", "contributor": "/s/resource/verbosity"}],
+        "start": {"@id": "/c/en/change", "@type": "Node", "label": "change", "language":
+        "en", "term": "/c/en/change"}, "surfaceText": "[[change]] is related to [[money]]",
+        "weight": 5.2911246441564765}, {"@id": "/a/[/r/RelatedTo/,/c/en/price/,/c/en/money/]",
+        "@type": "Edge", "dataset": "/d/verbosity", "end": {"@id": "/c/en/money",
+        "@type": "Node", "label": "money", "language": "en", "term": "/c/en/money"},
+        "license": "cc:by/4.0", "rel": {"@id": "/r/RelatedTo", "@type": "Relation",
+        "label": "RelatedTo"}, "sources": [{"@id": "/and/[/s/process/split_words/,/s/resource/verbosity/]",
+        "@type": "Source", "contributor": "/s/resource/verbosity", "process": "/s/process/split_words"},
+        {"@id": "/s/resource/verbosity", "@type": "Source", "contributor": "/s/resource/verbosity"}],
+        "start": {"@id": "/c/en/price", "@type": "Node", "label": "price", "language":
+        "en", "term": "/c/en/price"}, "surfaceText": "[[price]] is related to [[money]]",
+        "weight": 5.240229002629562}, {"@id": "/a/[/r/RelatedTo/,/c/en/money/,/c/en/currency/]",
+        "@type": "Edge", "dataset": "/d/verbosity", "end": {"@id": "/c/en/currency",
+        "@type": "Node", "label": "currency", "language": "en", "term": "/c/en/currency"},
+        "license": "cc:by/4.0", "rel": {"@id": "/r/RelatedTo", "@type": "Relation",
+        "label": "RelatedTo"}, "sources": [{"@id": "/and/[/s/process/split_words/,/s/resource/verbosity/]",
+        "@type": "Source", "contributor": "/s/resource/verbosity", "process": "/s/process/split_words"},
+        {"@id": "/s/resource/verbosity", "@type": "Source", "contributor": "/s/resource/verbosity"}],
+        "start": {"@id": "/c/en/money", "@type": "Node", "label": "money", "language":
+        "en", "term": "/c/en/money"}, "surfaceText": "[[money]] is related to [[currency]]",
+        "weight": 5.214211349763261}, {"@id": "/a/[/r/AtLocation/,/c/en/money/,/c/en/pocket/]",
+        "@type": "Edge", "dataset": "/d/conceptnet/4/en", "end": {"@id": "/c/en/pocket",
+        "@type": "Node", "label": "a pocket", "language": "en", "term": "/c/en/pocket"},
+        "license": "cc:by/4.0", "rel": {"@id": "/r/AtLocation", "@type": "Relation",
+        "label": "AtLocation"}, "sources": [{"@id": "/and/[/s/activity/omcs/omcs1_possibly_free_text/,/s/contributor/omcs/anamin/]",
+        "@type": "Source", "activity": "/s/activity/omcs/omcs1_possibly_free_text",
+        "contributor": "/s/contributor/omcs/anamin"}, {"@id": "/and/[/s/activity/omcs/omcs1_possibly_free_text/,/s/contributor/omcs/ondrej/]",
+        "@type": "Source", "activity": "/s/activity/omcs/omcs1_possibly_free_text",
+        "contributor": "/s/contributor/omcs/ondrej"}, {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/anamin/]",
+        "@type": "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/anamin"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/golfingfool/]",
+        "@type": "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/golfingfool"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/jbbdude/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/jbbdude"},
+        {"@id": "/and/[/s/activity/omcs/vote/,/s/contributor/omcs/ondrej/]", "@type":
+        "Source", "activity": "/s/activity/omcs/vote", "contributor": "/s/contributor/omcs/ondrej"}],
+        "start": {"@id": "/c/en/money", "@type": "Node", "label": "money", "language":
+        "en", "term": "/c/en/money"}, "surfaceText": "*Something you find in [[a pocket]]
+        is [[money]]", "weight": 4.898979485566356}, {"@id": "/a/[/r/RelatedTo/,/c/en/debt/,/c/en/money/]",
+        "@type": "Edge", "dataset": "/d/verbosity", "end": {"@id": "/c/en/money",
+        "@type": "Node", "label": "money", "language": "en", "term": "/c/en/money"},
+        "license": "cc:by/4.0", "rel": {"@id": "/r/RelatedTo", "@type": "Relation",
+        "label": "RelatedTo"}, "sources": [{"@id": "/and/[/s/process/split_words/,/s/resource/verbosity/]",
+        "@type": "Source", "contributor": "/s/resource/verbosity", "process": "/s/process/split_words"},
+        {"@id": "/s/resource/verbosity", "@type": "Source", "contributor": "/s/resource/verbosity"}],
+        "start": {"@id": "/c/en/debt", "@type": "Node", "label": "debt", "language":
+        "en", "term": "/c/en/debt"}, "surfaceText": "[[debt]] is related to [[money]]",
+        "weight": 4.5611402083251065}], "version": "5.8.1", "view": {"@id": "/c/en/money?offset=0&limit=20",
+        "@type": "PartialCollectionView", "comment": "There are more results. Follow
+        the ''nextPage'' link for more.", "firstPage": "/c/en/money?offset=0&limit=20",
+        "nextPage": "/c/en/money?offset=20&limit=20", "paginatedProperty": "edges"}}'
+  recorded_at: Mon, 06 Jan 2025 20:04:00 GMT
+recorded_with: VCR 6.3.1

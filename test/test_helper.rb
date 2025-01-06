@@ -4,12 +4,10 @@ require "rails/test_help"
 require "vcr"
 require "minitest/mock"
 
+# VCR configuration
 VCR.configure do |config|
-  config.cassette_library_dir = "test/fixtures/vcr_cassettes"
+  config.cassette_library_dir = "test/vcr"  # New path outside of fixtures
   config.hook_into :webmock
-  config.allow_http_connections_when_no_cassette = false
-  config.ignore_localhost = true
-  config.filter_sensitive_data('<API_KEY>') { ENV['API_KEY'] }
 end
 
 class ActiveSupport::TestCase
@@ -17,6 +15,9 @@ class ActiveSupport::TestCase
   
   # Run tests in parallel with specified workers
   parallelize(workers: :number_of_processors)
+
+  # Explicitly list only the fixtures we need
+  fixtures :books, :topics
 
   setup do
     # Clear any jobs before each test

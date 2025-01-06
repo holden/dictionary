@@ -12,7 +12,7 @@ class Book < ApplicationRecord
     return if open_library_id.present?
     
     if book = OpenLibraryService.lookup_book(title, author&.title)
-      update_column(:open_library_id, book.fetch('key'))
+      update_column(:open_library_id, book[:open_library_id])
     end
   end
 end 

@@ -1,3 +1,11 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 # Empty or minimal fixtures - we'll create test data in the tests
+
+mark_twain:
+  title: Mark Twain
+  type: Person
+
+other_author:
+  title: Other Author
+  type: Person
