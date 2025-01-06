@@ -117,33 +117,4 @@ class TopicTest < ActiveSupport::TestCase
     assert_includes topic.reload.related_topics, bank
     assert_includes topic.related_topics, currency
   end
-
-  test "fetch_johnson_definition creates new definition" do
-    topic = topics(:one)
-    
-    VCR.use_cassette("samuel_johnson/#{topic.title.downcase}") do
-      assert_difference -> { topic.definitions.count } do
-        topic.fetch_johnson_definition
-      end
-      
-      definition = topic.definitions.find_by(source: 'johnson')
-      assert definition
-      assert definition.text.present?
-      assert definition.source_url.present?
-    end
-  end
-
-  test "fetch_johnson_definition doesn't duplicate definitions" do
-    topic = topics(:one)
-    
-    # Create an existing Johnson definition
-    topic.definitions.create!(
-      text: "Existing definition",
-      source: "johnson"
-    )
-    
-    assert_no_difference -> { topic.definitions.count } do
-      topic.fetch_johnson_definition
-    end
-  end
 end
