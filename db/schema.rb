@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_04_000002) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_06_190133) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -137,7 +137,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_04_000002) do
     t.string "slug"
     t.tsvector "tsv"
     t.string "open_library_id"
+    t.jsonb "metadata", default: {}, null: false
     t.index ["concept_net_id"], name: "index_topics_on_concept_net_id", unique: true, where: "(concept_net_id IS NOT NULL)"
+    t.index ["metadata"], name: "index_topics_on_metadata", using: :gin
     t.index ["open_library_id"], name: "index_topics_on_open_library_id"
     t.index ["slug"], name: "index_topics_on_slug", unique: true
     t.index ["title"], name: "index_topics_on_title", unique: true

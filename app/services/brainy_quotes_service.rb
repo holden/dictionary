@@ -113,7 +113,7 @@ class BrainyQuotesService
 
           # Get topics/tags
           topics = quote_div.css('.qt-chip').map(&:text).map(&:strip)
-          author_name = doc.at_css('.bq-aut')&.text&.strip
+          attribution_text = doc.at_css('.bq-aut')&.text&.strip
 
           metadata = {
             brainyquote: {
@@ -128,7 +128,7 @@ class BrainyQuotesService
 
           quotes << {
             content: quote_text,
-            attribution_text: author_name,
+            attribution_text: attribution_text,
             source_url: metadata[:brainyquote][:quote_url],
             original_text: quote_text,
             original_language: 'en',

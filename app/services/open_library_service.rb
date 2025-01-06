@@ -1,63 +1,73 @@
+require 'net/http'
+require 'json'
+
 class OpenLibraryService
-  include HTTParty
-  base_uri 'https://openlibrary.org'
+  BASE_URL = 'https://openlibrary.org'
 
-  def self.lookup_author(name)
-    # Try both search endpoints for better results
-    author = search_authors(name) || search_authors_alt(name)
-    return nil unless author
+  class << self
+    def search_author(name)
+      query = URI.encode_www_form_component(name)
+      url = "#{BASE_URL}/search/authors.json?q=#{query}"
+      
+      Rails.logger.info "Searching OpenLibrary for author: #{name}"
+      
+      response = fetch_json(url)
+      return nil unless response && response['docs'].present?
 
-    # Return the key in the format we want
-    {
-      'key' => author['key']&.sub('/authors/', ''),
-      'name' => author['name'],
-      'birth_date' => author['birth_date'],
-      'death_date' => author['death_date']
-    }
-  end
+      # Find best match
+      author = find_best_match(response['docs'], name)
+      return nil unless author
 
-  def self.lookup_book(title, author_name = nil)
-    query = { q: title }
-    query[:author] = author_name if author_name.present?
+      Rails.logger.debug "Found author in search results: #{author.inspect}"
 
-    response = get("/search.json", query: query)
-    return nil unless response.success?
+      {
+        name: author['name'],
+        birth_date: parse_date(author['birth_date']),
+        death_date: parse_date(author['death_date']),
+        open_library_id: author['key']&.split('/')&.last,
+        raw_data: author  # Include all the raw data
+      }
+    rescue => e
+      Rails.logger.error "OpenLibrary API error: #{e.message}"
+      Rails.logger.error "Backtrace: #{e.backtrace.join("\n")}"
+      nil
+    end
 
-    docs = response.parsed_response['docs']
-    return nil if docs.empty?
+    private
 
-    # Try to find exact match first
-    exact_match = docs.find { |doc| doc['title']&.downcase == title.downcase }
-    book = exact_match || docs.first
+    def fetch_json(url)
+      uri = URI(url)
+      Rails.logger.debug "Fetching URL: #{url}"
+      
+      response = Net::HTTP.get_response(uri)
+      unless response.is_a?(Net::HTTPSuccess)
+        Rails.logger.error "HTTP request failed: #{response.code} - #{response.body}"
+        return nil
+      end
+      
+      JSON.parse(response.body)
+    rescue => e
+      Rails.logger.error "Error fetching JSON: #{e.message}"
+      nil
+    end
 
-    {
-      'key' => book['key'],
-      'title' => book['title'],
-      'publish_date' => book['publish_date']
-    }
-  end
+    def find_best_match(docs, search_name)
+      search_name = search_name.downcase
+      Rails.logger.debug "Searching through #{docs.length} results for: #{search_name}"
+      
+      docs.find do |doc|
+        match = doc['name']&.downcase == search_name ||
+                doc['alternate_names']&.any? { |name| name.downcase == search_name }
+        Rails.logger.debug "Checking #{doc['name']}: #{match ? 'matched' : 'no match'}" if doc['name']
+        match
+      end
+    end
 
-  private
-
-  def self.search_authors(name)
-    response = get("/search/authors.json", query: { q: name })
-    return nil unless response.success?
-
-    docs = response.parsed_response['docs']
-    return nil if docs.empty?
-
-    # Try exact match first
-    docs.find { |doc| doc['name']&.downcase == name.downcase } || docs.first
-  end
-
-  def self.search_authors_alt(name)
-    # Try alternative endpoint
-    response = get("/authors/_search", query: { q: name })
-    return nil unless response.success?
-
-    docs = response.parsed_response['docs']
-    return nil if docs.empty?
-
-    docs.first
+    def parse_date(date_str)
+      return nil if date_str.blank?
+      Date.parse(date_str)
+    rescue
+      nil
+    end
   end
 end 
