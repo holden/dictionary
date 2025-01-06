@@ -1,10 +1,11 @@
 require 'net/http'
 require 'net/https'
 require 'json'
+require 'base64'
 
 class BrainyQuotesService
   BASE_URL = 'https://www.brainyquote.com'
-  API_KEY = Rails.application.credentials.scraping_bee_api_key
+  API_KEY = Rails.application.credentials.zyte_api_key
   MAX_RETRIES = 3
 
   class AuthorNotFound < StandardError; end
@@ -21,23 +22,23 @@ class BrainyQuotesService
         author_url = "#{BASE_URL}/authors/#{author_slug}-quotes"
         
         Rails.logger.info "Fetching BrainyQuotes author page: #{author_url}"
-        response = fetch_page(author_url)
+        html = fetch_page(author_url)
         
-        if page_has_quotes?(response.body)
-          parse_quotes_page(response.body, author_url)
+        if page_has_quotes?(html)
+          parse_quotes_page(html, author_url)
         else
           # Try search if direct URL fails
           search_url = "#{BASE_URL}/search_results?q=#{CGI.escape(author)}"
           Rails.logger.info "Author not found, trying search: #{search_url}"
           
-          search_response = fetch_page(search_url)
-          author_url = extract_author_url(search_response.body, author)
+          search_html = fetch_page(search_url)
+          author_url = extract_author_url(search_html, author)
           
           raise AuthorNotFound, "No quotes found for author: #{author}" unless author_url
           
           Rails.logger.info "Found author URL: #{author_url}"
-          response = fetch_page(author_url)
-          parse_quotes_page(response.body, author_url)
+          html = fetch_page(author_url)
+          parse_quotes_page(html, author_url)
         end
       rescue StandardError => e
         Rails.logger.error "BrainyQuotes error: #{e.message}"
@@ -49,37 +50,35 @@ class BrainyQuotesService
     private
 
     def fetch_page(url)
-      uri = URI("https://app.scrapingbee.com/api/v1/")
-      params = {
-        api_key: API_KEY,
-        url: url,
-        render_js: true,
-        premium_proxy: true,
-        country_code: 'us',
-        block_ads: true,
-        block_resources: false,
-        wait_browser: 'networkidle0',
-        wait_for: '.grid-item, .quoteContent',
-        stealth_proxy: true
-      }
+      uri = URI('https://api.zyte.com/v1/extract')
       
-      uri.query = URI.encode_www_form(params)
+      request = Net::HTTP::Post.new(uri)
+      request.basic_auth(API_KEY, '')
+      request['Accept'] = 'application/json'
+      request['Content-Type'] = 'application/json'
+      
+      request.body = {
+        url: url,
+        browserHtml: true,
+        javascript: true
+      }.to_json
       
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_PEER
       http.read_timeout = 30
       
-      request = Net::HTTP::Get.new(uri)
       response = http.request(request)
       
       unless response.is_a?(Net::HTTPSuccess)
         error_info = JSON.parse(response.body) rescue { "error" => response.body }
-        Rails.logger.error "ScrapingBee response: #{error_info.inspect}"
+        Rails.logger.error "Zyte API response: #{error_info.inspect}"
         raise ScrapingError, "HTTP Request failed: #{response.code} - #{error_info}"
       end
       
-      response
+      response_data = JSON.parse(response.body)
+      # Use browserHtml instead of httpResponseBody
+      response_data['browserHtml'] || ''
     end
 
     def page_has_quotes?(html)
