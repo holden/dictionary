@@ -430,13 +430,11 @@ class Topic < ApplicationRecord
   end
 
   def ensure_open_library_id
+    return unless type == 'Person'
     return if open_library_id.present?
-    
-    if author = OpenLibraryService.lookup_author(title)
-      Rails.logger.info "Found OpenLibrary author: #{author.inspect}"
-      update_column(:open_library_id, author['key'])
-    else
-      Rails.logger.warn "No OpenLibrary match found for author: #{title}"
+
+    if (author_data = OpenLibraryService.search_author(title))
+      update(open_library_id: author_data[:open_library_id])
     end
   end
 end 

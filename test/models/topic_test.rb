@@ -51,7 +51,14 @@ class TopicTest < ActiveSupport::TestCase
   end
 
   test "fetches OpenLibrary ID for Person topics" do
-    stub_service_call(OpenLibraryService, :lookup_author, @open_library_response) do
+    author_data = {
+      name: 'Ambrose Bierce',
+      open_library_id: 'OL31757A',
+      birth_date: '1842',
+      death_date: '1914'
+    }
+    
+    stub_service_call(OpenLibraryService, :search_author, author_data) do
       topic = Topic.create!(title: 'ambrose bierce', type: 'Person')
       assert_equal 'OL31757A', topic.open_library_id
     end

@@ -5,10 +5,10 @@ class OpenLibraryServiceTest < ActiveSupport::TestCase
   
   test "fetches author data from OpenLibrary API" do
     VCR.use_cassette('openlibrary/ambrose_bierce') do
-      result = OpenLibraryService.lookup_author('ambrose bierce')
-      assert result.key?('key')
-      assert result.key?('name')
-      assert_includes result['name'], 'Bierce'
+      result = OpenLibraryService.search_author('ambrose bierce')
+      assert result.key?(:name)
+      assert result.key?(:open_library_id)
+      assert_includes result[:name], 'Bierce'
     end
   end
 end 
