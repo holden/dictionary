@@ -13,17 +13,23 @@ class SamuelJohnsonService
       Rails.logger.debug "Searching for term: #{normalized_term}"
       
       # Make the search request
-      response = HTTParty.get(
+      response = HTTParty.post(
         SEARCH_URL,
-        query: {
+        body: {
           term: normalized_term,
           searchType: 'Headword',
           edition: 'both',
           type: 'Text',
-          view: 'both'
+          view: 'both',
+          submit: 'Search',
+          searchTypeDisplay: 'Headword',
+          editionDisplay: 'both',
+          typeDisplay: 'Text',
+          viewDisplay: 'both'
         },
         headers: {
           'Accept' => 'text/html',
+          'Content-Type' => 'application/x-www-form-urlencoded',
           'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         },
         follow_redirects: true
@@ -40,7 +46,7 @@ class SamuelJohnsonService
       # Try to find the definition content
       definition_div = doc.css('div').find do |div|
         div.text.include?(normalized_term) && 
-        (div.at_css('sjddef') || div.at_css('sense') || div.at_css('headword'))
+        (div.at_css('sjddef') || div.at_css('sense') || div.at_css('headword') || div.text.include?('n.s.'))
       end
 
       Rails.logger.debug "Definition div found: #{!!definition_div}"
