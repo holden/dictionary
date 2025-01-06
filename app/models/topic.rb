@@ -309,6 +309,68 @@ class Topic < ApplicationRecord
     CreateTopicRelationshipsJob.perform_later(id)
   end
 
+  def fetch_johnson_definition
+    # Skip if we already have a Johnson's definition
+    return if definitions
+      .joins('JOIN websites ON websites.id = definitions.source_id')
+      .where(
+        source_type: 'Website',
+        websites: { title: 'Johnson\'s Dictionary' }
+      ).exists?
+
+    # Lookup the definition
+    result = SamuelJohnsonService.lookup_definition(title)
+    return unless result
+
+    # Find or create the Johnson's Dictionary website source
+    website = Website.find_or_create_by!(
+      title: 'Johnson\'s Dictionary',
+      url: 'https://johnsonsdictionaryonline.com'
+    )
+
+    # Create the new definition
+    definition = definitions.new(source: website)
+    
+    # Extract just the definition content, removing navigation and other site elements
+    definition_html = <<~HTML
+      <div class="johnson-definition">
+        <div class="headword">
+          <h3>#{result[:headword]}</h3>
+          <span class="part-of-speech">#{result[:part_of_speech]}</span>
+        </div>
+        
+        <div class="etymology">
+          #{result[:etymology]}
+        </div>
+        
+        <div class="definition">
+          #{result[:definition]}
+        </div>
+        
+        #{result[:quotes]&.map do |quote|
+          <<~QUOTE
+            <blockquote class="quote">
+              <p>#{quote[:text]}</p>
+              <cite>#{quote[:author]}</cite>
+            </blockquote>
+          QUOTE
+        end&.join("\n")}
+        
+        <figure class="dictionary-image">
+          <img src="#{result[:image_url]}" alt="Johnson's Dictionary entry for #{result[:headword]}">
+        </figure>
+      </div>
+    HTML
+
+    definition.content = ActionText::Content.new(definition_html)
+    definition.save!
+    definition
+
+  rescue StandardError => e
+    Rails.logger.error "Error fetching Johnson's definition for '#{title}': #{e.message}"
+    nil
+  end
+
   private
 
   def standardize_title

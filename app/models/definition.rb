@@ -9,6 +9,9 @@ class Definition < ApplicationRecord
   validate :must_have_author_or_source
   validate :source_must_be_valid_type
 
+  # Add metadata accessors
+  store_accessor :metadata, :image_url, :raw_html
+
   private
 
   def must_have_author_or_source
