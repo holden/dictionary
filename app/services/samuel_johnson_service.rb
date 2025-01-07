@@ -16,10 +16,6 @@ class SamuelJohnsonService
       begin
         Rails.logger.info "Fetching Johnson's Dictionary definition for: #{normalized_term}"
         
-        # First try to get from cache
-        cached = Rails.cache.read("johnson_dictionary/#{normalized_term}")
-        return cached if cached
-
         # Fetch the search results page
         html = fetch_page(SEARCH_URL, {
           term: normalized_term,
@@ -32,9 +28,6 @@ class SamuelJohnsonService
         result = parse_definition(html, normalized_term)
         return nil unless result
         
-        # Cache successful results
-        Rails.cache.write("johnson_dictionary/#{normalized_term}", result, expires_in: 1.week)
-
         # Return just what's needed for creating the definition
         {
           content_html: result[:content_html],
@@ -84,69 +77,69 @@ class SamuelJohnsonService
 
     def parse_definition(html, term)
       doc = Nokogiri::HTML(html)
-      Rails.logger.debug "Parsing HTML for term: #{term}"
-      
-      # Find the definition content
-      definition_div = doc.css('div').find do |div|
-        div.text.include?(term) && 
-        (div.at_css('headword') || div.at_css('sense') || div.at_css('.sjddef'))
-      end
-
-      Rails.logger.debug "Definition div found: #{!!definition_div}"
+      definition_div = doc.at_css('#result_word')
       return nil unless definition_div
 
-      # Extract the definition components
-      headword = definition_div.at_css('headword')&.text&.strip
-      pos = definition_div.at_css('.gramGrp pos, .gramGrp')&.text&.gsub(/[\[\]]/, '')&.strip
-      etymology = definition_div.at_css('.etym')&.text&.gsub(/[\[\]]/, '')&.strip
-      definition = definition_div.at_css('.sjddef')&.text&.strip
+      # Extract basic components and clean up whitespace
+      headword = definition_div.at_css('headword')&.text&.gsub(/\s+/, ' ')&.strip
+      pos = definition_div.at_css('.gramGrp pos, pos')&.text&.gsub(/\s+/, ' ')&.strip
+      etymology = definition_div.at_css('.etym')&.text&.gsub(/\s+/, ' ')&.gsub(/[\[\]]/, '')&.strip
+      definition = definition_div.at_css('sjddef')&.text&.gsub(/\s+/, ' ')&.strip
 
-      # Extract quotes more cleanly
-      quotes = definition_div.css('quotebibl').map do |q| 
+      # Extract quotes with better handling of poetry-style quotes
+      quotes = definition_div.css('quotebibl').map do |quote|
+        if !quote.at_css('quote')
+          # For poetry-style quotes, preserve intentional line breaks only
+          text_nodes = []
+          quote.children.each do |node|
+            break if node.matches?('.bibl, br.bibl')
+            if node.text?
+              text_nodes << node.text.strip
+            elsif node.name == 'br' && node['class'] == 'cit-verse'
+              text_nodes << "\n"
+            elsif node.name == 'em'
+              text_nodes << node.text.strip
+            end
+          end
+          quote_text = text_nodes.join(' ').gsub(/\s+/, ' ').strip
+                                .split("\n").map(&:strip).join("\n")
+        else
+          # For regular quotes
+          quote_text = quote.at_css('quote').text.gsub(/\s+/, ' ').strip
+        end
+
+        author = quote.at_css('.author em')&.text&.gsub(/[.]$/, '')&.strip
+        work = quote.at_css('.title em')&.text&.gsub(/[.]$/, '')&.strip
+
         {
-          text: q.at_css('quote')&.text&.strip,
-          author: q.at_css('.author em')&.text&.gsub(/[.]$/, ''),  # Remove trailing period
-          work: q.at_css('.title em')&.text&.gsub(/[.]$/, '')      # Remove trailing period
+          text: quote_text,
+          author: author,
+          work: work
         }
-      end.reject { |q| q[:text].blank? }  # Remove empty quotes
+      end.reject { |q| q[:text].blank? }
 
-      # Store metadata more concisely
-      metadata = {
-        johnson_dictionary: {
-          edition: '1773',
-          headword: headword,
-          part_of_speech: pos,
-          etymology: etymology,
-          quotes: quotes,
-          image_url: "https://johnsonsdictionaryonline.com/img/words/f1773-#{term}-1.png",
-          extracted_at: Time.current.iso8601
-        }
-      }
-
-      # Format the content HTML more cleanly
+      # Format as simple HTML with clean whitespace
       content_html = <<~HTML
         <div class="johnson-definition">
-          <header class="definition-header">
-            <h3 class="headword">#{headword}</h3>
-            <span class="part-of-speech">#{pos}</span>
-            <div class="etymology">#{etymology}</div>
-          </header>
-          
-          <div class="definition-body">
-            #{definition}
-          </div>
-          
+          <h3>#{headword}</h3>
+          <p>#{pos} #{etymology}</p>
+          <p>#{definition}</p>
           #{quotes.map do |quote|
-            <<~QUOTE
-              <blockquote class="quote">
-                <p>#{quote[:text]}</p>
+            lines = quote[:text].split("\n")
+            text = if lines.length > 1
+              lines.map { |line| "<p>#{line}</p>" }.join
+            else
+              "<p>#{quote[:text]}</p>"
+            end
+            <<~QUOTE.strip
+              <blockquote>
+                #{text}
                 <cite>#{[quote[:author], quote[:work]].compact.join(", ")}</cite>
               </blockquote>
             QUOTE
           end.join("\n")}
-          
           <figure class="dictionary-image">
-            <img src="#{metadata[:johnson_dictionary][:image_url]}" 
+            <img src="https://johnsonsdictionaryonline.com/img/words/f1773-#{term}-1.png" 
                  alt="Johnson's Dictionary entry for #{headword}"
                  loading="lazy">
           </figure>
@@ -154,8 +147,17 @@ class SamuelJohnsonService
       HTML
 
       {
-        content_html: content_html,
-        metadata: metadata
+        content_html: content_html.strip,
+        metadata: {
+          johnson_dictionary: {
+            headword: headword,
+            part_of_speech: pos,
+            etymology: etymology,
+            quotes: quotes,
+            image_url: "https://johnsonsdictionaryonline.com/img/words/f1773-#{term}-1.png",
+            extracted_at: Time.current.iso8601
+          }
+        }
       }
     end
 
