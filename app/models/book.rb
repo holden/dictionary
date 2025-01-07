@@ -1,5 +1,5 @@
 class Book < ApplicationRecord
-  belongs_to :author, class_name: 'Topic'
+  belongs_to :author, class_name: 'Person'
   
   validates :title, presence: true
   validates :open_library_id, uniqueness: true, allow_nil: true

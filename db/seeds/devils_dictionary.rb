@@ -3,10 +3,10 @@ require 'open-uri'
 
 puts "Starting Devils Dictionary import..."
 
-# Create or find Ambrose Bierce
-ambrose_bierce = Topic.find_or_create_by!(
-  title: "Ambrose Bierce",
-  type: "Person"
+# Create or find Ambrose Bierce as a Person (not a Topic)
+ambrose_bierce = Person.find_or_create_by!(
+  title: "ambrose bierce",
+  slug: "ambrose-bierce"
 )
 
 # Create or find the Devil's Dictionary
@@ -52,7 +52,7 @@ dictionary_entries.each do |entry|
 
     # Determine type based on content analysis
     type = case definition.downcase
-           when /\b(person|man|woman|author|king|queen)\b/ then "Person"
+           when /\b(person|man|woman|author|king|queen)\b/ then "Other" # Changed from Person to Other
            when /\b(building|tool|weapon|structure|device)\b/ then "Thing"
            when /\b(action|activity|process|movement)\b/ then "Action"
            when /\b(place|location|country|city)\b/ then "Place"
@@ -71,7 +71,6 @@ dictionary_entries.each do |entry|
 
     if topic.save
       puts "Created topic: #{topic.title} (#{topic.type})"
-      # Create definition and other associations...
 
       # Create the definition
       Definition.create!(

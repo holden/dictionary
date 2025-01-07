@@ -20,7 +20,7 @@ class Quote < ApplicationRecord
     Rails.logger.info "Resolving author for: #{attribution_text}"
 
     # Try finding in our database first
-    self.author = Person.find_by("lower(title) = ? AND type = 'Person'", attribution_text.downcase)
+    self.author = Person.find_by("lower(title) = ?", attribution_text.downcase)
     if author.present?
       Rails.logger.info "Found existing author: #{author.title}"
       self.attribution_text = nil
@@ -30,7 +30,17 @@ class Quote < ApplicationRecord
     Rails.logger.info "Author not found in database, trying OpenLibrary..."
 
     # Try creating from OpenLibrary if not found
-    if (person = Person.find_or_create_from_open_library(attribution_text))
+    if author_data = OpenLibraryService.search_author(attribution_text)
+      person = Person.create!(
+        title: attribution_text.downcase,
+        slug: attribution_text.parameterize,
+        open_library_id: author_data[:open_library_id],
+        birth_date: author_data[:birth_date],
+        death_date: author_data[:death_date],
+        metadata: {
+          open_library: author_data[:raw_data]
+        }
+      )
       Rails.logger.info "Created author from OpenLibrary: #{person.title}"
       self.author = person
       self.attribution_text = nil

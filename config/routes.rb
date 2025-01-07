@@ -22,8 +22,14 @@ Rails.application.routes.draw do
     end
   end
 
-  # STI routes with nested quotes
-  %w[people places concepts things events actions others].each do |type|
+  # Add people resources
+  resources :people do
+    resources :quotes, only: [:index]
+    resources :books, only: [:index]
+  end
+  
+  # Remove 'people' from the STI types list
+  %w[places concepts things events actions others].each do |type|
     resources type, controller: 'topics', type: type.singularize.classify do
       scope module: :topics do
         resources :quotes, only: [:index, :create, :destroy] do

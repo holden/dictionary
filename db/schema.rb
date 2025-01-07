@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_06_190134) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_06_190136) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -79,6 +79,23 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_06_190134) do
     t.index ["source_type", "source_id"], name: "idx_definitions_source"
     t.index ["source_type", "source_id"], name: "index_definitions_on_source"
     t.index ["topic_id"], name: "index_definitions_on_topic_id"
+  end
+
+  create_table "people", force: :cascade do |t|
+    t.string "title", null: false
+    t.string "slug", null: false
+    t.string "open_library_id"
+    t.date "birth_date"
+    t.date "death_date"
+    t.jsonb "metadata", default: {}, null: false
+    t.tsvector "tsv"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["metadata"], name: "index_people_on_metadata", using: :gin
+    t.index ["open_library_id"], name: "index_people_on_open_library_id", unique: true, where: "(open_library_id IS NOT NULL)"
+    t.index ["slug"], name: "index_people_on_slug", unique: true
+    t.index ["title"], name: "index_people_on_title", unique: true
+    t.index ["tsv"], name: "index_people_on_tsv", using: :gin
   end
 
   create_table "pg_search_documents", force: :cascade do |t|
@@ -169,10 +186,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_06_190134) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "books", "topics", column: "author_id"
+  add_foreign_key "books", "people", column: "author_id"
   add_foreign_key "definitions", "topics"
+  add_foreign_key "quotes", "people", column: "author_id"
   add_foreign_key "quotes", "topics"
-  add_foreign_key "quotes", "topics", column: "author_id"
   add_foreign_key "quotes", "users"
   add_foreign_key "sessions", "users"
   add_foreign_key "topic_relationships", "topics"
