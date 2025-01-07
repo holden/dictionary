@@ -86,6 +86,9 @@ class SamuelJohnsonService
       etymology = definition_div.at_css('.etym')&.text&.gsub(/\s+/, ' ')&.gsub(/[\[\]]/, '')&.strip
       definition = definition_div.at_css('sjddef')&.text&.gsub(/\s+/, ' ')&.strip
 
+      # Return nil if we don't have the minimum required data
+      return nil unless headword.present? && definition.present?
+
       # Extract quotes with better handling of poetry-style quotes
       quotes = definition_div.css('quotebibl').map do |quote|
         if !quote.at_css('quote')
