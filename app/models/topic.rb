@@ -322,15 +322,10 @@ class Topic < ApplicationRecord
     result = SamuelJohnsonService.lookup_definition(title)
     return unless result
 
-    # Find or create the Johnson's Dictionary website source
-    website = Website.find_or_create_by!(
-      title: 'Johnson\'s Dictionary',
-      url: 'https://johnsonsdictionaryonline.com'
-    )
-
-    # Create the new definition
+    # Create the new definition with author
     definition = definitions.new(
-      source: website,
+      author: result[:author],
+      source: result[:source],
       metadata: result[:metadata]
     )
     definition.content = result[:content_html]

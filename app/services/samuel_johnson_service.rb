@@ -16,6 +16,17 @@ class SamuelJohnsonService
       begin
         Rails.logger.info "Fetching Johnson's Dictionary definition for: #{normalized_term}"
         
+        # Find or create Samuel Johnson as the author
+        samuel_johnson = Person.find_or_create_by!(title: 'samuel johnson') do |person|
+          person.slug = 'samuel-johnson'
+        end
+
+        # Find or create the dictionary as a source - simplified to avoid unique constraint issues
+        dictionary = Website.find_or_create_by!(url: BASE_URL) do |website|
+          website.title = "Johnson's Dictionary of the English Language"
+          website.description = "First published in 1755 and written by Samuel Johnson"
+        end
+        
         # Fetch the search results page
         html = fetch_page(SEARCH_URL, {
           term: normalized_term,
@@ -28,10 +39,12 @@ class SamuelJohnsonService
         result = parse_definition(html, normalized_term)
         return nil unless result
         
-        # Return just what's needed for creating the definition
+        # Return with author and source information
         {
           content_html: result[:content_html],
-          metadata: result[:metadata]
+          metadata: result[:metadata],
+          author: samuel_johnson,
+          source: dictionary
         }
       rescue StandardError => e
         Rails.logger.error "Johnson's Dictionary error: #{e.message}"
