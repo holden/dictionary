@@ -1,0 +1,17 @@
+mark_twain:
+  title: "Mark Twain"
+  slug: "mark-twain"
+  open_library_id: "OL12345"
+  metadata: {}
+
+other_author:
+  title: "Other Author"
+  slug: "other-author"
+  open_library_id: "OL67890"
+  metadata: {}
+
+samuel_johnson:
+  title: "Samuel Johnson"
+  slug: "samuel-johnson"
+  open_library_id: "OL23456"
+  metadata: {} 

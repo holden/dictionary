@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_06_190136) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_06_190138) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -164,7 +164,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_06_190136) do
     t.index ["title"], name: "index_topics_on_title", unique: true
     t.index ["tsv"], name: "topics_tsv_idx", using: :gin
     t.index ["type"], name: "index_topics_on_type"
-    t.check_constraint "type::text = ANY (ARRAY['Person'::character varying::text, 'Place'::character varying::text, 'Concept'::character varying::text, 'Thing'::character varying::text, 'Event'::character varying::text, 'Action'::character varying::text, 'Other'::character varying::text])", name: "valid_type"
+    t.check_constraint "type::text = ANY (ARRAY['Place'::character varying::text, 'Concept'::character varying::text, 'Thing'::character varying::text, 'Event'::character varying::text, 'Action'::character varying::text, 'Other'::character varying::text])", name: "valid_type"
   end
 
   create_table "users", force: :cascade do |t|

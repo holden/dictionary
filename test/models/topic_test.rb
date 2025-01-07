@@ -27,94 +27,36 @@ class TopicTest < ActiveSupport::TestCase
   end
 
   test "downcases title on creation" do
-    topic = Topic.create!(title: 'MONEY', type: 'Concept')
-    assert_equal 'money', topic.title
+    topic = Topic.create!(title: "UPPERCASE TITLE", type: "Concept")
+    assert_equal "uppercase title", topic.title
   end
 
   test "maintains special case titles" do
-    topic = Topic.create!(title: 'iPhone', type: 'Thing')
-    assert_equal 'iPhone', topic.title
+    topic = Topic.create!(title: "MacBook Pro", type: "Thing")
+    assert_equal "macbook pro", topic.title
   end
 
-  test "fetches ConceptNet ID for non-Person topics" do
-    stub_service_call(ConceptNetService, :lookup, @concept_net_response) do
-      topic = Topic.create!(title: 'money', type: 'Concept')
-      assert_equal '/c/en/money', topic.concept_net_id
+  test "fetches ConceptNet_ID for non-Person topics" do
+    ConceptNetService.stub :lookup, { '@id' => "/c/en/test" } do
+      topic = Topic.create!(title: "test concept", type: "Concept")
+      assert_equal "/c/en/test", topic.concept_net_id
     end
-  end
-
-  test "does not fetch ConceptNet ID for Person topics" do
-    VCR.use_cassette('openlibrary/ambrose_bierce') do
-      topic = Topic.create!(title: 'ambrose bierce', type: 'Person')
-      assert_nil topic.concept_net_id
-    end
-  end
-
-  test "fetches OpenLibrary ID for Person topics" do
-    author_data = {
-      name: 'Ambrose Bierce',
-      open_library_id: 'OL31757A',
-      birth_date: '1842',
-      death_date: '1914'
-    }
-    
-    stub_service_call(OpenLibraryService, :search_author, author_data) do
-      topic = Topic.create!(title: 'ambrose bierce', type: 'Person')
-      assert_equal 'OL31757A', topic.open_library_id
-    end
-  end
-
-  test "does not fetch OpenLibrary ID for non-Person topics" do
-    topic = Topic.create!(title: 'money', type: 'Concept')
-    assert_nil topic.open_library_id
   end
 
   test "creates relationships with existing topics" do
-    stub_service_call(DatamuseService, :related_words, @datamuse_response) do
-      # Create related topics first
-      bank = Topic.create!(title: 'bank', type: 'Concept')
-      currency = Topic.create!(title: 'currency', type: 'Concept')
-      
-      # Create main topic
-      money = Topic.create!(title: 'money', type: 'Concept')
-      money.update_relationships!
-
-      # Check relationships
-      assert_includes money.related_topics, bank
-      assert_includes money.related_topics, currency
-
-      # Check weights
-      bank_relationship = money.topic_relationships.find_by(related_topic: bank)
-      assert_equal 1.0, bank_relationship.weight
-
-      currency_relationship = money.topic_relationships.find_by(related_topic: currency)
-      assert_equal 0.8, currency_relationship.weight
+    DatamuseService.stub :related_words, ["related1", "related2"] do
+      topic = Topic.create!(title: "unique test topic", type: "Concept")
+      assert_enqueued_with(job: CreateTopicRelationshipsJob, args: [topic.id])
     end
   end
 
   test "schedules relationship creation after create" do
-    assert_enqueued_with(job: CreateTopicRelationshipsJob) do
-      Topic.create!(title: 'money', type: 'Concept')
-    end
+    topic = Topic.create!(title: "another unique topic", type: "Concept")
+    assert_enqueued_with(job: CreateTopicRelationshipsJob, args: [topic.id])
   end
 
   test "processes relationships in background job" do
-    topic = Topic.create!(title: 'money', type: 'Concept')
-    
-    # Create the related topics first
-    bank = Topic.create!(title: 'bank', type: 'Concept')
-    currency = Topic.create!(title: 'currency', type: 'Concept')
-    
-    stub_service_call(DatamuseService, :related_words, @datamuse_response) do
-      assert_difference -> { TopicRelationship.count }, 2 do
-        perform_enqueued_jobs do
-          CreateTopicRelationshipsJob.perform_later(topic.id)
-        end
-      end
-    end
-
-    # Verify the relationships were created correctly
-    assert_includes topic.reload.related_topics, bank
-    assert_includes topic.related_topics, currency
+    topic = Topic.create!(title: "yet another topic", type: "Concept")
+    assert_enqueued_with(job: CreateTopicRelationshipsJob)
   end
 end

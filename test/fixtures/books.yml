@@ -1,9 +1,13 @@
 one:
-  title: Example Book
+  title: "Example Book"
   author: mark_twain
-  open_library_id: OL12345W
+  open_library_id: "OL12345W"
 
 two:
-  title: Another Book
+  title: "Another Book"
   author: other_author
-  open_library_id: OL67890W 
+  open_library_id: "OL67890W"
+
+adventures_of_huckleberry_finn:
+  title: "Adventures of Huckleberry Finn"
+  author: mark_twain 

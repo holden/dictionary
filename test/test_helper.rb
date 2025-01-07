@@ -16,8 +16,8 @@ class ActiveSupport::TestCase
   # Run tests in parallel with specified workers
   parallelize(workers: :number_of_processors)
 
-  # Explicitly list only the fixtures we need
-  fixtures :books, :topics
+  # Specify the order of fixture loading to respect foreign key constraints
+  fixtures :people, :topics, :books  # Load people first since books depend on them
 
   setup do
     # Clear any jobs before each test

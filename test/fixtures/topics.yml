@@ -2,10 +2,28 @@
 
 # Empty or minimal fixtures - we'll create test data in the tests
 
-mark_twain:
-  title: Mark Twain
-  type: Person
+concept:
+  title: "Money"
+  type: "Concept"
+  concept_net_id: "/c/en/money"
+  metadata: {}
 
-other_author:
-  title: Other Author
-  type: Person
+place:
+  title: "Paris"
+  type: "Place"
+  metadata: {}
+
+thing:
+  title: "iPhone"
+  type: "Thing"
+  metadata: {}
+
+bank:
+  title: "bank"
+  type: "Concept"
+  metadata: {}
+
+currency:
+  title: "currency"
+  type: "Concept"
+  metadata: {}
