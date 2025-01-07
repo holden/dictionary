@@ -1,6 +1,7 @@
 class UrbanDictionaryService
   include HTTParty
   base_uri 'https://mashape-community-urban-dictionary.p.rapidapi.com'
+  include ApiCacheable
 
   def self.search(term, limit: 1)
     Rails.logger.info "Starting Urban Dictionary search for: #{term}"
@@ -37,6 +38,12 @@ class UrbanDictionaryService
         Rails.logger.error "Urban Dictionary API error: #{e.class} - #{e.message}"
         []
       end
+    end
+  end
+
+  def self.lookup_definition(term)
+    cache_api_response("urban_dictionary/#{term.downcase}") do
+      # API call implementation
     end
   end
 end 

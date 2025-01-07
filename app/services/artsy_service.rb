@@ -1,6 +1,7 @@
 class ArtsyService
   include HTTParty
   base_uri 'https://api.artsy.net/api'
+  include ApiCacheable
 
   def initialize
     @token = fetch_token
@@ -24,6 +25,12 @@ class ArtsyService
 
       return [] unless response.success?
       parse_artworks(response.parsed_response)
+    end
+  end
+
+  def self.search_artworks(query)
+    cache_api_response("artsy/#{query.downcase}") do
+      # API call implementation
     end
   end
 

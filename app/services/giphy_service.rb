@@ -1,6 +1,7 @@
 class GiphyService
   include HTTParty
   base_uri 'https://api.giphy.com/v1/gifs'
+  include ApiCacheable
 
   def self.search(term)
     Rails.cache.fetch("giphy/#{term}", expires_in: 1.hour) do
@@ -23,6 +24,12 @@ class GiphyService
           giphy_url: gif['url']  # Add the Giphy URL
         }
       end
+    end
+  end
+
+  def self.search_gifs(query)
+    cache_api_response("giphy/#{query.downcase}") do
+      # API call implementation
     end
   end
 end 

@@ -1,5 +1,6 @@
 class WikiQuotesService
   include HTTParty
+  include ApiCacheable
   base_uri 'https://en.wikiquote.org/w/api.php'
   
   class Error < StandardError; end
@@ -33,7 +34,7 @@ class WikiQuotesService
   end
 
   def fetch_quotes(limit = 3)
-    Rails.cache.fetch("wikiquotes/#{@topic_title}", expires_in: 1.hour) do
+    Rails.cache.fetch("wikiquotes/#{@topic_title}/#{limit}", expires_in: 24.hours) do
       self.class.search(q: @topic_title, limit: limit)
     end
   rescue StandardError => e
