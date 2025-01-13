@@ -15,9 +15,29 @@ module Topics
 
       if @medium.save
         @topic.media << @medium unless @topic.media.include?(@medium)
-        redirect_to send("#{@topic.route_key}_media_path", @topic), notice: "#{@medium.title} was successfully added."
+        respond_to do |format|
+          format.html { redirect_to send("#{@topic.route_key}_media_path", @topic), notice: "#{@medium.title} was successfully added." }
+          format.turbo_stream { 
+            flash.now[:notice] = "#{@medium.title} was successfully added."
+            @media = @topic.media.reload
+            render turbo_stream: [
+              turbo_stream.update("content", template: "topics/media/index"),
+              turbo_stream.update("flash", partial: "shared/flash")
+            ]
+          }
+        end
       else
-        redirect_to send("#{@topic.route_key}_media_path", @topic), alert: "Failed to add media."
+        respond_to do |format|
+          format.html { redirect_to send("#{@topic.route_key}_media_path", @topic), alert: "Failed to add media." }
+          format.turbo_stream {
+            flash.now[:alert] = "Failed to add media."
+            @media = @topic.media
+            render turbo_stream: [
+              turbo_stream.update("content", template: "topics/media/index"),
+              turbo_stream.update("flash", partial: "shared/flash")
+            ]
+          }
+        end
       end
     end
 
@@ -25,7 +45,17 @@ module Topics
       @medium = @topic.media.find(params[:id])
       @topic.media.delete(@medium)
       
-      redirect_to send("#{@topic.route_key}_media_path", @topic), notice: "#{@medium.title} was successfully removed."
+      respond_to do |format|
+        format.html { redirect_to send("#{@topic.route_key}_media_path", @topic), notice: "#{@medium.title} was successfully removed." }
+        format.turbo_stream {
+          flash.now[:notice] = "#{@medium.title} was successfully removed."
+          @media = @topic.media.reload
+          render turbo_stream: [
+            turbo_stream.update("content", template: "topics/media/index"),
+            turbo_stream.update("flash", partial: "shared/flash")
+          ]
+        }
+      end
     end
 
     private

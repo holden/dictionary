@@ -21,7 +21,7 @@
     </div>
   </div>
 
-  <%= button_to send("#{@topic.route_key}_media_path", @topic, media),
+  <%= button_to send("#{@topic.route_key}_medium_path", @topic, media),
       method: :delete,
       class: "rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-red-600 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50",
       data: { turbo_confirm: "Are you sure you want to remove this media?" } do %>
