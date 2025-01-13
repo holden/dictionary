@@ -1,6 +1,8 @@
 module Topics
   module Media
     class SearchController < ApplicationController
+      include Topics::TopicFinder
+      
       before_action :authenticate
       before_action :set_topic
       
@@ -15,12 +17,6 @@ module Topics
           format.turbo_stream
           format.html { render :new }
         end
-      end
-
-      private
-
-      def set_topic
-        @topic = Topic.find_by!(slug: params[:concept_id])
       end
     end
   end

@@ -1,5 +1,7 @@
 module Topics
   class MediaController < ApplicationController
+    include Topics::TopicFinder
+    
     before_action :authenticate
     before_action :set_topic
     
@@ -27,10 +29,6 @@ module Topics
     end
 
     private
-
-    def set_topic
-      @topic = Topic.find_by!(slug: params[:concept_id])
-    end
 
     def media_params
       params.require(:media).permit(:title, :type, :tmdb_id, metadata: {})
