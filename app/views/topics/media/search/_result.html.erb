@@ -18,16 +18,12 @@
           • <%= result[:metadata][:first_air_date] %>
         <% end %>
       </p>
-      <% if result[:metadata][:overview].present? %>
-        <p class="mt-1 text-sm text-gray-500 line-clamp-2">
-          <%= result[:metadata][:overview] %>
-        </p>
-      <% end %>
     </div>
   </div>
 
   <%= button_to send("#{@topic.route_key}_media_path", @topic),
       params: { media: result },
+      data: { turbo_frame: "content" },
       class: "rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-blue-600 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" do %>
     Add
   <% end %>

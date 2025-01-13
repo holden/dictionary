@@ -13,11 +13,15 @@ module Topics
       @medium = ::Media.find_or_initialize_by(tmdb_id: media_params[:tmdb_id])
       @medium.assign_attributes(media_params)
 
-      if @medium.save
-        @topic.media << @medium unless @topic.media.include?(@medium)
-        redirect_to send("#{@topic.route_key}_media_path", @topic), notice: "#{@medium.title} was successfully added."
-      else
-        redirect_to send("#{@topic.route_key}_media_path", @topic), alert: "Failed to add media."
+      respond_to do |format|
+        if @medium.save
+          @topic.media << @medium unless @topic.media.include?(@medium)
+          format.html { redirect_to send("#{@topic.route_key}_media_path", @topic), notice: "#{@medium.title} was successfully added." }
+          format.turbo_stream { redirect_to send("#{@topic.route_key}_media_path", @topic), notice: "#{@medium.title} was successfully added." }
+        else
+          format.html { redirect_to send("#{@topic.route_key}_media_path", @topic), alert: "Failed to add media." }
+          format.turbo_stream { redirect_to send("#{@topic.route_key}_media_path", @topic), alert: "Failed to add media." }
+        end
       end
     end
 
