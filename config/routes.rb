@@ -50,6 +50,13 @@ Rails.application.routes.draw do
             post 'search/tmdb', to: 'people/search#create'
           end
         end
+
+        resources :media, only: [:index, :create, :destroy] do
+          collection do
+            get 'search/tmdb', to: 'media/search#new'
+            post 'search/tmdb', to: 'media/search#create'
+          end
+        end
       end
     end
   end

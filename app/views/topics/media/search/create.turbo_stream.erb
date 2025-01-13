@@ -1,0 +1,11 @@
+<%= turbo_stream.update "search_results" do %>
+  <div class="divide-y divide-gray-200">
+    <% if @results.any? %>
+      <%= render partial: "result", collection: @results %>
+    <% else %>
+      <div class="p-4 text-sm text-gray-500">
+        No results found for "<%= params[:query] %>"
+      </div>
+    <% end %>
+  </div>
+<% end %> 

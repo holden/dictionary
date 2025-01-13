@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_13_131600) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_13_140000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -106,6 +106,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_13_131600) do
     t.index ["media_id", "person_id"], name: "index_media_people_on_media_id_and_person_id", unique: true
     t.index ["media_id"], name: "index_media_people_on_media_id"
     t.index ["person_id"], name: "index_media_people_on_person_id"
+  end
+
+  create_table "media_topics", id: false, force: :cascade do |t|
+    t.bigint "media_id"
+    t.bigint "topic_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["media_id", "topic_id"], name: "index_media_topics_on_media_id_and_topic_id", unique: true
+    t.index ["media_id"], name: "index_media_topics_on_media_id"
+    t.index ["topic_id"], name: "index_media_topics_on_topic_id"
   end
 
   create_table "people", force: :cascade do |t|

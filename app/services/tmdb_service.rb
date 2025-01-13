@@ -47,4 +47,67 @@ class TmdbService
       imdb_id: response['imdb_id']
     }
   end
+
+  def multi_search(query)
+    response = self.class.get("/search/multi", @options.merge(
+      query: { 
+        query: query,
+        include_adult: false 
+      }
+    ))
+    
+    return [] unless response.success?
+    
+    response['results'].map do |result|
+      case result['media_type']
+      when 'movie'
+        format_movie(result)
+      when 'tv'
+        format_tv_show(result)
+      when 'person'
+        format_person(result)
+      end
+    end.compact
+  end
+
+  private
+
+  def format_movie(result)
+    {
+      type: 'Movie',
+      tmdb_id: result['id'].to_s,
+      title: result['title'],
+      metadata: {
+        release_date: result['release_date'],
+        overview: result['overview'],
+        popularity: result['popularity'],
+        vote_average: result['vote_average'],
+        poster_path: result['poster_path'] ? "https://image.tmdb.org/t/p/w500#{result['poster_path']}" : nil
+      }
+    }
+  end
+
+  def format_tv_show(result)
+    {
+      type: 'TVShow',
+      tmdb_id: result['id'].to_s,
+      title: result['name'],
+      metadata: {
+        first_air_date: result['first_air_date'],
+        overview: result['overview'],
+        popularity: result['popularity'],
+        vote_average: result['vote_average'],
+        poster_path: result['poster_path'] ? "https://image.tmdb.org/t/p/w500#{result['poster_path']}" : nil
+      }
+    }
+  end
+
+  def format_person(result)
+    {
+      type: 'Person',
+      tmdb_id: result['id'].to_s,
+      name: result['name'],
+      profile_path: result['profile_path'] ? "https://image.tmdb.org/t/p/w500#{result['profile_path']}" : nil
+    }
+  end
 end 
