@@ -1,0 +1,36 @@
+<%= turbo_frame_tag "content" do %>
+  <div class="bg-white shadow sm:rounded-lg">
+    <div class="px-4 py-5 sm:p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-base font-semibold leading-6 text-gray-900">
+          Search TMDB for People
+        </h3>
+      </div>
+
+      <%= form_with url: search_tmdb_concept_people_path(@topic), 
+                  method: :post,
+                  data: { turbo_frame: "search_results" } do |f| %>
+        <div class="mt-2 flex rounded-md shadow-sm">
+          <%= f.text_field :query,
+              class: "block w-full rounded-l-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6",
+              placeholder: "Search for people..." %>
+          
+          <%= f.submit "Search",
+              class: "relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50" %>
+        </div>
+      <% end %>
+
+      <%= turbo_frame_tag "search_results" do %>
+        <div class="mt-6 divide-y divide-gray-200">
+          <% if @results&.any? %>
+            <%= render partial: "result", collection: @results %>
+          <% else %>
+            <p class="text-sm text-gray-500 py-4">
+              Enter a search term to find people...
+            </p>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %> 

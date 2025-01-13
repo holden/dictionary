@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_06_190138) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_08_182500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -91,11 +91,25 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_06_190138) do
     t.tsvector "tsv"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "tmdb_id"
+    t.string "imdb_id"
+    t.index ["imdb_id"], name: "index_people_on_imdb_id", unique: true
     t.index ["metadata"], name: "index_people_on_metadata", using: :gin
     t.index ["open_library_id"], name: "index_people_on_open_library_id", unique: true, where: "(open_library_id IS NOT NULL)"
     t.index ["slug"], name: "index_people_on_slug", unique: true
     t.index ["title"], name: "index_people_on_title", unique: true
+    t.index ["tmdb_id"], name: "index_people_on_tmdb_id", unique: true
     t.index ["tsv"], name: "index_people_on_tsv", using: :gin
+  end
+
+  create_table "people_topics", id: false, force: :cascade do |t|
+    t.bigint "person_id"
+    t.bigint "topic_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["person_id", "topic_id"], name: "index_people_topics_on_person_id_and_topic_id", unique: true
+    t.index ["person_id"], name: "index_people_topics_on_person_id"
+    t.index ["topic_id"], name: "index_people_topics_on_topic_id"
   end
 
   create_table "pg_search_documents", force: :cascade do |t|

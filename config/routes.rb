@@ -12,6 +12,8 @@ Rails.application.routes.draw do
     end
     member do
       post :refresh_quotes
+      get 'people/search/:source', to: 'people#search', as: :search_people
+      post 'people/:source', to: 'people#create', as: :create_person
     end
   end
   
@@ -39,6 +41,24 @@ Rails.application.routes.draw do
             get 'search/brainyquotes', to: 'quotes/brainy_search#new'
             post 'search/brainyquotes', to: 'quotes/brainy_search#create'
           end
+        end
+        
+        # Add people routes in the same style
+        resources :people, only: [:index, :create, :destroy] do
+          collection do
+            get 'search/tmdb', to: 'people/search#new'
+            post 'search/tmdb', to: 'people/search#create'
+          end
+        end
+      end
+    end
+  end
+
+  resources :concepts, controller: 'topics', as: 'topics' do
+    namespace :people do
+      resource :search, only: [:create] do
+        collection do
+          post 'tmdb'
         end
       end
     end

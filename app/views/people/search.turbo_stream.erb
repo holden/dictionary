@@ -1,0 +1,27 @@
+<%= turbo_stream.update "search_results" do %>
+  <div class="divide-y divide-gray-200">
+    <% @results.each do |person| %>
+      <div class="flex items-center gap-4 py-4">
+        <% if person[:profile_path] %>
+          <%= image_tag person[:profile_path], 
+              class: "h-16 w-16 rounded-full object-cover",
+              alt: person[:name] %>
+        <% end %>
+        
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium text-gray-900">
+            <%= person[:name] %>
+          </p>
+          <p class="text-sm text-gray-500">
+            <%= person[:known_for_department] %>
+          </p>
+        </div>
+
+        <%= button_to topic_create_person_path(@topic, :tmdb, tmdb_id: person[:tmdb_id]),
+            class: "rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" do %>
+          Add to Topic
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+<% end %> 

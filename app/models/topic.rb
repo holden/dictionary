@@ -76,6 +76,14 @@ class Topic < ApplicationRecord
   # Scopes
   scope :recent_first, -> { order(created_at: :desc) }
 
+  has_and_belongs_to_many :people
+
+  # Add default scope to always include rich text content
+  default_scope { includes(definitions: :rich_text_content) }
+  
+  # Or if you prefer not to use default_scope, modify your controller:
+  scope :with_content, -> { includes(definitions: :rich_text_content) }
+
   def refresh_conceptnet_data!
     self.concept_net_id = nil
     generate_concept_net_id

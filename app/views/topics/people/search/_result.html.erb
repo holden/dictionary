@@ -1,0 +1,25 @@
+<div class="flex items-center gap-4 py-4">
+  <% if result[:profile_path] %>
+    <%= image_tag result[:profile_path], 
+        class: "h-16 w-16 rounded-full object-cover",
+        alt: result[:name] %>
+  <% end %>
+  
+  <div class="flex-1 min-w-0">
+    <p class="text-sm font-medium text-gray-900">
+      <%= result[:name] %>
+    </p>
+    <p class="text-sm text-gray-500">
+      <%= result[:known_for_department] %>
+    </p>
+  </div>
+
+  <%= form_tag send("#{@topic.route_key}_people_path", @topic), 
+      method: :post,
+      data: { turbo: false } do %>
+    <%= hidden_field_tag :tmdb_id, result[:tmdb_id] %>
+    <%= hidden_field_tag :source, :tmdb %>
+    <%= submit_tag "Add to Topic",
+        class: "rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" %>
+  <% end %>
+</div> 

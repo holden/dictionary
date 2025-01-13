@@ -1,0 +1,15 @@
+<div class="bg-white shadow sm:rounded-lg">
+  <div class="px-4 py-5 sm:p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-base font-semibold leading-6 text-gray-900">
+        Related People
+      </h3>
+    </div>
+
+    <%= turbo_frame_tag "topic_people" do %>
+      <div class="divide-y divide-gray-200">
+        <%= render partial: "topics/person", collection: @topic.people %>
+      </div>
+    <% end %>
+  </div>
+</div> 

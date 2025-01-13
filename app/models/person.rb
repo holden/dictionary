@@ -7,9 +7,12 @@ class Person < ApplicationRecord
   # Associations
   has_many :quotes, foreign_key: :author_id, dependent: :nullify
   has_many :books, foreign_key: :author_id, dependent: :nullify
+  has_and_belongs_to_many :topics
 
   # Validations  
   validates :title, presence: true, uniqueness: true
+  validates :tmdb_id, uniqueness: true, allow_nil: true
+  validates :imdb_id, uniqueness: true, allow_nil: true
 
   # Search configuration
   pg_search_scope :search_by_title,
@@ -20,7 +23,7 @@ class Person < ApplicationRecord
                  }
 
   # Callbacks
-  after_create :ensure_open_library_data
+  after_create :ensure_open_library_data, unless: -> { metadata['tmdb'].present? }
 
   # Display methods
   def display_title
@@ -44,6 +47,10 @@ class Person < ApplicationRecord
     "#{birth_year}-#{death_year}"
   end
 
+  def display_name
+    name
+  end
+
   private
 
   def ensure_open_library_data
@@ -54,9 +61,9 @@ class Person < ApplicationRecord
         open_library_id: author_data[:open_library_id],
         birth_date: author_data[:birth_date],
         death_date: author_data[:death_date],
-        metadata: {
+        metadata: metadata.merge(
           open_library: author_data[:raw_data]
-        }
+        )
       )
     end
   rescue => e

@@ -75,6 +75,13 @@
         <%# Sidebar content %>
         <div>
           <%= render 'quotes', quotes: @quotes %>
+          <%# People %>
+          <%= render "people_section" %>
+
+          <%# Illustrations %>
+          <% if @gifs.present? %>
+            # ...
+          <% end %>
         </div>
       </div>
     </div>
