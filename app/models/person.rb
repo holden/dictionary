@@ -8,6 +8,13 @@ class Person < ApplicationRecord
   has_many :quotes, foreign_key: :author_id, dependent: :nullify
   has_many :books, foreign_key: :author_id, dependent: :nullify
   has_and_belongs_to_many :topics
+  has_many :media_people, dependent: :destroy
+  has_many :media, through: :media_people
+
+  # Scopes for different media types
+  has_many :movies, -> { where(type: 'Movie') }, through: :media_people, source: :media
+  has_many :tv_shows, -> { where(type: 'TVShow') }, through: :media_people, source: :media
+  has_many :artworks, -> { where(type: 'Art') }, through: :media_people, source: :media
 
   # Validations  
   validates :title, presence: true, uniqueness: true
