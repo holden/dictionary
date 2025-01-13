@@ -1,30 +1,32 @@
-<div class="flex items-center justify-between gap-4 py-4">
-  <div class="flex items-center gap-4">
-    <% if media.metadata['poster_path'] %>
-      <%= image_tag media.metadata['poster_path'], 
-          class: "h-16 w-16 rounded object-cover",
-          alt: media.title %>
-    <% end %>
-    
-    <div class="flex-1 min-w-0">
-      <p class="text-sm font-medium text-gray-900">
-        <%= media.title %>
-      </p>
-      <p class="text-sm text-gray-500">
-        <%= media.type %>
-        <% if media.metadata['release_date'] %>
-          • <%= media.metadata['release_date'] %>
-        <% elsif media.metadata['first_air_date'] %>
-          • <%= media.metadata['first_air_date'] %>
-        <% end %>
-      </p>
+<%= turbo_frame_tag dom_id(media) do %>
+  <div class="flex items-center justify-between gap-4 py-4">
+    <div class="flex items-center gap-4">
+      <% if media.metadata['poster_path'] %>
+        <%= image_tag media.metadata['poster_path'], 
+            class: "h-16 w-16 rounded object-cover",
+            alt: media.title %>
+      <% end %>
+      
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-medium text-gray-900">
+          <%= media.title %>
+        </p>
+        <p class="text-sm text-gray-500">
+          <%= media.type %>
+          <% if media.metadata['release_date'] %>
+            • <%= media.metadata['release_date'] %>
+          <% elsif media.metadata['first_air_date'] %>
+            • <%= media.metadata['first_air_date'] %>
+          <% end %>
+        </p>
+      </div>
     </div>
-  </div>
 
-  <%= button_to send("#{@topic.route_key}_medium_path", @topic, media),
-      method: :delete,
-      class: "rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-red-600 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50",
-      data: { turbo_confirm: "Are you sure you want to remove this media?" } do %>
-    Remove
-  <% end %>
-</div> 
+    <%= button_to send("#{@topic.route_key}_medium_path", @topic, media),
+        method: :delete,
+        class: "rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-red-600 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50",
+        data: { turbo_confirm: "Are you sure you want to remove this media?" } do %>
+      Remove
+    <% end %>
+  </div>
+<% end %> 

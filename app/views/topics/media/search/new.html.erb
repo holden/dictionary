@@ -9,7 +9,7 @@
   </div>
 
   <div class="mt-8">
-    <%= form_with url: search_tmdb_concept_media_path(@topic),
+    <%= form_with url: send("search_tmdb_#{@topic.route_key}_media_path", @topic),
                 method: :post,
                 data: { turbo_frame: "search_results" },
                 class: "space-y-6" do |f| %>

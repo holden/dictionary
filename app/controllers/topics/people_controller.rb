@@ -8,28 +8,14 @@ module Topics
     end
 
     def create
-      person_data = TmdbService.new.person_details(params[:tmdb_id])
-      @person = Person.find_or_initialize_by(tmdb_id: person_data[:tmdb_id])
-      
-      @person.assign_attributes(
-        title: person_data[:name],
-        metadata: {
-          tmdb: {
-            profile_path: person_data[:profile_path],
-            known_for_department: person_data[:known_for_department],
-            biography: person_data[:biography],
-            imdb_id: person_data[:imdb_id]
-          }
-        }
-      )
-      
+      @person = Person.find_or_initialize_by(tmdb_id: person_params[:tmdb_id])
+      @person.assign_attributes(person_params)
+
       if @person.save
         @topic.people << @person unless @topic.people.include?(@person)
-        redirect_to send("#{@topic.route_key}_people_path", @topic), 
-          notice: 'Person was successfully added.'
+        redirect_to send("#{@topic.route_key}_people_path", @topic), notice: "#{@person.name} was successfully added."
       else
-        redirect_to search_tmdb_concept_people_path(@topic), 
-          alert: 'Could not add person.'
+        redirect_to send("#{@topic.route_key}_people_path", @topic), alert: "Failed to add person."
       end
     end
 

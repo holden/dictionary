@@ -15,29 +15,9 @@ module Topics
 
       if @medium.save
         @topic.media << @medium unless @topic.media.include?(@medium)
-        respond_to do |format|
-          format.html { redirect_to send("#{@topic.route_key}_media_path", @topic), notice: "#{@medium.title} was successfully added." }
-          format.turbo_stream { 
-            flash.now[:notice] = "#{@medium.title} was successfully added."
-            @media = @topic.media.reload
-            render turbo_stream: [
-              turbo_stream.update("content", template: "topics/media/index"),
-              turbo_stream.update("flash", partial: "shared/flash")
-            ]
-          }
-        end
+        redirect_to send("#{@topic.route_key}_media_path", @topic), notice: "#{@medium.title} was successfully added."
       else
-        respond_to do |format|
-          format.html { redirect_to send("#{@topic.route_key}_media_path", @topic), alert: "Failed to add media." }
-          format.turbo_stream {
-            flash.now[:alert] = "Failed to add media."
-            @media = @topic.media
-            render turbo_stream: [
-              turbo_stream.update("content", template: "topics/media/index"),
-              turbo_stream.update("flash", partial: "shared/flash")
-            ]
-          }
-        end
+        redirect_to send("#{@topic.route_key}_media_path", @topic), alert: "Failed to add media."
       end
     end
 
@@ -47,11 +27,10 @@ module Topics
       
       respond_to do |format|
         format.html { redirect_to send("#{@topic.route_key}_media_path", @topic), notice: "#{@medium.title} was successfully removed." }
-        format.turbo_stream {
+        format.turbo_stream { 
           flash.now[:notice] = "#{@medium.title} was successfully removed."
-          @media = @topic.media.reload
           render turbo_stream: [
-            turbo_stream.update("content", template: "topics/media/index"),
+            turbo_stream.remove(@medium),
             turbo_stream.update("flash", partial: "shared/flash")
           ]
         }

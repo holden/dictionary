@@ -4,7 +4,7 @@
       <h3 class="text-base font-semibold leading-6 text-gray-900">
         People Related to <%= @topic.title.titleize %>
       </h3>
-      <%= link_to search_tmdb_concept_people_path(@topic),
+      <%= link_to send("search_tmdb_#{@topic.route_key}_people_path", @topic),
           class: "inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600",
           data: { turbo_frame: "content" } do %>
         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -15,35 +15,7 @@
     </div>
 
     <div class="divide-y divide-gray-200">
-      <% @people.each do |person| %>
-        <%= turbo_frame_tag dom_id(person) do %>
-          <div class="flex items-center justify-between gap-4 py-4">
-            <div class="flex items-center gap-4">
-              <% if person.metadata.dig('tmdb', 'profile_path') %>
-                <%= image_tag person.metadata['tmdb']['profile_path'], 
-                    class: "h-16 w-16 rounded-full object-cover",
-                    alt: person.title %>
-              <% end %>
-              
-              <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium text-gray-900">
-                  <%= person.title %>
-                </p>
-                <p class="text-sm text-gray-500">
-                  <%= person.metadata.dig('tmdb', 'known_for_department') %>
-                </p>
-              </div>
-            </div>
-
-            <%= button_to send("#{@topic.route_key}_person_path", @topic, person),
-                method: :delete,
-                class: "rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-red-600 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50",
-                data: { turbo_confirm: "Are you sure you want to remove #{person.title}?" } do %>
-              Remove
-            <% end %>
-          </div>
-        <% end %>
-      <% end %>
+      <%= render @people %>
     </div>
   </div>
 </div> 

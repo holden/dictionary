@@ -1,0 +1,27 @@
+<%= turbo_frame_tag dom_id(person) do %>
+  <div class="flex items-center justify-between gap-4 py-4">
+    <div class="flex items-center gap-4">
+      <% if person.metadata.dig('tmdb', 'profile_path') %>
+        <%= image_tag person.metadata['tmdb']['profile_path'], 
+            class: "h-16 w-16 rounded-full object-cover",
+            alt: person.title %>
+      <% end %>
+      
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-medium text-gray-900">
+          <%= person.title %>
+        </p>
+        <p class="text-sm text-gray-500">
+          <%= person.metadata.dig('tmdb', 'known_for_department') %>
+        </p>
+      </div>
+    </div>
+
+    <%= button_to send("#{@topic.route_key}_person_path", @topic, person),
+        method: :delete,
+        class: "rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-red-600 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50",
+        data: { turbo_confirm: "Are you sure you want to remove #{person.title}?" } do %>
+      Remove
+    <% end %>
+  </div>
+<% end %> 

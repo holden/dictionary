@@ -15,7 +15,14 @@ module Topics
         
         respond_to do |format|
           format.turbo_stream
-          format.html { render :new }
+          format.html { 
+            if @results.any?
+              render :new
+            else
+              redirect_to send("#{@topic.route_key}_media_path", @topic), 
+                alert: "No results found for '#{params[:query]}'"
+            end
+          }
         end
       end
     end

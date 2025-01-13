@@ -1,6 +1,8 @@
 module Topics
   module People
     class SearchController < ApplicationController
+      include Topics::TopicFinder
+      
       before_action :authenticate
       before_action :set_topic
       
@@ -13,7 +15,14 @@ module Topics
         
         respond_to do |format|
           format.turbo_stream
-          format.html { render :new }
+          format.html { 
+            if @results.any?
+              render :new
+            else
+              redirect_to send("#{@topic.route_key}_people_path", @topic), 
+                alert: "No results found for '#{params[:query]}'"
+            end
+          }
         end
       end
 
