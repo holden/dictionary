@@ -1,7 +1,11 @@
 <div class="flex items-center justify-between gap-4 py-4">
   <div class="flex items-center gap-4">
-    <% if result[:metadata][:urls][:thumb] %>
-      <%= image_tag result[:metadata][:urls][:thumb], 
+    <% if result.dig(:metadata, :urls, :thumb).present? %>
+      <%= image_tag result.dig(:metadata, :urls, :thumb), 
+          class: "h-16 w-16 rounded object-cover",
+          alt: result[:title] %>
+    <% else %>
+      <%= image_tag 'https://placehold.co/400x600/png?text=No+Image',
           class: "h-16 w-16 rounded object-cover",
           alt: result[:title] %>
     <% end %>
@@ -11,7 +15,7 @@
         <%= result[:title] %>
       </p>
       <p class="text-sm text-gray-500">
-        by <%= result[:metadata][:user][:name] %>
+        by <%= result.dig(:metadata, :user, :name) %>
       </p>
     </div>
   </div>

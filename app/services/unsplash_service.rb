@@ -34,7 +34,13 @@ class UnsplashService
           height: result['height'],
           color: result['color'],
           blur_hash: result['blur_hash'],
-          urls: result['urls'],
+          urls: {
+            raw: result['urls']['raw'],
+            full: result['urls']['full'],
+            regular: result['urls']['regular'],
+            small: result['urls']['small'],
+            thumb: result['urls']['thumb']
+          },
           user: {
             name: result['user']['name'],
             username: result['user']['username'],
