@@ -65,6 +65,8 @@ Rails.application.routes.draw do
             post 'search/tmdb', to: 'media/search#create'
             get 'search/unsplash', to: 'media/unsplash_search#new'
             post 'search/unsplash', to: 'media/unsplash_search#create'
+            get 'search/artsy', to: 'media/artsy_search#new'
+            post 'search/artsy', to: 'media/artsy_search#create'
           end
         end
       end

@@ -1,0 +1,33 @@
+<div class="relative flex items-center space-x-3 rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm hover:border-gray-400">
+  <div class="flex-shrink-0">
+    <% if result[:image_url].present? %>
+      <img class="h-16 w-16 object-cover rounded-lg" src="<%= result[:image_url] %>" alt="">
+    <% end %>
+  </div>
+  <div class="min-w-0 flex-1">
+    <div class="focus:outline-none">
+      <p class="text-sm font-medium text-gray-900"><%= result[:title] %></p>
+      <% if result[:artist].present? %>
+        <p class="text-sm text-gray-500">by <%= result[:artist] %></p>
+      <% end %>
+    </div>
+  </div>
+  <div>
+    <%= button_to send("#{@topic.route_key}_media_path", @topic),
+                  params: { media: {
+                    title: result[:title],
+                    type: 'Art',
+                    artsy_id: result[:artwork_url]&.split('/').last,
+                    poster_url: result[:image_url],
+                    metadata: {
+                      artsy: {
+                        artist: result[:artist],
+                        artwork_url: result[:artwork_url]
+                      }
+                    }
+                  }},
+                  class: "inline-flex items-center rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" do %>
+      Add to Collection
+    <% end %>
+  </div>
+</div> 
