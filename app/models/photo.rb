@@ -6,6 +6,27 @@ class Photo < Media
     Media.model_name
   end
 
+  # Metadata accessors
+  def thumb_url
+    metadata.dig('urls', 'thumb')
+  end
+
+  def full_url
+    metadata.dig('urls', 'full')
+  end
+
+  def photographer_name
+    metadata.dig('user', 'name')
+  end
+
+  def photographer_username
+    metadata.dig('user', 'username')
+  end
+
+  def photographer_url
+    "https://unsplash.com/@#{photographer_username}?utm_source=devils_dictionary&utm_medium=referral"
+  end
+
   # Example of metadata structure:
   # {
   #   description: "A beautiful landscape",
