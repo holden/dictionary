@@ -1,20 +1,15 @@
 class CreateTopicRelationshipsJob < ApplicationJob
   queue_as :default
   
-  def perform(topic_id)
-    topic = Topic.find_by(id: topic_id)
-    return unless topic
-
-    Rails.logger.info "Starting relationship creation for Topic ##{topic_id} (#{topic.title})"
-    
-    begin
-      topic.update_relationships!
-    rescue StandardError => e
-      Rails.logger.error "Failed to create relationships for Topic ##{topic_id}: #{e.message}"
-      Rails.logger.error e.backtrace.join("\n")
-      raise e # Re-raise to trigger job retry
-    end
+  retry_on StandardError, 
+           wait: ->(executions) { [2, 4, 8, 16, 32][executions - 1] || 32 },
+           attempts: 5 do |job, error|
+    Rails.logger.error "Failed to create relationships for Topic ##{job.arguments.first}: #{error.message}"
   end
 
-  retry_on StandardError, wait: :exponentially_longer, attempts: 3
+  def perform(topic_id)
+    topic = Topic.find(topic_id)
+    Rails.logger.info "Starting relationship creation for Topic ##{topic_id} (#{topic.name})"
+    topic.update_relationships!
+  end
 end 

@@ -262,54 +262,54 @@ class Topic < ApplicationRecord
 
   # This is the only method that should handle relationships
   def update_relationships!
-    Rails.logger.tagged("TopicRelationships") do
-      # Get related words from Datamuse
-      related_words = DatamuseService.related_words(title)
-      if related_words.empty?
-        Rails.logger.info "No related words found for '#{title}'"
-        return
+    Rails.logger.info "Creating relationships for '#{name}'"
+    
+    # Get related words from Datamuse
+    related_words = DatamuseService.related_words(title)
+    if related_words.empty?
+      Rails.logger.info "No related words found for '#{title}'"
+      return
+    end
+
+    # Get existing topics that match any of the related words
+    existing_topics = Topic.where(
+      title: related_words.map { |w| w['word'].downcase }
+    ).pluck(:title, :id).to_h { |title, id| [title.downcase, id] }
+
+    Rails.logger.info "Found #{existing_topics.size} matching topics for '#{title}'"
+
+    ActiveRecord::Base.transaction do
+      # Clear existing relationships
+      topic_relationships.destroy_all
+
+      # Find the maximum score for normalization
+      max_score = related_words.map { |w| w['score'] }.max.to_f
+
+      # Create new relationships for existing topics
+      created = 0
+      related_words.each do |word_data|
+        word = word_data['word'].downcase
+        next unless related_topic_id = existing_topics[word]
+        next if related_topic_id == id # Skip self-relationships
+
+        # Normalize score to be between 0 and 1
+        normalized_weight = max_score.zero? ? 0.5 : word_data['score'] / max_score
+
+        TopicRelationship.create!(
+          topic: self,
+          related_topic_id: related_topic_id,
+          relationship_type: 'related',
+          weight: normalized_weight
+        )
+        created += 1
       end
 
-      # Get existing topics that match any of the related words
-      existing_topics = Topic.where(
-        title: related_words.map { |w| w['word'].downcase }
-      ).pluck(:title, :id).to_h { |title, id| [title.downcase, id] }
-
-      Rails.logger.info "Found #{existing_topics.size} matching topics for '#{title}'"
-
-      ActiveRecord::Base.transaction do
-        # Clear existing relationships
-        topic_relationships.destroy_all
-
-        # Find the maximum score for normalization
-        max_score = related_words.map { |w| w['score'] }.max.to_f
-
-        # Create new relationships for existing topics
-        created = 0
-        related_words.each do |word_data|
-          word = word_data['word'].downcase
-          next unless related_topic_id = existing_topics[word]
-          next if related_topic_id == id # Skip self-relationships
-
-          # Normalize score to be between 0 and 1
-          normalized_weight = max_score.zero? ? 0.5 : word_data['score'] / max_score
-
-          TopicRelationship.create!(
-            topic: self,
-            related_topic_id: related_topic_id,
-            relationship_type: 'related',
-            weight: normalized_weight
-          )
-          created += 1
-        end
-
-        Rails.logger.info "Created #{created} relationships for '#{title}'"
-      end
+      Rails.logger.info "Created #{created} relationships for '#{title}'"
     end
   rescue StandardError => e
-    Rails.logger.error "Error creating relationships for '#{title}': #{e.message}"
+    Rails.logger.error "Error creating relationships for '#{name}': #{e.message}"
     Rails.logger.error e.backtrace.join("\n")
-    raise e # Re-raise to allow job retry
+    raise e
   end
 
   # Add new callback for relationship creation
