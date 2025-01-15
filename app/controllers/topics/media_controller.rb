@@ -44,7 +44,7 @@ module Topics
     private
 
     def media_params
-      params.require(:media).permit(:title, :type, :tmdb_id, metadata: {})
+      params.require(:media).permit(:title, :type, :tmdb_id, :unsplash_id, metadata: {})
     end
   end
 end 

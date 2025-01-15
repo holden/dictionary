@@ -1,0 +1,25 @@
+<div class="flex items-center justify-between gap-4 py-4">
+  <div class="flex items-center gap-4">
+    <% if result[:metadata][:urls][:thumb] %>
+      <%= image_tag result[:metadata][:urls][:thumb], 
+          class: "h-16 w-16 rounded object-cover",
+          alt: result[:title] %>
+    <% end %>
+    
+    <div class="flex-1 min-w-0">
+      <p class="text-sm font-medium text-gray-900">
+        <%= result[:title] %>
+      </p>
+      <p class="text-sm text-gray-500">
+        by <%= result[:metadata][:user][:name] %>
+      </p>
+    </div>
+  </div>
+
+  <%= button_to send("#{@topic.route_key}_media_path", @topic),
+      params: { media: result },
+      data: { turbo_frame: "content" },
+      class: "rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-blue-600 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" do %>
+    Add
+  <% end %>
+</div> 
