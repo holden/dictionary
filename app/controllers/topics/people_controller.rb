@@ -30,10 +30,12 @@ module Topics
         respond_to do |format|
           format.html { redirect_to send("#{@topic.route_key}_people_path", @topic), notice: "#{@person.title} was successfully added." }
           format.turbo_stream { 
+            flash.now[:notice] = "#{@person.title} was successfully added."
             @people = @topic.people.order(created_at: :desc)
-            render turbo_stream: turbo_stream.update("content", 
-              template: "topics/people/index"
-            )
+            render turbo_stream: [
+              turbo_stream.update("content", template: "topics/people/index"),
+              turbo_stream.update("flash", partial: "shared/flash")
+            ]
           }
         end
       else
