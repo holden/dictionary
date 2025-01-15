@@ -30,7 +30,7 @@ class Person < ApplicationRecord
                  }
 
   # Callbacks
-  after_create :ensure_open_library_data, unless: -> { metadata['tmdb'].present? }
+  after_create :fetch_open_library_data
 
   # Display methods
   def display_title
@@ -60,20 +60,18 @@ class Person < ApplicationRecord
 
   private
 
-  def ensure_open_library_data
+  def fetch_open_library_data
     return if open_library_id.present?
-    
-    if author_data = OpenLibraryService.search_author(title)
-      update(
-        open_library_id: author_data[:open_library_id],
-        birth_date: author_data[:birth_date],
-        death_date: author_data[:death_date],
-        metadata: metadata.merge(
-          open_library: author_data[:raw_data]
-        )
-      )
+
+    if result = OpenLibraryService.search_author(title)
+      self.open_library_id = result['key']
+      self.metadata = {
+        'open_library' => {
+          'birth_date' => result['birth_date'],
+          'death_date' => result['death_date']
+        }
+      }
+      save!
     end
-  rescue => e
-    Rails.logger.error "Error fetching OpenLibrary data for person #{title}: #{e.message}"
   end
 end 

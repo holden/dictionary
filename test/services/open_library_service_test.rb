@@ -21,8 +21,7 @@ class OpenLibraryServiceTest < ActiveSupport::TestCase
 
   test "searches for multiple authors" do
     VCR.use_cassette("openlibrary_authors_search") do
-      service = OpenLibraryService.new
-      results = service.search_authors("Voltaire")
+      results = OpenLibraryService.search_authors("Voltaire")
       
       assert_not_empty results
       assert_equal "Voltaire", results.first['name']

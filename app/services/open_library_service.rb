@@ -6,9 +6,8 @@ class OpenLibraryService
   include HTTParty
   base_uri 'https://openlibrary.org'
 
-  # New method for searching authors (used by people search)
-  def search_authors(query)
-    response = self.class.get('/search/authors.json', query: { q: query })
+  def self.search_authors(query)
+    response = get('/search/authors.json', query: { q: query })
     
     return [] unless response.success?
 
@@ -26,7 +25,6 @@ class OpenLibraryService
     []
   end
 
-  # Original method for looking up a single author (used by existing code)
   def self.search_author(name)
     response = get('/search/authors.json', query: { q: name })
     return nil unless response.success?
@@ -46,7 +44,6 @@ class OpenLibraryService
     nil
   end
 
-  # Original method for looking up books (used by Book model)
   def self.lookup_book(title, author = nil)
     query = { q: title }
     query[:author] = author if author.present?
