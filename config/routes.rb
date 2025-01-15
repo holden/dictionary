@@ -28,6 +28,12 @@ Rails.application.routes.draw do
   resources :people do
     resources :quotes, only: [:index]
     resources :books, only: [:index]
+    collection do
+      get 'search/tmdb', to: 'people#search_tmdb'
+      get 'search/openlibrary', to: 'people#search_openlibrary'
+      post 'search/tmdb', to: 'people#create'
+      post 'search/openlibrary', to: 'people#create'
+    end
   end
   
   # Remove 'people' from the STI types list
@@ -48,6 +54,8 @@ Rails.application.routes.draw do
           collection do
             get 'search/tmdb', to: 'people/search#new'
             post 'search/tmdb', to: 'people/search#create'
+            get 'search/openlibrary', to: 'people/openlibrary_search#new'
+            post 'search/openlibrary', to: 'people/openlibrary_search#create'
           end
         end
 

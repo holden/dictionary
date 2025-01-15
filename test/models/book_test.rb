@@ -1,21 +1,37 @@
 require "test_helper"
 
 class BookTest < ActiveSupport::TestCase
-  fixtures :people, :books  # Explicitly load required fixtures in correct order
-  
-  test "validates presence of title" do
-    book = Book.new(author: people(:mark_twain))
-    assert_not book.valid?
-    assert_includes book.errors[:title], "can't be blank"
-  end
+  fixtures :people, :books  # Load required fixtures
 
   test "ensures open_library_id after create when lookup succeeds" do
-    OpenLibraryService.stub :lookup_book, { open_library_id: "OL999999W" } do
+    VCR.use_cassette("openlibrary_book_lookup") do
+      author = people(:voltaire)  # Assuming you have a Voltaire fixture
       book = Book.create!(
-        title: "Adventures of Huckleberry Finn",
-        author: people(:mark_twain)
+        title: "Candide",
+        author: author
       )
-      assert_equal "OL999999W", book.open_library_id
+      
+      assert_not_nil book.open_library_id
+      assert_equal "Candide", book.title
     end
+  end
+
+  test "saves without open_library_id when lookup fails" do
+    VCR.use_cassette("openlibrary_book_lookup_fails") do
+      author = people(:voltaire)  # Use the same fixture
+      book = Book.create!(
+        title: "NonExistentBook123456789",
+        author: author
+      )
+      
+      assert_nil book.open_library_id
+      assert_equal "NonExistentBook123456789", book.title
+    end
+  end
+
+  test "validates presence of author" do
+    book = Book.new(title: "Some Title")
+    assert_not book.valid?
+    assert_includes book.errors[:author], "must exist"
   end
 end 

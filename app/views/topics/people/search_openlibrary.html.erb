@@ -1,0 +1,67 @@
+<%= turbo_frame_tag "content" do %>
+  <div class="bg-white shadow sm:rounded-lg">
+    <div class="px-4 py-5 sm:p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-base font-semibold leading-6 text-gray-900">
+          Search OpenLibrary for People
+        </h3>
+      </div>
+
+      <%= form_with url: send("search_openlibrary_#{@topic.route_key}_people_path", @topic),
+          method: :get,
+          class: "space-y-6",
+          data: { turbo_frame: "search_results" } do |f| %>
+        <div class="mt-2 flex rounded-md shadow-sm">
+          <%= f.text_field :query,
+              class: "block w-full rounded-l-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6",
+              placeholder: "Search for authors...",
+              value: params[:query] %>
+          
+          <%= f.submit "Search",
+              class: "relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50" %>
+        </div>
+      <% end %>
+
+      <%= turbo_frame_tag "search_results" do %>
+        <div class="mt-6 divide-y divide-gray-200">
+          <% if @results&.any? %>
+            <% @results.each do |result| %>
+              <%= form_with url: send("search_openlibrary_#{@topic.route_key}_people_path", @topic), method: :post, class: "py-4" do |f| %>
+                <%= f.hidden_field :person, value: {
+                  name: result['name'],
+                  open_library_id: result['key'],
+                  birth_date: result['birth_date'],
+                  death_date: result['death_date']
+                }.to_json %>
+                
+                <div class="flex items-center justify-between">
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900">
+                      <%= result['name'] %>
+                    </p>
+                    <% if result['birth_date'].present? || result['death_date'].present? %>
+                      <p class="text-sm text-gray-500">
+                        <%= [result['birth_date'], result['death_date']].compact.join(' - ') %>
+                      </p>
+                    <% end %>
+                  </div>
+
+                  <%= f.submit "Add",
+                      class: "rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-blue-600 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" %>
+                </div>
+              <% end %>
+            <% end %>
+          <% elsif @results == [] %>
+            <p class="text-sm text-gray-500 py-4">
+              No results found
+            </p>
+          <% else %>
+            <p class="text-sm text-gray-500 py-4">
+              Enter a search term to find authors...
+            </p>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %> 

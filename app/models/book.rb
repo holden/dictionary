@@ -9,10 +9,7 @@ class Book < ApplicationRecord
   private
 
   def ensure_open_library_id
-    return if open_library_id.present?
-    
-    if book = OpenLibraryService.lookup_book(title, author&.title)
-      update_column(:open_library_id, book[:open_library_id])
-    end
+    result = OpenLibraryService.lookup_book(title, author.title)
+    update(open_library_id: result['key']&.gsub('/works/', '')) if result
   end
 end 

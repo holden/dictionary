@@ -1,0 +1,341 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://openlibrary.org/search/authors.json?q=Voltaire
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.18.0 (Ubuntu)
+      Date:
+      - Wed, 15 Jan 2025 15:36:53 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Method:
+      - GET, OPTIONS
+      Access-Control-Max-Age:
+      - '86400'
+      X-Ol-Stats:
+      - '"SR 1 1.685 TT 0 1.690"'
+      Referrer-Policy:
+      - no-referrer-when-downgrade
+    body:
+      encoding: UTF-8
+      string: '{"numFound": 158, "start": 0, "numFoundExact": true, "docs": [{"alternate_names":
+        ["F. M. de Voltaire", "J. F. M. de Voltaire", "Jean Francois Marie Arouet
+        de Voltaire", "Jean Francois-Mari Arouet de Voltaire", "Voltaire Voltaire",
+        "voltaire candide", "De Voltaire", "Voltaire Fran\u00e7ois-Marie Arouet",
+        "Voltaire/ de Lisle", "VOLTAIRE", "1694-1778 Voltaire", "Nom de plume VOLTAIRE",
+        "Voltaire (Francois Marie Arouet Voltaire)", "\u0412\u043e\u043b\u044c\u0442\u0435\u0440",
+        "Francois Marie Arouet De Voltaire", "Francois Marie Arouet de Voltaire",
+        "Fran\u00e7ois Marie Arouet de Voltaire", "Francois Marie Arouet Voltaire",
+        "Fran\u00e7ois-Marie Arouet de Voltaire", "Fran\u00e7ois-Marie AROUET", "Jean
+        Francois Marie Arouet De Voltaire", "Fran\u00e7ois-Marie Arouet Voltaire",
+        "Fran\u00e7ois Marie Arouet", "Francois Marie Arouet", "Francois-Marie Arouet",
+        "Fran\u00e7ois-Marie Arouet", "Fran\u00e7ois (Francois) Marie Arouet", "Voltaire
+        (Francois Marie Arouet)", "Fran\u00e7ois Marie Arouet Voltaire", "Fran\u00e7ois
+        Marie de Voltaire", "Francois Marie Arouet (Voltaire)", "Voltaire 1694-1778",
+        "Francois-Marie Arouet (Voltaire)", "Fran\u00e7ois-Marie Voltaire", "Frangois
+        Marie Voltaire", "M. Voltaire", "Voltaire (Fran\u00e7ois Marie Arouet)", "Autor
+        Voltaire"], "birth_date": "21 November 1694", "death_date": "30 May 1778",
+        "key": "OL32293A", "name": "Voltaire", "top_subjects": ["History", "Voltaire
+        (1694-1778)", "France", "18th century", "Philosophy", "Voltaire, 1694-1778",
+        "Early works to 1800", "World history", "French literature, history and criticism,
+        18th century", "Louis XIV, 1643-1715"], "top_work": "Candide", "type": "author",
+        "work_count": 3078, "ratings_average": 3.9135802, "ratings_sortable": 3.691644,
+        "ratings_count": 81, "ratings_count_1": 0, "ratings_count_2": 6, "ratings_count_3":
+        18, "ratings_count_4": 34, "ratings_count_5": 23, "want_to_read_count": 481,
+        "already_read_count": 139, "currently_reading_count": 29, "readinglog_count":
+        649, "_version_": 1821008574208278531}, {"key": "OL2798659A", "name": "Voltaire
+        Foundation", "top_subjects": ["18th century", "History", "Voltaire (1694-1778)",
+        "History and criticism", "France", "Voltaire, 1694-1778", "Intellectual life",
+        "French literature", "France, intellectual life", "Criticism and interpretation"],
+        "top_work": "Correspondance de Madame de Graffigny", "type": "author", "work_count":
+        38, "_version_": 1796008826707640324}, {"key": "OL864463A", "name": "Voltaire
+        Schilling", "top_subjects": ["United States", "Latin America", "History",
+        "Foreign relations", "Rio Grande do Sul (Brazil)", "Rio Grande do Sul", "Revolution,
+        1775-1783", "Monroe doctrine", "Modern History", "Germany"], "top_work": "EUA
+        x Ame\u0301rica Latina", "type": "author", "work_count": 17, "_version_":
+        1796089571043180546}, {"key": "OL9699680A", "name": "Haydn Trevor Voltaire
+        Foundation", "top_subjects": ["French literature, history and criticism, 18th
+        century", "Voltaire, 1694-1778", "Rousseau, jean-jacques, 1712-1778", "Philosophers,
+        correspondence", "Marivaux, pierre carlet de chamblain de, 1688-1763", "Didactic
+        literature, history and criticism", "Criticism and interpretation", "Authors,
+        correspondence"], "top_work": "De L''esprit des Loix : Manuscrits", "type":
+        "author", "work_count": 14, "_version_": 1796104968518762502}, {"key": "OL9112479A",
+        "name": "Marie Andrine Voltaire", "top_work": "Journey to My Destiny", "type":
+        "author", "work_count": 13, "_version_": 1796097310647648256}, {"key": "OL9824835A",
+        "name": "Ian Voltaire", "top_work": "Arthur Stone", "type": "author", "work_count":
+        9, "_version_": 1796106261476933643}, {"key": "OL9800009A", "name": "Voltaire
+        Rumbaoa", "top_work": "Am I small? Lau be maraki a? : English-Hiri Motu/Police
+        Motu/Pidgin Motu", "type": "author", "work_count": 8, "_version_": 1796106731829329928},
+        {"key": "OL13550195A", "name": "1694-1778 Voltaire", "top_work": "Henriade",
+        "type": "author", "work_count": 8, "_version_": 1795988668664512527}, {"key":
+        "OL3263300A", "name": "M. De Voltaire", "top_work": "Philosophical Dictionary",
+        "type": "author", "work_count": 8, "_version_": 1796015169228242944}, {"key":
+        "OL10537182A", "name": "Cesare Voltaire", "top_work": "isle des Esclaves",
+        "type": "author", "work_count": 7, "_version_": 1795944193660551177}, {"key":
+        "OL10340042A", "name": "Aurelio Voltaire", "top_subjects": ["Fiction, horror"],
+        "top_work": "Call of the Jersey Devil", "type": "author", "work_count": 6,
+        "_version_": 1795940735547080710}, {"key": "OL2984125A", "name": "Simone Voltaire",
+        "top_subjects": ["Fiction, thrillers, general", "Fiction, fantasy, general",
+        "Fiction, action & adventure"], "top_work": "Sarcaun", "type": "author", "work_count":
+        6, "_version_": 1796011820595544068}, {"key": "OL7137238A", "name": "Frantz
+        Voltaire", "top_subjects": ["History", "Slavery", "Canada", "Blacks", "Politics
+        and government", "Noirs canadiens", "Noirs", "Histoire", "Haiti", "Esclavage"],
+        "top_work": "A brief history of the black communities in Canada", "type":
+        "author", "work_count": 6, "_version_": 1796069380076863498}, {"birth_date":
+        "1967", "key": "OL1427069A", "name": "Voltaire", "top_subjects": ["Pine Barrens
+        (N.J.)", "New jersey, fiction", "Interior decoration", "Humor, general", "Humor",
+        "Hell", "Goth culture (Subculture)", "Good and evil, fiction", "Good and evil",
+        "Fiction"], "top_work": "Call of the Jersey devil", "type": "author", "work_count":
+        4, "_version_": 1795990467519709196}, {"key": "OL2126382A", "name": "Voltaire
+        Lewis", "top_work": "Godiva Marlow", "type": "author", "work_count": 4, "_version_":
+        1796000114482872320}, {"key": "OL7482904A", "name": "Francois Voltaire", "top_subjects":
+        ["Continental european fiction (fictional works by one author)"], "top_work":
+        "Micromegas and Other Short Fictions", "type": "author", "work_count": 4,
+        "_version_": 1796075720123875330}, {"birth_date": "1964", "key": "OL862395A",
+        "name": "Jean Tolly Voltaire", "top_subjects": ["Politics and government",
+        "Haiti", "1986-", "Politicians", "Biography"], "top_work": "La ve\u0301rite\u0301
+        politique", "type": "author", "work_count": 4, "_version_": 1796091274325917698},
+        {"key": "OL5781315A", "name": "Soci\u00e9t\u00e9 Voltaire", "top_work": "Cahiers
+        Voltaire, revue annuelle de la Soci\u00e9t\u00e9 Voltaire", "type": "author",
+        "work_count": 3, "_version_": 1796051457656487942}, {"birth_date": "1912",
+        "death_date": "2006", "key": "OL6760401A", "name": "Voltaire Fraga", "top_subjects":
+        ["Voltaire Fraga (1912-2006)", "S\u00e3o Paulo (Brazil : State). Pinacoteca
+        do Estado", "S\u00e3o Paulo (Brazil : State)", "Photography", "Exhibitions",
+        "Brazil", "Artistic Photography", "20th century"], "top_work": "Voltaire Fraga",
+        "type": "author", "work_count": 3, "_version_": 1796065752889950222}, {"key":
+        "OL9773670A", "name": "J. Voltaire", "top_subjects": ["Fiction, erotica, general"],
+        "top_work": "Little Raven One", "type": "author", "work_count": 3, "_version_":
+        1796106790657589258}, {"key": "OL9270354A", "name": "Oliver Herbrand Gordon
+        Voltaire", "top_work": "The Works of Voltaire", "type": "author", "work_count":
+        4, "_version_": 1796101229933232137}, {"key": "OL12329782A", "name": "Voltaire
+        Irving Babbitt", "top_work": "Zadig, and Other Stories", "type": "author",
+        "work_count": 3, "_version_": 1795971069682647041}, {"key": "OL10255672A",
+        "name": "Cabaret Voltaire", "top_subjects": ["History", "Exhibitions", "Dadaism",
+        "Cabaret Voltaire (Zurich, Switzerland)", "Art, swiss"], "top_work": "Genesis
+        Dada", "type": "author", "work_count": 2, "_version_": 1795938107893219340},
+        {"key": "OL11079934A", "name": "Robert Voltaire", "top_work": "Photography
+        Marketing Masterclass", "type": "author", "work_count": 2, "_version_": 1795950736221143048},
+        {"key": "OL11071858A", "name": "Marie Voltaire", "top_work": "Viaje a Mi Destino",
+        "type": "author", "work_count": 2, "_version_": 1795950998844342278}, {"key":
+        "OL10949691A", "name": "Boulevard Voltaire", "top_work": "Douce France", "type":
+        "author", "work_count": 2, "_version_": 1795947329695514628}, {"key": "OL10935029A",
+        "name": "Nephtalie Voltaire", "top_work": "Mis Hijos en Las Redes Sociales",
+        "type": "author", "work_count": 2, "_version_": 1795948325527093278}, {"key":
+        "OL1870698A", "name": "Amy Voltaire", "top_work": "Candida", "type": "author",
+        "work_count": 2, "_version_": 1795996880509861894}, {"key": "OL13030542A",
+        "name": "Voltaire Oyzon", "top_subjects": ["Education", "Children''s fiction"],
+        "top_work": "Sandangaw", "type": "author", "work_count": 2, "_version_": 1795981334710059009},
+        {"key": "OL12488676A", "name": "Voltaire / Hegel", "top_work": "Philosophical
+        Dictionary, Selections / Philosophy of History, Introduction (The Great Books,
+        Sixth Year, Volume 6)", "type": "author", "work_count": 2, "_version_": 1795974323005030403},
+        {"birth_date": "1950", "key": "OL1256457A", "name": "Karl Voltaire", "top_work":
+        "Two essays in stochastic capital theory", "type": "author", "work_count":
+        2, "_version_": 1795974991675654155}, {"key": "OL11287297A", "name": "Vaudevillian
+        Voltaire", "top_work": "Dead by Midnight", "type": "author", "work_count":
+        2, "_version_": 1795953242764476416}, {"key": "OL5012570A", "name": "Voltaire
+        Molesworth", "top_subjects": ["Logic"], "top_work": "Landmarks in logic",
+        "type": "author", "work_count": 2, "_version_": 1796039515427569664}, {"key":
+        "OL6581763A", "name": "Voltaire Gungab", "top_subjects": ["Tagalog language",
+        "Readers", "Children''s stories, Tagalog"], "top_work": "Sining ni Bayani
+        =", "type": "author", "work_count": 2, "_version_": 1796062786204205063},
+        {"key": "OL7754899A", "name": "Lex Voltaire", "top_work": "How Republicans
+        Can Legally Pay No Taxes, Change America, And Save The World.", "type": "author",
+        "work_count": 2, "_version_": 1796080345484886020}, {"key": "OL4197565A",
+        "name": "Diderot Voltaire", "top_work": "Obras Escogidas Voltaire, Diderot",
+        "type": "author", "work_count": 2, "_version_": 1796029223361576967}, {"key":
+        "OL3977640A", "name": "Voltaire /Dominique", "top_work": "Oedipe. suivi de
+        oedipe travesti (parodie)", "type": "author", "work_count": 2, "_version_":
+        1796025973910536195}, {"key": "OL14715811A", "name": "Voltaire Voltaire",
+        "type": "author", "work_count": 0, "ratings_average": 0.0, "ratings_sortable":
+        2.047372, "ratings_count": 0, "ratings_count_1": 0, "ratings_count_2": 0,
+        "ratings_count_3": 0, "ratings_count_4": 0, "ratings_count_5": 0, "want_to_read_count":
+        0, "already_read_count": 0, "currently_reading_count": 0, "readinglog_count":
+        0, "_version_": 1812092687725101056}, {"key": "OL13566405A", "name": "1694-1778
+        Correspondence Voltaire", "top_work": "Unpublished Correspondence of Madame
+        du Deffand : With d''Alembert, Montesquieu, the President H\u00e9nault, the
+        Duchess du Maine, Mesdames de Staal, de Choiseul, the Marquis d''Argens, the
+        Chevalier d''Aydie, &C. : Followed by the Letters of Voltaire To", "type":
+        "author", "work_count": 3, "_version_": 1795988036241063940}, {"key": "OL11424593A",
+        "name": "Voltaire, Gambacorti, Chiara", "top_work": "La biblioth\u00e8que
+        id\u00e9ale des 50 ans GF, Tome 18", "type": "author", "work_count": 2, "_version_":
+        1795955702652469251}, {"key": "OL11391572A", "name": "Marie A. Voltaire",
+        "top_work": "Duped", "type": "author", "work_count": 2, "_version_": 1795956699030355979},
+        {"key": "OL10492972A", "name": "Junia Voltaire Dumesle", "top_subjects": ["Spirituality",
+        "Religion"], "top_work": "Survival", "type": "author", "work_count": 2, "_version_":
+        1795942334671618053}, {"key": "OL2015277A", "name": "Enrique Voltaire Garcia",
+        "top_subjects": ["United States", "Philippines", "Foreign relations", "American
+        Military bases"], "top_work": "U.S. military bases and Philippine-American
+        relations", "type": "author", "work_count": 2, "_version_": 1796000373565030408},
+        {"key": "OL182690A", "name": "Pierre-Andre\u0301 Voltaire", "top_work": "Le
+        dernier boat-people", "type": "author", "work_count": 2, "_version_": 1795995430686818307},
+        {"key": "OL13633614A", "name": "Voltaire Foundation Staff", "top_subjects":
+        ["Romance literature"], "top_work": "Uvres Compl\u00e8tes de Montesquieu",
+        "type": "author", "work_count": 2, "_version_": 1795990217642999811}, {"key":
+        "OL12804475A", "name": "Voltaire, Faure, Elsa", "top_work": "Microm\u00e9gas",
+        "type": "author", "work_count": 2, "_version_": 1795979604916174852}, {"key":
+        "OL12199126A", "name": "Voltaire Ren\u00e9 Pomeau", "top_work": "Voltaire.
+        Romans et contes", "type": "author", "work_count": 2, "_version_": 1795968401523343365},
+        {"key": "OL12208259A", "name": "Voltaire, Brenner, Jacques", "top_work": "m\u00e9moires
+        pour servir \u00e0 la vie de monsieur de voltaire", "type": "author", "work_count":
+        2, "_version_": 1795968418395979785}, {"key": "OL13594678A", "name": "M. de
+        VOLTAIRE", "top_work": "M\u00e9moires pour servir \u00e0 la vie.", "type":
+        "author", "work_count": 2, "_version_": 1795988315482095626}, {"key": "OL12985094A",
+        "name": "Voltaire, Komroff, Manuel", "top_work": "The romances of Voltaire",
+        "type": "author", "work_count": 2, "_version_": 1795981423993159684}, {"key":
+        "OL12514754A", "name": "Voltaire & Ira Wade", "top_work": "Voltaire''s Micromegas",
+        "type": "author", "work_count": 2, "_version_": 1795973631956746253}, {"key":
+        "OL11781037A", "name": "Voltaire J. Veneracion", "top_subjects": ["Social
+        responsibility of business", "Philippines", "Non-governmental organizations",
+        "International business enterprises", "Human rights", "Corporate governance"],
+        "top_work": "People and profits", "type": "author", "work_count": 2, "_version_":
+        1795960720543711246}, {"birth_date": "1955", "key": "OL12043739A", "name":
+        "Mich\u00e8le Voltaire Marcelin", "top_work": "La d\u00e9senchant\u00e9e",
+        "type": "author", "work_count": 2, "_version_": 1795965503943999489}, {"key":
+        "OL3913233A", "name": "Voltaire+Plagnol-Die", "top_work": "Profil D''Une Oeuvre",
+        "type": "author", "work_count": 2, "_version_": 1796024378070138880}, {"key":
+        "OL8559421A", "name": "Voltaire Medina Orellana", "top_subjects": ["Travel",
+        "Social life and customs", "Manners and customs", "History", "Description
+        and travel"], "top_work": "Cr\u00f3nicas de Machala", "type": "author", "work_count":
+        2, "_version_": 1796089279821119490}, {"birth_date": "1842", "key": "OL7187088A",
+        "name": "Voltaire P Twombly", "top_subjects": ["1862 Fort Donelson, Tennessee,
+        Battle of"], "top_work": "The Second Iowa Infantry at Fort Donelson, February
+        15, 1862", "type": "author", "work_count": 2, "_version_": 1796072446102601737},
+        {"key": "OL6777742A", "name": "Voltaire Q. Oyzon", "top_work": "An maupay
+        ha mga Waray ug iba pa nga mga siday", "type": "author", "work_count": 2,
+        "_version_": 1796065522605883400}, {"birth_date": "1943", "key": "OL7400192A",
+        "name": "Voltaire Medina Orellana", "top_work": "\u00bfPor qu\u00e9 Daniel
+        y no Gardel?", "type": "author", "work_count": 2, "_version_": 1796074453323481097},
+        {"key": "OL644470A", "name": "Voltaire Giavarina Marensi", "top_subjects":
+        ["Insurance law", "Cases", "Brazil"], "top_work": "O seguro no direito brasileiro",
+        "type": "author", "work_count": 2, "_version_": 1796058673721638920}, {"alternate_names":
+        ["Voltaire"], "key": "OL7625192A", "name": "J.F.M.A. de Voltaire", "type":
+        "author", "work_count": 0, "_version_": 1796077216900055040}, {"key": "OL13497198A",
+        "name": "Voltaire", "type": "author", "work_count": 0, "_version_": 1795989030320472069},
+        {"key": "OL13497747A", "name": "Voltaire", "type": "author", "work_count":
+        0, "_version_": 1795989261588103169}, {"key": "OL12189892A", "name": "Voltaire",
+        "type": "author", "work_count": 0, "_version_": 1795968359712423936}, {"key":
+        "OL6671138A", "name": "Voltaire", "type": "author", "work_count": 0, "_version_":
+        1796063395303129096}, {"key": "OL7625191A", "name": "Voltaire", "type": "author",
+        "work_count": 0, "_version_": 1796077216899006469}, {"key": "OL7463764A",
+        "name": "Voltaire", "type": "author", "work_count": 0, "_version_": 1796074182621003784},
+        {"key": "OL4352329A", "name": "voltaire.", "type": "author", "work_count":
+        0, "_version_": 1796028466612666377}, {"key": "OL12337150A", "name": "Voltaire
+        Jean-Antoine-Nicola Pascal", "top_work": "Pens\u00e9es de Blaise Pascal",
+        "type": "author", "work_count": 3, "_version_": 1795970589084614662}, {"key":
+        "OL331198A", "name": "Colloque Voltaire (1995 Nice, France)", "top_subjects":
+        ["Voltaire (1694-1778)", "Philosophy", "French", "Dictionaries", "Congresses"],
+        "top_work": "Voltaire et le Dictionnaire philosophique", "type": "author",
+        "work_count": 3, "_version_": 1796017295899754512}, {"key": "OL13582218A",
+        "name": "Voltaire 1694-1778 Ingenu", "top_work": "Huron : Com\u00e9die en
+        Deux Actes, et en Vers, M\u00eal\u00e9e d''ariettes", "type": "author", "work_count":
+        2, "_version_": 1795989650059296776}, {"key": "OL1988823A", "name": "Jean
+        Paul Voltaire Allou", "top_work": "Un C\u0153ur sur le fil d''une plume",
+        "type": "author", "work_count": 2, "_version_": 1795998873760563209}, {"key":
+        "OL12774971A", "name": "J. I. Voltaire; Rodale", "top_work": "Voltaire", "type":
+        "author", "work_count": 2, "_version_": 1795977318468943873}, {"key": "OL12766924A",
+        "name": "Morris [Ed. ] Voltaire; Bishop", "top_work": "Candide and Other Philosophical
+        Tales", "type": "author", "work_count": 2, "_version_": 1795977536347308043},
+        {"key": "OL13539425A", "name": "1694-1778 Author Voltaire", "top_work": "Essay
+        on Crimes and Punishments : Translated from the Italian", "type": "author",
+        "work_count": 2, "_version_": 1795988205314506752}, {"key": "OL11606116A",
+        "name": "Gallimard Folio edition Voltaire", "top_work": "Candide Ou L''Optimisme
+        (French Edition)", "type": "author", "work_count": 2, "_version_": 1795959900751265802},
+        {"key": "OL11801188A", "name": "I. A. N. VOLTAIRE", "top_work": "Admiral James
+        Rothchild", "type": "author", "work_count": 2, "_version_": 1795961250039988233},
+        {"key": "OL8633412A", "name": "Voltaire de Freitas Michel", "top_subjects":
+        ["Legal status, laws", "Land tenure", "Indigenous peoples", "Indians of North
+        America", "Human rights", "Canada", "Brazil", "Aboriginal Australians"], "top_work":
+        "Direitos ancestrais", "type": "author", "work_count": 2, "_version_": 1796091300674535427},
+        {"key": "OL9016833A", "name": "Institut et mus\u00e9e Voltaire", "top_subjects":
+        ["Voltaire (1694-1778)", "Knowledge", "In literature", "Exhibitions", "China"],
+        "top_work": "Voltaire et la Chine", "type": "author", "work_count": 2, "_version_":
+        1796098262814425095}, {"key": "OL9299748A", "name": "Alucard Caspian Voltaire
+        Tepes", "top_work": "Vision Of Rainbows", "type": "author", "work_count":
+        2, "_version_": 1796099503487451137}, {"key": "OL1678776A", "name": "Internationales
+        Kolloquium Voltaire und Deutschland Mannheim 1978.", "top_subjects": ["Voltaire
+        (1694-1778)", "Intellectual life", "Germany in literature", "Germany", "Enlightenment",
+        "Congresses", "18th century"], "top_work": "Voltaire und Deutschland", "type":
+        "author", "work_count": 3, "_version_": 1795995256639979523}, {"key": "OL11444833A",
+        "name": "Zola, Emile, Voltaire, Hugo, Victor", "top_work": "\"J''accuse\"
+        et autres textes citoyens (Petits Classiques Larousse) (French Edition)",
+        "type": "author", "work_count": 2, "_version_": 1795956287497830408}, {"key":
+        "OL10911553A", "name": "Jean Meslier Jean Meslier Voltaire", "top_work": "Testament
+        de Meslier; Jean Meslier, Voltaire", "type": "author", "work_count": 2, "_version_":
+        1795949235415285765}, {"key": "OL12806088A", "name": "Saint-Lambert, Voltaire,
+        Diderot, Denis", "top_work": "Trois contes philosophiques", "type": "author",
+        "work_count": 2, "_version_": 1795977812506574852}, {"key": "OL12262189A",
+        "name": "Raymond Voltaire (1694-1778). Naves", "top_work": "Lettres philosophiques,
+        ou Lettres anglaises", "type": "author", "work_count": 2, "_version_": 1795967970577481738},
+        {"key": "OL13594110A", "name": "Voltaire  (translated By Richard aldington)",
+        "top_work": "Candide and Other Romances", "type": "author", "work_count":
+        2, "_version_": 1795988074088366089}, {"key": "OL11489258A", "name": "The
+        Living Thoughts of Voltaire", "top_work": "Andre Maurois", "type": "author",
+        "work_count": 2, "_version_": 1795958179512713217}, {"key": "OL11713210A",
+        "name": "Donald M. (trans.) Voltaire; Frame", "top_work": "Voltaire''s Candide
+        Zadig and Selected Stories", "type": "author", "work_count": 2, "_version_":
+        1795961891527327749}, {"key": "OL12302886A", "name": "Cyrano de Bergerac and
+        Voltaire", "top_work": "Three Philosophical Voyages : Cyrano De Bergerac :
+        Les Etats Et Empires De La Lune ; Voltaire", "type": "author", "work_count":
+        2, "_version_": 1795971193138839562}, {"key": "OL12266634A", "name": "Louis
+        Voltaire (1694-1778) ; Gielly", "top_work": "Voltaire", "type": "author",
+        "work_count": 2, "_version_": 1795969235174817792}, {"key": "OL6309936A",
+        "name": "Voltaire Jorge Baptista da Piedade", "top_subjects": ["History",
+        "Coimbra (Portugal)"], "top_work": "Hist\u00f3ria da cidade de Coimbra", "type":
+        "author", "work_count": 2, "_version_": 1796059890943262724}, {"key": "OL7103585A",
+        "name": "Platone-Erasmo-Voltaire- Clausewitz-Thoreau", "top_work": "Classici
+        del pensiero", "type": "author", "work_count": 2, "_version_": 1796070126387200003},
+        {"key": "OL2659763A", "name": "FRANCOIS VOLTAIRE", "type": "author", "work_count":
+        0, "_version_": 1796006506504650762}, {"key": "OL7625207A", "name": "Frann\u00e7ois
+        Voltaire", "type": "author", "work_count": 0, "_version_": 1796077216900055051},
+        {"key": "OL4496539A", "name": "Voltaire Foundation.", "type": "author", "work_count":
+        0, "_version_": 1796030080043974665}, {"key": "OL9866491A", "name": "John
+        Voltaire", "type": "author", "work_count": 0, "_version_": 1796107687398735874},
+        {"key": "OL14269719A", "name": "Siderico Voltaire", "type": "author", "work_count":
+        0, "ratings_average": 0.0, "ratings_sortable": 2.047372, "ratings_count":
+        0, "ratings_count_1": 0, "ratings_count_2": 0, "ratings_count_3": 0, "ratings_count_4":
+        0, "ratings_count_5": 0, "want_to_read_count": 0, "already_read_count": 0,
+        "currently_reading_count": 0, "readinglog_count": 0, "_version_": 1810543844208410624},
+        {"key": "OL14700099A", "name": "Virgil Voltaire", "type": "author", "work_count":
+        0, "ratings_average": 0.0, "ratings_sortable": 2.047372, "ratings_count":
+        0, "ratings_count_1": 0, "ratings_count_2": 0, "ratings_count_3": 0, "ratings_count_4":
+        0, "ratings_count_5": 0, "want_to_read_count": 0, "already_read_count": 0,
+        "currently_reading_count": 0, "readinglog_count": 0, "_version_": 1812000620461162500},
+        {"key": "OL14363216A", "name": "Alena Voltaire", "type": "author", "work_count":
+        0, "ratings_average": 0.0, "ratings_sortable": 2.047372, "ratings_count":
+        0, "ratings_count_1": 0, "ratings_count_2": 0, "ratings_count_3": 0, "ratings_count_4":
+        0, "ratings_count_5": 0, "want_to_read_count": 0, "already_read_count": 0,
+        "currently_reading_count": 0, "readinglog_count": 0, "_version_": 1810761562518978562},
+        {"key": "OL14424857A", "name": "Enrique Voltaire", "type": "author", "work_count":
+        0, "ratings_average": 0.0, "ratings_sortable": 2.047372, "ratings_count":
+        0, "ratings_count_1": 0, "ratings_count_2": 0, "ratings_count_3": 0, "ratings_count_4":
+        0, "ratings_count_5": 0, "want_to_read_count": 0, "already_read_count": 0,
+        "currently_reading_count": 0, "readinglog_count": 0, "_version_": 1810915205991890944},
+        {"key": "OL14531049A", "name": "Francisco Voltaire", "type": "author", "work_count":
+        0, "ratings_average": 0.0, "ratings_sortable": 2.047372, "ratings_count":
+        0, "ratings_count_1": 0, "ratings_count_2": 0, "ratings_count_3": 0, "ratings_count_4":
+        0, "ratings_count_5": 0, "want_to_read_count": 0, "already_read_count": 0,
+        "currently_reading_count": 0, "readinglog_count": 0, "_version_": 1811271673469468672}]}'
+  recorded_at: Wed, 15 Jan 2025 15:36:53 GMT
+recorded_with: VCR 6.3.1

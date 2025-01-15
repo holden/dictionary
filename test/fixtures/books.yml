@@ -11,3 +11,8 @@ two:
 adventures_of_huckleberry_finn:
   title: "Adventures of Huckleberry Finn"
   author: mark_twain 
+
+candide:
+  title: Candide
+  author: voltaire
+  open_library_id: OL123456W 

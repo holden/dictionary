@@ -59,6 +59,14 @@ module Topics
       end
     end
 
+    def search_openlibrary
+      if params[:query].present?
+        @results = OpenLibraryService.new.search_authors(params[:query])
+      end
+      
+      render :search_openlibrary
+    end
+
     private
 
     def set_topic

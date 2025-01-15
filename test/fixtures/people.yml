@@ -14,4 +14,13 @@ samuel_johnson:
   title: "Samuel Johnson"
   slug: "samuel-johnson"
   open_library_id: "OL23456"
-  metadata: {} 
+  metadata: {}
+
+voltaire:
+  title: Voltaire
+  slug: voltaire
+  open_library_id: OL32293A
+  metadata:
+    openlibrary:
+      birth_date: "21 November 1694"
+      death_date: "30 May 1778" 
