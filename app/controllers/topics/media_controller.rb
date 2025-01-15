@@ -10,7 +10,11 @@ module Topics
     end
 
     def create
-      @medium = ::Media.find_or_initialize_by(tmdb_id: media_params[:tmdb_id])
+      @medium = if media_params[:type] == 'Photo'
+        Photo.find_or_initialize_by(unsplash_id: media_params[:unsplash_id])
+      else
+        Movie.find_or_initialize_by(tmdb_id: media_params[:tmdb_id])
+      end
       @medium.assign_attributes(media_params)
 
       respond_to do |format|

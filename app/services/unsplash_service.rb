@@ -35,16 +35,16 @@ class UnsplashService
           color: result['color'],
           blur_hash: result['blur_hash'],
           urls: {
-            raw: result['urls']['raw'],
-            full: result['urls']['full'],
-            regular: result['urls']['regular'],
-            small: result['urls']['small'],
-            thumb: result['urls']['thumb']
+            raw: result.dig('urls', 'raw'),
+            full: result.dig('urls', 'full'),
+            regular: result.dig('urls', 'regular'),
+            small: result.dig('urls', 'small'),
+            thumb: result.dig('urls', 'thumb')
           },
           user: {
-            name: result['user']['name'],
-            username: result['user']['username'],
-            portfolio_url: result['user']['portfolio_url']
+            name: result.dig('user', 'name'),
+            username: result.dig('user', 'username'),
+            portfolio_url: result.dig('user', 'portfolio_url')
           }
         }
       }
