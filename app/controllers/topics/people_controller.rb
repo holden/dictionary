@@ -9,13 +9,35 @@ module Topics
 
     def create
       @person = Person.find_or_initialize_by(tmdb_id: person_params[:tmdb_id])
-      @person.assign_attributes(person_params)
+      
+      # Map TMDB attributes to our model's attributes
+      @person.assign_attributes({
+        title: person_params[:name],
+        tmdb_id: person_params[:tmdb_id],
+        metadata: {
+          tmdb: {
+            known_for_department: person_params[:known_for_department],
+            popularity: person_params[:popularity],
+            profile_path: person_params[:profile_path]
+          }
+        }
+      })
 
       if @person.save
+        @topic = find_topic
         @topic.people << @person unless @topic.people.include?(@person)
-        redirect_to send("#{@topic.route_key}_people_path", @topic), notice: "#{@person.name} was successfully added."
+        
+        respond_to do |format|
+          format.html { redirect_to send("#{@topic.route_key}_people_path", @topic), notice: "#{@person.title} was successfully added." }
+          format.turbo_stream { 
+            @people = @topic.people.order(created_at: :desc)
+            render turbo_stream: turbo_stream.update("content", 
+              template: "topics/people/index"
+            )
+          }
+        end
       else
-        redirect_to send("#{@topic.route_key}_people_path", @topic), alert: "Failed to add person."
+        render :new, status: :unprocessable_entity
       end
     end
 
@@ -54,6 +76,22 @@ module Topics
       unless @topic.type.downcase == params[:type].downcase
         redirect_to root_path, alert: "Topic not found"
       end
+    end
+
+    def person_params
+      params.require(:person).permit(
+        :name, 
+        :tmdb_id, 
+        :known_for_department, 
+        :popularity, 
+        :profile_path
+      )
+    end
+
+    def find_topic
+      param_key = params[:type].underscore
+      param_value = params["#{param_key}_id"]
+      param_key.classify.constantize.find_by!(slug: param_value)
     end
   end
 end 

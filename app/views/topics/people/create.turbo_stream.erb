@@ -1,0 +1,11 @@
+<%= turbo_stream.append "content" do %>
+  <%= render @person %>
+<% end %>
+
+<%= turbo_stream.update "search_results" do %>
+  <%# Clear the search results after adding %>
+<% end %>
+
+<%= turbo_stream.update "flash" do %>
+  <%= render "shared/flash" %>
+<% end %> 
