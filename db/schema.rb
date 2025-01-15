@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_15_013701) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_13_140000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -84,13 +84,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_15_013701) do
   create_table "media", force: :cascade do |t|
     t.string "title", null: false
     t.string "type", null: false
-    t.string "tmdb_id"
     t.jsonb "metadata", default: {}
+    t.string "tmdb_id"
+    t.string "unsplash_id"
+    t.string "artsy_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "unsplash_id"
-    t.index ["tmdb_id"], name: "index_media_on_tmdb_id", unique: true
-    t.index ["unsplash_id"], name: "index_media_on_unsplash_id", unique: true
+    t.index ["artsy_id"], name: "index_media_on_artsy_id", unique: true, where: "(artsy_id IS NOT NULL)"
+    t.index ["title"], name: "index_media_on_title"
+    t.index ["tmdb_id"], name: "index_media_on_tmdb_id", unique: true, where: "(tmdb_id IS NOT NULL)"
+    t.index ["type"], name: "index_media_on_type"
+    t.index ["unsplash_id"], name: "index_media_on_unsplash_id", unique: true, where: "(unsplash_id IS NOT NULL)"
   end
 
   create_table "media_people", force: :cascade do |t|
