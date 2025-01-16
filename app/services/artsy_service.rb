@@ -7,25 +7,28 @@ class ArtsyService
     @token = fetch_token
   end
 
-  def search(term, limit: 20)
+  def search(query)
     return [] unless @token
 
-    Rails.cache.fetch("artsy/#{term}", expires_in: 1.hour) do
-      response = self.class.get('/search', {
-        query: { 
-          q: term,
-          size: limit,
-          type: 'artwork'
-        },
-        headers: {
-          'X-Xapp-Token' => @token,
-          'Accept' => 'application/vnd.artsy-v2+json'
-        }
-      })
+    Rails.logger.info "Searching Artsy for: #{query}"
+    Rails.logger.info "Using token: #{@token}"
 
-      return [] unless response.success?
-      parse_artworks(response.parsed_response)
-    end
+    response = self.class.get('/search', {
+      query: { 
+        q: query,
+        type: 'artwork'
+      },
+      headers: {
+        'X-Xapp-Token' => @token,
+        'Accept' => 'application/vnd.artsy-v2+json'
+      }
+    })
+
+    Rails.logger.info "Artsy API Response status: #{response.code}"
+    Rails.logger.info "Artsy API Response body: #{response.body}"
+
+    return [] unless response.success?
+    parse_artworks(response.parsed_response)
   end
 
   def self.search_artworks(query)
@@ -37,17 +40,17 @@ class ArtsyService
   private
 
   def fetch_token
-    Rails.cache.fetch("artsy/token", expires_in: 23.hours) do
-      response = self.class.post('/tokens/xapp_token', {
-        body: {
-          client_id: Rails.application.credentials.dig(:artsy, :client_id),
-          client_secret: Rails.application.credentials.dig(:artsy, :client_secret)
-        }
-      })
+    response = self.class.post('/tokens/xapp_token', {
+      body: {
+        client_id: Rails.application.credentials.artsy.client_id,
+        client_secret: Rails.application.credentials.artsy.client_secret
+      }
+    })
 
-      return nil unless response.success?
-      response.parsed_response['token']
-    end
+    Rails.logger.info "Token fetch response status: #{response.code}"
+    
+    return nil unless response.success?
+    response.parsed_response['token']
   end
 
   def parse_artworks(data)

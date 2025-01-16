@@ -7,6 +7,8 @@ module Topics
       def new
         if params[:query].present?
           @results = ArtsyService.new.search(params[:query])
+        else
+          @results = []
         end
       end
 
