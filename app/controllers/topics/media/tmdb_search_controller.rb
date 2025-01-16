@@ -1,6 +1,6 @@
 module Topics
   module Media
-    class SearchController < ApplicationController
+    class TmdbSearchController < ApplicationController
       include Topics::TopicFinder
       
       before_action :authenticate

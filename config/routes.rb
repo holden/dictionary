@@ -61,8 +61,8 @@ Rails.application.routes.draw do
 
         resources :media, only: [:index, :create, :destroy] do
           collection do
-            get 'search/tmdb', to: 'media/search#new'
-            post 'search/tmdb', to: 'media/search#create'
+            get 'search/tmdb', to: 'media/tmdb_search#new'
+            post 'search/tmdb', to: 'media/tmdb_search#create'
             get 'search/unsplash', to: 'media/unsplash_search#new'
             post 'search/unsplash', to: 'media/unsplash_search#create'
             get 'search/artsy', to: 'media/artsy_search#new'
