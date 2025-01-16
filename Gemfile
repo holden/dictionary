@@ -66,7 +66,7 @@ group :test do
   gem 'webmock'
 end
 
-gem "engtagger", "~> 0.4.1"
+gem "engtagger", "~> 0.4.2"
 gem "httparty"
 gem "nokogiri"
 
