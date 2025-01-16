@@ -3,7 +3,7 @@ class Person < ApplicationRecord
   has_many :quotes
   has_many :books
 
-  validates :title, presence: true
+  validates :title, presence: true, uniqueness: true
   validates :google_knowledge_id, uniqueness: { allow_nil: true }
   validates :tmdb_id, uniqueness: { allow_nil: true }
   validates :open_library_id, uniqueness: { allow_nil: true }
