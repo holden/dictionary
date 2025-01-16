@@ -8,15 +8,21 @@ module Topics
     end
 
     def create
-      @medium = if media_params[:type] == 'Photo'
+      @medium = case media_params[:type]
+      when 'Photo'
         Photo.find_or_initialize_by(unsplash_id: media_params[:unsplash_id])
+      when 'Art'
+        Art.find_or_initialize_by(artsy_id: media_params[:artsy_id])
       else
         Movie.find_or_initialize_by(tmdb_id: media_params[:tmdb_id])
       end
 
+      metadata = media_params[:metadata] || {}
+      metadata['poster_url'] = media_params[:poster_url] if media_params[:poster_url].present?
+
       @medium.assign_attributes({
         title: media_params[:title],
-        metadata: media_params[:metadata]
+        metadata: metadata
       })
 
       if @medium.save
@@ -82,6 +88,8 @@ module Topics
         :type,
         :tmdb_id,
         :unsplash_id,
+        :artsy_id,
+        :poster_url,
         metadata: {}
       )
     end

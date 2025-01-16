@@ -1,33 +1,40 @@
-<div class="relative flex items-center space-x-3 rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm hover:border-gray-400">
+<div class="flex items-center space-x-4 p-4 hover:bg-gray-50">
   <div class="flex-shrink-0">
     <% if result[:image_url].present? %>
-      <img class="h-16 w-16 object-cover rounded-lg" src="<%= result[:image_url] %>" alt="">
+      <img class="h-24 w-24 object-cover rounded" src="<%= result[:image_url] %>" alt="">
+    <% else %>
+      <div class="h-24 w-24 bg-gray-100 rounded flex items-center justify-center">
+        <svg class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+      </div>
     <% end %>
   </div>
+
   <div class="min-w-0 flex-1">
-    <div class="focus:outline-none">
-      <p class="text-sm font-medium text-gray-900"><%= result[:title] %></p>
-      <% if result[:artist].present? %>
-        <p class="text-sm text-gray-500">by <%= result[:artist] %></p>
-      <% end %>
-    </div>
-  </div>
-  <div>
-    <%= button_to send("#{@topic.route_key}_media_path", @topic),
-                  params: { media: {
-                    title: result[:title],
-                    type: 'Art',
-                    artsy_id: result[:artwork_url]&.split('/').last,
-                    poster_url: result[:image_url],
-                    metadata: {
-                      artsy: {
-                        artist: result[:artist],
-                        artwork_url: result[:artwork_url]
-                      }
-                    }
-                  }},
-                  class: "inline-flex items-center rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" do %>
-      Add to Collection
+    <h4 class="text-sm font-medium text-gray-900 truncate"><%= result[:title] %></h4>
+    <% if result[:artist].present? %>
+      <p class="text-sm text-gray-500">by <%= result[:artist] %></p>
+    <% end %>
+    <% if result[:date].present? %>
+      <p class="text-sm text-gray-500"><%= result[:date] %></p>
     <% end %>
   </div>
+
+  <%= button_to send("#{@topic.route_key}_media_path", @topic),
+                params: { media: {
+                  title: result[:title],
+                  type: 'Art',
+                  artsy_id: result[:artwork_url]&.split('/').last,
+                  poster_url: result[:image_url],
+                  metadata: {
+                    artsy: {
+                      artist: result[:artist],
+                      artwork_url: result[:artwork_url]
+                    }
+                  }
+                }},
+                class: "flex-shrink-0 ml-4 bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" do %>
+    Add
+  <% end %>
 </div> 

@@ -7,7 +7,7 @@ class ArtsyService
     @token = fetch_token
   end
 
-  def search(term, limit: 5)
+  def search(term, limit: 20)
     return [] unless @token
 
     Rails.cache.fetch("artsy/#{term}", expires_in: 1.hour) do

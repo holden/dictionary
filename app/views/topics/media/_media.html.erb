@@ -8,9 +8,15 @@
               alt: media.title %>
         <% end %>
       <% elsif media.type == 'Movie' || media.type == 'TVShow' %>
-        <%= image_tag media.display_poster, 
+        <%= image_tag media.poster_url, 
             class: "h-16 w-16 rounded object-cover",
             alt: media.title %>
+      <% elsif media.type == 'Art' %>
+        <%= link_to media.external_url, target: "_blank", rel: "noopener" do %>
+          <%= image_tag media.poster_url,
+              class: "h-16 w-16 rounded object-cover hover:opacity-75 transition-opacity",
+              alt: media.title %>
+        <% end %>
       <% end %>
       
       <div class="flex-1 min-w-0">
@@ -24,6 +30,8 @@
                     class: "hover:text-blue-600",
                     target: "_blank",
                     rel: "noopener" %>
+          <% elsif media.type == 'Art' && media.metadata.dig('artsy', 'artist').present? %>
+            by <%= media.metadata.dig('artsy', 'artist') %>
           <% else %>
             <%= media.type %>
             <% if media.metadata['release_date'] %>

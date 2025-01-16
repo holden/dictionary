@@ -27,6 +27,18 @@ class Photo < Media
     "https://unsplash.com/@#{photographer_username}?utm_source=devils_dictionary&utm_medium=referral"
   end
 
+  def poster_url
+    metadata.dig('urls', 'regular')
+  end
+
+  def display_name
+    title
+  end
+
+  def external_url
+    "https://unsplash.com/photos/#{unsplash_id}"
+  end
+
   # Example of metadata structure:
   # {
   #   description: "A beautiful landscape",

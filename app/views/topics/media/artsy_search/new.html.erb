@@ -24,7 +24,7 @@
       <% end %>
 
       <% if @results&.any? %>
-        <div class="mt-6 grid grid-cols-1 gap-4">
+        <div class="mt-6 divide-y divide-gray-200 border-t border-gray-200">
           <%= render partial: "result", collection: @results %>
         </div>
       <% elsif params[:query].present? %>

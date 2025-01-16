@@ -7,13 +7,15 @@ class Movie < Media
   end
 
   def poster_url
-    return nil if metadata.blank? || !metadata['poster_path'].present?
-    return metadata['poster_path'] if metadata['poster_path'].start_with?('http')
-    "https://image.tmdb.org/t/p/w500#{metadata['poster_path']}"
+    metadata['poster_path'] && "https://image.tmdb.org/t/p/w500#{metadata['poster_path']}"
   end
 
-  def display_poster
-    poster_url.presence || 'https://placehold.co/400x600/png?text=No+Poster'
+  def display_name
+    title
+  end
+
+  def external_url
+    "https://www.themoviedb.org/movie/#{tmdb_id}"
   end
 
   private

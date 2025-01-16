@@ -5,13 +5,16 @@ class Art < Media
     Media.model_name
   end
 
-  # Example of metadata structure:
-  # {
-  #   creation_date: "1889",
-  #   medium: "Oil on canvas",
-  #   artsy: {
-  #     category: "Painting",
-  #     collecting_institution: "MoMA"
-  #   }
-  # }
+  def poster_url
+    metadata['poster_url']
+  end
+
+  def display_name
+    artist = metadata.dig('artsy', 'artist')
+    artist.present? ? "#{title} by #{artist}" : title
+  end
+
+  def external_url
+    metadata.dig('artsy', 'artwork_url')
+  end
 end 
