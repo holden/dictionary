@@ -1,0 +1,37 @@
+<div class="flex items-center justify-between gap-4 py-4">
+  <div class="flex items-center gap-4">
+    <% if result[:metadata][:poster_url].present? %>
+      <%= image_tag result[:metadata][:poster_url], 
+          class: "h-16 w-16 rounded object-cover",
+          alt: result[:title] %>
+    <% else %>
+      <%= image_tag 'https://placehold.co/400x600/png?text=No+Preview',
+          class: "h-16 w-16 rounded object-cover",
+          alt: result[:title] %>
+    <% end %>
+    
+    <div class="flex-1 min-w-0">
+      <p class="text-sm font-medium text-gray-900">
+        <%= result[:title] %>
+      </p>
+      <p class="text-sm text-gray-500">
+        <%= result[:type] %>
+      </p>
+    </div>
+  </div>
+
+  <%= button_to send("#{@topic.route_key}_media_path", @topic),
+      params: { media: {
+        title: result[:title],
+        type: 'Gif',
+        source_id: result[:source_id],
+        source_type: 'Giphy',
+        poster_url: result[:metadata][:poster_url],
+        metadata: {
+          giphy: result[:metadata][:giphy]
+        }
+      }},
+      class: "rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-blue-600 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" do %>
+    Add
+  <% end %>
+</div> 

@@ -67,6 +67,8 @@ Rails.application.routes.draw do
             post 'search/unsplash', to: 'media/unsplash_search#create'
             get 'search/artsy', to: 'media/artsy_search#new'
             post 'search/artsy', to: 'media/artsy_search#create'
+            get 'search/giphy', to: 'media/giphy_search#new'
+            post 'search/giphy', to: 'media/giphy_search#create'
           end
         end
       end

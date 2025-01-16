@@ -15,7 +15,7 @@ class TopicsController < ApplicationController
 
   def show
     @quotes = @topic.fetch_quotes
-    @gifs = GiphyService.search(@topic.title)
+    @gifs = GiphyService.search_preview(@topic.title) if @topic.title.present?
     @artworks = ArtsyService.new.search(@topic.title)
     @urban_definitions = UrbanDictionaryService.search(@topic.title)
     

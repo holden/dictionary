@@ -1,22 +1,14 @@
 <%= turbo_frame_tag dom_id(media) do %>
   <div class="flex items-center justify-between gap-4 py-4">
     <div class="flex items-center gap-4">
-      <% if media.type == 'Photo' %>
-        <%= link_to media.full_url, target: "_blank", rel: "noopener" do %>
-          <%= image_tag media.thumb_url, 
-              class: "h-16 w-16 rounded object-cover hover:opacity-75 transition-opacity",
-              alt: media.title %>
-        <% end %>
-      <% elsif media.type == 'Movie' || media.type == 'TVShow' %>
+      <% if media.poster_url.present? %>
         <%= image_tag media.poster_url, 
             class: "h-16 w-16 rounded object-cover",
             alt: media.title %>
-      <% elsif media.type == 'Art' %>
-        <%= link_to media.external_url, target: "_blank", rel: "noopener" do %>
-          <%= image_tag media.poster_url,
-              class: "h-16 w-16 rounded object-cover hover:opacity-75 transition-opacity",
-              alt: media.title %>
-        <% end %>
+      <% else %>
+        <%= image_tag 'https://placehold.co/400x600/png?text=No+Preview',
+            class: "h-16 w-16 rounded object-cover",
+            alt: media.title %>
       <% end %>
       
       <div class="flex-1 min-w-0">
@@ -24,22 +16,7 @@
           <%= media.title %>
         </p>
         <p class="text-sm text-gray-500">
-          <% if media.type == 'Photo' %>
-            by <%= link_to media.photographer_name,
-                    media.photographer_url,
-                    class: "hover:text-blue-600",
-                    target: "_blank",
-                    rel: "noopener" %>
-          <% elsif media.type == 'Art' && media.metadata.dig('artsy', 'artist').present? %>
-            by <%= media.metadata.dig('artsy', 'artist') %>
-          <% else %>
-            <%= media.type %>
-            <% if media.metadata['release_date'] %>
-              • <%= media.metadata['release_date'] %>
-            <% elsif media.metadata['first_air_date'] %>
-              • <%= media.metadata['first_air_date'] %>
-            <% end %>
-          <% end %>
+          <%= media.type %>
         </p>
       </div>
     </div>
