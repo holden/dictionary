@@ -9,10 +9,9 @@
         </h3>
       </div>
 
-      <%= form_with url: send("search_tmdb_#{@topic.route_key}_media_path", @topic), 
-                  method: :post,
-                  data: { turbo_frame: "search_results" },
-                  class: "space-y-6" do |f| %>
+      <%= form_with url: send("search_tmdb_#{@topic.route_key}_media_path", @topic),
+                    method: :get,
+                    data: { turbo_frame: "content" } do |f| %>
         <div class="mt-2 flex rounded-md shadow-sm">
           <%= f.text_field :query,
               class: "block w-full rounded-l-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6",

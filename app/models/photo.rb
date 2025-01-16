@@ -1,6 +1,6 @@
 class Photo < Media
-  validates :unsplash_id, uniqueness: true, allow_nil: true
-  before_validation :set_type
+  validates :source_id, uniqueness: { scope: :source_type }, allow_nil: true
+  before_validation :set_source_type
 
   def self.model_name
     Media.model_name
@@ -36,7 +36,7 @@ class Photo < Media
   end
 
   def external_url
-    "https://unsplash.com/photos/#{unsplash_id}"
+    "https://unsplash.com/photos/#{source_id}"
   end
 
   # Example of metadata structure:
@@ -63,7 +63,7 @@ class Photo < Media
 
   private
 
-  def set_type
-    self.type = 'Photo'
+  def set_source_type
+    self.source_type = 'Unsplash'
   end
 end 

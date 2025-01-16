@@ -1,6 +1,6 @@
 <div class="flex items-center justify-between gap-4 py-4">
   <div class="flex items-center gap-4">
-    <% if result.dig(:metadata, :poster_path).present? %>
+    <% if result[:metadata][:poster_path].present? %>
       <%= image_tag result[:metadata][:poster_path], 
           class: "h-16 w-16 rounded object-cover",
           alt: result[:title] %>
@@ -16,18 +16,20 @@
       </p>
       <p class="text-sm text-gray-500">
         <%= result[:type] %>
-        <% if result.dig(:metadata, :release_date).present? %>
+        <% if result[:metadata][:release_date].present? %>
           • <%= result[:metadata][:release_date] %>
-        <% elsif result.dig(:metadata, :first_air_date).present? %>
-          • <%= result[:metadata][:first_air_date] %>
         <% end %>
       </p>
     </div>
   </div>
 
   <%= button_to send("#{@topic.route_key}_media_path", @topic),
-      params: { media: result },
-      data: { turbo_frame: "content" },
+      params: { media: {
+        title: result[:title],
+        type: result[:type],
+        source_id: result[:source_id],
+        metadata: result[:metadata]
+      }},
       class: "rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-blue-600 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" do %>
     Add
   <% end %>

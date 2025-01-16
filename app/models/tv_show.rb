@@ -1,28 +1,26 @@
 class TvShow < Media
-  validates :tmdb_id, uniqueness: true, allow_nil: true
-  before_validation :set_type
+  validates :source_id, uniqueness: { scope: :source_type }, allow_nil: true
+  before_validation :set_source_type
 
   def self.model_name
     Media.model_name
   end
 
-  def self.sti_name
-    'TVShow'
-  end
-
   def poster_url
-    return nil if metadata.blank? || !metadata['poster_path'].present?
-    return metadata['poster_path'] if metadata['poster_path'].start_with?('http')
-    "https://image.tmdb.org/t/p/w500#{metadata['poster_path']}"
+    metadata['poster_path']
   end
 
-  def display_poster
-    poster_url.presence || 'https://placehold.co/400x600/png?text=No+Poster'
+  def display_name
+    title
+  end
+
+  def external_url
+    "https://www.themoviedb.org/tv/#{source_id}"
   end
 
   private
 
-  def set_type
-    self.type = self.class.sti_name
+  def set_source_type
+    self.source_type = 'TMDB'
   end
 end 

@@ -1,5 +1,6 @@
 class Art < Media
-  validates :artsy_id, uniqueness: true, allow_nil: true
+  validates :source_id, uniqueness: { scope: :source_type }, allow_nil: true
+  before_validation :set_source_type
 
   def self.model_name
     Media.model_name
@@ -16,5 +17,11 @@ class Art < Media
 
   def external_url
     metadata.dig('artsy', 'artwork_url')
+  end
+
+  private
+
+  def set_source_type
+    self.source_type = 'Artsy'
   end
 end 

@@ -25,7 +25,8 @@
                 params: { media: {
                   title: result[:title],
                   type: 'Art',
-                  artsy_id: result[:artwork_url]&.split('/').last,
+                  source_id: result[:artwork_url]&.split('/')&.last,
+                  source_type: 'Artsy',
                   poster_url: result[:image_url],
                   metadata: {
                     artsy: {

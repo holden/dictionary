@@ -5,10 +5,31 @@ class TmdbService
   def initialize
     @options = {
       headers: {
-        'Authorization' => "Bearer #{Rails.application.credentials.tmdb.access_token}",
+        'Authorization' => "Bearer #{Rails.application.credentials.tmdb[:access_token]}",
         'Content-Type' => 'application/json'
       }
     }
+  end
+
+  def search(query)
+    response = self.class.get("/search/multi", @options.merge(query: { query: query }))
+    return [] unless response.success?
+
+    results = response['results']
+    results.select { |r| r['media_type'].in?(['movie', 'tv']) }.map do |result|
+      {
+        title: result['title'] || result['name'],
+        type: result['media_type'] == 'movie' ? 'Movie' : 'TVShow',
+        source_id: result['id'].to_s,
+        metadata: {
+          overview: result['overview'],
+          popularity: result['popularity'],
+          poster_path: result['poster_path'] && "https://image.tmdb.org/t/p/w500#{result['poster_path']}",
+          release_date: result['release_date'] || result['first_air_date'],
+          vote_average: result['vote_average']
+        }
+      }
+    end
   end
 
   def search_people(query)

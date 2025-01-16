@@ -85,16 +85,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_13_140000) do
     t.string "title", null: false
     t.string "type", null: false
     t.jsonb "metadata", default: {}
-    t.string "tmdb_id"
-    t.string "unsplash_id"
-    t.string "artsy_id"
+    t.string "source_id"
+    t.string "source_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["artsy_id"], name: "index_media_on_artsy_id", unique: true, where: "(artsy_id IS NOT NULL)"
+    t.index ["source_type", "source_id"], name: "index_media_on_source_type_and_source_id", unique: true
     t.index ["title"], name: "index_media_on_title"
-    t.index ["tmdb_id"], name: "index_media_on_tmdb_id", unique: true, where: "(tmdb_id IS NOT NULL)"
     t.index ["type"], name: "index_media_on_type"
-    t.index ["unsplash_id"], name: "index_media_on_unsplash_id", unique: true, where: "(unsplash_id IS NOT NULL)"
   end
 
   create_table "media_people", force: :cascade do |t|
