@@ -1,0 +1,19 @@
+<%= turbo_frame_tag "content" do %>
+  <div class="bg-white shadow sm:rounded-lg">
+    <div class="px-4 py-5 sm:p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-base font-semibold leading-6 text-gray-900">
+          Error Adding Person
+        </h3>
+      </div>
+
+      <div class="mt-2 text-sm text-red-600">
+        <%= flash[:error] %>
+      </div>
+
+      <%= link_to "Back to Search",
+          send("search_knowledge_graph_#{@topic.route_key}_people_path", @topic),
+          class: "mt-4 inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" %>
+    </div>
+  </div>
+<% end %> 

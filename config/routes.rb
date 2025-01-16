@@ -33,6 +33,8 @@ Rails.application.routes.draw do
       get 'search/openlibrary', to: 'people#search_openlibrary'
       post 'search/tmdb', to: 'people#create'
       post 'search/openlibrary', to: 'people#create'
+      get 'search/knowledge_graph', to: 'people/knowledge_graph_search#new'
+      post 'search/knowledge_graph', to: 'people/knowledge_graph_search#create'
     end
   end
   
@@ -56,6 +58,8 @@ Rails.application.routes.draw do
             post 'search/tmdb', to: 'people/search#create'
             get 'search/openlibrary', to: 'people/openlibrary_search#new'
             post 'search/openlibrary', to: 'people/openlibrary_search#create'
+            get 'search/knowledge_graph', to: 'people/knowledge_graph_search#new'
+            post 'search/knowledge_graph', to: 'people/knowledge_graph_search#create'
           end
         end
 

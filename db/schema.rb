@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_13_140000) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_16_123456) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -127,6 +127,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_13_140000) do
     t.datetime "updated_at", null: false
     t.integer "tmdb_id"
     t.string "imdb_id"
+    t.string "google_knowledge_id"
+    t.index ["google_knowledge_id"], name: "index_people_on_google_knowledge_id", unique: true
     t.index ["imdb_id"], name: "index_people_on_imdb_id", unique: true
     t.index ["metadata"], name: "index_people_on_metadata", using: :gin
     t.index ["open_library_id"], name: "index_people_on_open_library_id", unique: true, where: "(open_library_id IS NOT NULL)"

@@ -1,0 +1,41 @@
+<div class="flex items-center justify-between gap-4 py-4">
+  <div class="flex items-center gap-4">
+    <% if result[:image_url].present? %>
+      <%= image_tag result[:image_url], 
+          class: "h-16 w-16 rounded object-cover",
+          alt: result[:name] %>
+    <% else %>
+      <%= image_tag 'https://placehold.co/400x600/png?text=No+Preview',
+          class: "h-16 w-16 rounded object-cover",
+          alt: result[:name] %>
+    <% end %>
+    
+    <div class="flex-1 min-w-0">
+      <p class="text-sm font-medium text-gray-900">
+        <%= result[:name] %>
+      </p>
+      <p class="text-sm text-gray-500">
+        <%= result[:description] %>
+      </p>
+    </div>
+  </div>
+
+  <%= button_to send("search_knowledge_graph_#{@topic.route_key}_people_path", @topic),
+      params: { 
+        person: {
+          title: result[:name],
+          google_knowledge_id: result[:knowledge_graph_id],
+          description: result[:description],
+          image_url: result[:image_url],
+          metadata: {
+            knowledge_graph: {
+              detailed_description: result[:detailed_description],
+              url: result[:url]
+            }
+          }
+        }
+      },
+      class: "rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-blue-600 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" do %>
+    Add
+  <% end %>
+</div> 
