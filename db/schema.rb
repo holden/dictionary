@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_16_123456) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_16_201000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -62,6 +62,30 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_16_123456) do
     t.datetime "updated_at", null: false
     t.index ["author_id"], name: "index_books_on_author_id"
     t.index ["open_library_id"], name: "index_books_on_open_library_id", unique: true, where: "(open_library_id IS NOT NULL)"
+  end
+
+  create_table "bot_influences", force: :cascade do |t|
+    t.bigint "bot_id", null: false
+    t.bigint "person_id", null: false
+    t.float "influence_weight", default: 1.0, null: false
+    t.text "description"
+    t.jsonb "metadata", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["bot_id", "person_id"], name: "index_bot_influences_on_bot_id_and_person_id", unique: true
+    t.index ["bot_id"], name: "index_bot_influences_on_bot_id"
+    t.index ["metadata"], name: "index_bot_influences_on_metadata", using: :gin
+    t.index ["person_id"], name: "index_bot_influences_on_person_id"
+  end
+
+  create_table "bots", force: :cascade do |t|
+    t.string "name"
+    t.text "personality"
+    t.string "base_model"
+    t.float "voter_weight"
+    t.text "curation_focus"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "definitions", force: :cascade do |t|
@@ -225,6 +249,24 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_16_123456) do
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
+  create_table "votes", force: :cascade do |t|
+    t.string "votable_type", null: false
+    t.bigint "votable_id", null: false
+    t.string "voter_type", null: false
+    t.bigint "voter_id", null: false
+    t.boolean "vote_flag", null: false
+    t.float "vote_weight", default: 1.0
+    t.jsonb "metadata", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["metadata"], name: "index_votes_on_metadata", using: :gin
+    t.index ["votable_id", "votable_type"], name: "index_votes_on_votable_id_and_votable_type"
+    t.index ["votable_type", "votable_id"], name: "index_votes_on_votable"
+    t.index ["voter_id", "voter_type", "votable_id", "votable_type"], name: "index_votes_uniqueness", unique: true
+    t.index ["voter_id", "voter_type"], name: "index_votes_on_voter_id_and_voter_type"
+    t.index ["voter_type", "voter_id"], name: "index_votes_on_voter"
+  end
+
   create_table "websites", force: :cascade do |t|
     t.string "url", null: false
     t.string "title"
@@ -237,6 +279,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_16_123456) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "books", "people", column: "author_id"
+  add_foreign_key "bot_influences", "bots"
+  add_foreign_key "bot_influences", "people"
   add_foreign_key "definitions", "topics"
   add_foreign_key "media_people", "media", column: "media_id"
   add_foreign_key "media_people", "people"

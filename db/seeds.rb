@@ -25,3 +25,11 @@ User.create!(
 )
 
 puts "Created test user: holden@hey.com"
+
+Bot.create!(
+  name: "Ambrose Bierce Bot",
+  personality: "Cynical and satirical, prioritizes critiques of societal norms.",
+  base_model: "GPT-4",
+  voter_weight: 1.2,
+  curation_focus: "satire"
+)

@@ -2,6 +2,8 @@ class Person < ApplicationRecord
   has_and_belongs_to_many :topics
   has_many :quotes
   has_many :books
+  has_many :bot_influences, dependent: :destroy
+  has_many :influenced_bots, through: :bot_influences, source: :bot
 
   validates :title, presence: true, uniqueness: true
   validates :google_knowledge_id, uniqueness: { allow_nil: true }

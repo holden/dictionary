@@ -1,0 +1,34 @@
+<div class="flex items-center justify-between gap-4 py-4">
+  <div class="flex items-center gap-4">
+    <% if influence.person.image_url.present? %>
+      <%= image_tag influence.person.image_url, 
+          class: "h-16 w-16 rounded object-cover",
+          alt: influence.person.title %>
+    <% else %>
+      <%= image_tag 'https://placehold.co/400x600/png?text=No+Preview',
+          class: "h-16 w-16 rounded object-cover",
+          alt: influence.person.title %>
+    <% end %>
+    
+    <div class="flex-1 min-w-0">
+      <div class="flex items-center justify-between">
+        <p class="text-sm font-medium text-gray-900">
+          <%= link_to influence.person.title, person_path(influence.person), class: "hover:text-blue-600" %>
+        </p>
+        <p class="text-sm text-gray-500">
+          Weight: <%= influence.influence_weight %>
+        </p>
+      </div>
+      <p class="mt-1 text-sm text-gray-500 line-clamp-2">
+        <%= influence.person.description %>
+      </p>
+    </div>
+  </div>
+
+  <%= button_to bot_bot_influence_path(influence.bot, influence), 
+      method: :delete,
+      class: "rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-red-600 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50",
+      data: { turbo_confirm: "Are you sure?" } do %>
+    Remove
+  <% end %>
+</div> 

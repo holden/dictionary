@@ -84,4 +84,8 @@ Rails.application.routes.draw do
       end
     end
   end
+
+  resources :bots do
+    resources :bot_influences, only: [:new, :create, :destroy]
+  end
 end

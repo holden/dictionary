@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  personality: MyText
+  base_model: MyString
+  voter_weight: 1.5
+  curation_focus: MyText
+
+two:
+  name: MyString
+  personality: MyText
+  base_model: MyString
+  voter_weight: 1.5
+  curation_focus: MyText

@@ -1,0 +1,27 @@
+<div class="flex items-center justify-between gap-4 py-4">
+  <div class="flex-1 min-w-0">
+    <div class="flex items-center justify-between">
+      <p class="text-sm font-medium text-gray-900">
+        <%= link_to bot.name, bot_path(bot), class: "hover:text-blue-600" %>
+      </p>
+      <p class="text-sm text-gray-500">
+        Weight: <%= bot.voter_weight %>
+      </p>
+    </div>
+    <p class="mt-1 text-sm text-gray-500 line-clamp-2">
+      <%= bot.personality %>
+    </p>
+  </div>
+
+  <div class="flex items-center gap-2">
+    <%= link_to "Edit", edit_bot_path(bot),
+        class: "rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" %>
+    
+    <%= button_to bot_path(bot), 
+        method: :delete,
+        class: "rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-red-600 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50",
+        data: { turbo_confirm: "Are you sure?" } do %>
+      Delete
+    <% end %>
+  </div>
+</div> 
