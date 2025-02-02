@@ -18,51 +18,8 @@
     </div>
   </div>
 
-  <!-- Lyrics list -->
-  <div class="mt-6 space-y-4">
-    <% @lyrics.each do |lyric| %>
-      <%= turbo_frame_tag lyric do %>
-        <div class="bg-white px-4 py-5 sm:px-6 shadow rounded-lg">
-          <!-- Title/Lyric -->
-          <div class="text-base font-medium text-gray-900 mb-1">
-            <%= lyric.content.to_plain_text %>
-          </div>
-
-          <!-- Author and actions -->
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-x-3 text-sm text-gray-500">
-              <% if lyric.author %>
-                <%= link_to lyric.author.title,
-                    person_path(lyric.author),
-                    class: "hover:underline" %>
-              <% else %>
-                <%= lyric.attribution_text %>
-              <% end %>
-
-              <% if lyric.source_url.present? %>
-                <%= link_to "View on Genius", lyric.source_url,
-                    class: "text-indigo-600 hover:text-indigo-900",
-                    target: "_blank" %>
-              <% end %>
-            </div>
-
-            <%= button_to "Delete",
-                send("#{@topic.route_key}_lyric_path", @topic, lyric),
-                method: :delete,
-                class: "rounded-md bg-white px-3 py-2 text-sm font-semibold text-red-600 shadow-sm ring-1 ring-inset ring-red-300 hover:bg-red-50",
-                data: { turbo_confirm: "Are you sure?" } %>
-          </div>
-
-          <!-- Metadata -->
-          <div class="mt-1 text-xs text-gray-500">
-            <% if lyric.source_title.present? %>
-              <%= lyric.source_title %>
-              <span class="mx-2">•</span>
-            <% end %>
-            Added by <%= lyric.user.email_address %> • <%= time_ago_in_words(lyric.created_at) %> ago
-          </div>
-        </div>
-      <% end %>
-    <% end %>
+  <!-- Lyrics list with proper ID for Turbo Stream -->
+  <div id="lyrics" class="mt-6 space-y-4">
+    <%= render partial: "topics/lyrics/lyric", collection: @lyrics %>
   </div>
 </div> 

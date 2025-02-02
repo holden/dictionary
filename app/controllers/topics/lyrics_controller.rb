@@ -17,18 +17,15 @@ module Topics
       @lyric.topic = @topic
       @lyric.user = Current.user
 
-      # Try to resolve the author
       if @lyric.attribution_text.present?
         Rails.logger.info "Resolving author for: #{@lyric.attribution_text}"
         
-        # Try finding in our database first
         if author = Person.find_by("lower(title) = ?", @lyric.attribution_text.downcase)
           Rails.logger.info "Found existing author: #{author.title}"
           @lyric.author = author
         else
           Rails.logger.info "Author not found in database, trying OpenLibrary..."
           
-          # Try creating from OpenLibrary if not found
           if author_data = OpenLibraryService.search_author(@lyric.attribution_text)
             person = Person.create!(
               title: @lyric.attribution_text.downcase,
@@ -49,13 +46,16 @@ module Topics
 
       if @lyric.save
         respond_to do |format|
-          format.turbo_stream { 
-            redirect_to send("#{@topic.route_key}_lyrics_path", @topic), notice: 'Lyric was successfully created.'
-          }
           format.html { redirect_to send("#{@topic.route_key}_lyrics_path", @topic), notice: 'Lyric was successfully created.' }
+          format.turbo_stream do
+            flash.now[:notice] = 'Lyric was successfully created.'
+            render turbo_stream: [
+              turbo_stream.prepend("lyrics", partial: "topics/lyrics/lyric", locals: { lyric: @lyric }),
+              turbo_stream.update("flash", partial: "shared/flash")
+            ]
+          end
         end
       else
-        # Check if the error is due to a duplicate lyric
         if @lyric.errors[:source_url].include?('has already been taken')
           redirect_to send("#{@topic.route_key}_lyrics_path", @topic), 
             alert: 'This lyric has already been added to the database.'
@@ -68,14 +68,16 @@ module Topics
 
     def destroy
       @lyric.destroy
+
       respond_to do |format|
-        format.turbo_stream { 
+        format.html { redirect_to send("#{@topic.route_key}_lyrics_path", @topic), notice: 'Lyric was successfully removed.' }
+        format.turbo_stream do
+          flash.now[:notice] = 'Lyric was successfully removed.'
           render turbo_stream: [
             turbo_stream.remove(@lyric),
-            turbo_stream.update("flash", partial: "shared/flash", locals: { notice: "Lyric was successfully removed." })
+            turbo_stream.update("flash", partial: "shared/flash")
           ]
-        }
-        format.html { redirect_to send("#{@topic.route_key}_lyrics_path", @topic), notice: 'Lyric was successfully removed.' }
+        end
       end
     end
 

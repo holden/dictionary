@@ -11,11 +11,13 @@ module Topics
         @results = GeniusService.search(params[:query])
         
         respond_to do |format|
-          format.turbo_stream {
-            render turbo_stream: turbo_stream.update("search_results", 
-              partial: "topics/lyrics/genius_search/result",
-              locals: { results: @results })
-          }
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.update(
+              "search_results",
+              partial: "result",
+              locals: { results: @results }
+            )
+          end
         end
       end
 
