@@ -1,16 +1,23 @@
-class Quote < ApplicationRecord
-  belongs_to :topic
-  belongs_to :author, class_name: 'Person', optional: true
-  belongs_to :user, optional: true
-
+class Quote < Expression
+  has_rich_text :content
+  
   before_create :resolve_author
   before_save :clear_attribution_if_author_present
 
-  has_rich_text :content
+  attribute :attribution_text, :string
+  attribute :disputed, :boolean, default: false
+  attribute :misattributed, :boolean, default: false
+  attribute :original_language, :string
+  attribute :original_text, :string
+  attribute :source_url, :string
+  attribute :citation, :string
 
   validates :content, presence: true
-  validates :user, presence: true
   validate :author_or_attribution_present
+
+  def self.model_name
+    Expression.model_name
+  end
 
   private
 

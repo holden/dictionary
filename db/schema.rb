@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_16_201000) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_16_202000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -105,6 +105,29 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_16_201000) do
     t.index ["topic_id"], name: "index_definitions_on_topic_id"
   end
 
+  create_table "expressions", force: :cascade do |t|
+    t.bigint "topic_id", null: false
+    t.bigint "author_id"
+    t.string "attribution_text"
+    t.string "source_url"
+    t.text "original_text"
+    t.string "original_language"
+    t.text "citation"
+    t.boolean "disputed", default: false
+    t.boolean "misattributed", default: false
+    t.bigint "user_id", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "type"
+    t.integer "year_written"
+    t.string "source_title"
+    t.index ["author_id"], name: "index_expressions_on_author_id"
+    t.index ["topic_id"], name: "index_expressions_on_topic_id"
+    t.index ["type"], name: "index_expressions_on_type"
+    t.index ["user_id"], name: "index_expressions_on_user_id"
+  end
+
   create_table "media", force: :cascade do |t|
     t.string "title", null: false
     t.string "type", null: false
@@ -179,25 +202,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_16_201000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["searchable_type", "searchable_id"], name: "index_pg_search_documents_on_searchable"
-  end
-
-  create_table "quotes", force: :cascade do |t|
-    t.bigint "topic_id", null: false
-    t.bigint "author_id"
-    t.string "attribution_text"
-    t.string "source_url"
-    t.text "original_text"
-    t.string "original_language"
-    t.text "citation"
-    t.boolean "disputed", default: false
-    t.boolean "misattributed", default: false
-    t.bigint "user_id", null: false
-    t.jsonb "metadata", default: {}, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["author_id"], name: "index_quotes_on_author_id"
-    t.index ["topic_id"], name: "index_quotes_on_topic_id"
-    t.index ["user_id"], name: "index_quotes_on_user_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -282,11 +286,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_16_201000) do
   add_foreign_key "bot_influences", "bots"
   add_foreign_key "bot_influences", "people"
   add_foreign_key "definitions", "topics"
+  add_foreign_key "expressions", "people", column: "author_id"
+  add_foreign_key "expressions", "topics"
+  add_foreign_key "expressions", "users"
   add_foreign_key "media_people", "media", column: "media_id"
   add_foreign_key "media_people", "people"
-  add_foreign_key "quotes", "people", column: "author_id"
-  add_foreign_key "quotes", "topics"
-  add_foreign_key "quotes", "users"
   add_foreign_key "sessions", "users"
   add_foreign_key "topic_relationships", "topics"
   add_foreign_key "topic_relationships", "topics", column: "related_topic_id"

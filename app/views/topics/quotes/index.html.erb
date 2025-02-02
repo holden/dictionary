@@ -40,8 +40,8 @@
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-x-3 text-sm text-gray-500">
               <% if quote.author %>
-                <%= link_to quote.author.display_title,
-                    send("#{quote.author.route_key}_path", quote.author),
+                <%= link_to quote.author.title,
+                    person_path(quote.author),
                     class: "hover:underline" %>
               <% else %>
                 <%= quote.attribution_text %>

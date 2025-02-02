@@ -1,59 +1,75 @@
 module Topics
   class QuotesController < ApplicationController
+    include Topics::TopicFinder
     before_action :authenticate
-    before_action :set_topic
     before_action :set_quote, only: [:destroy]
 
     def index
       @quotes = @topic.quotes.order(created_at: :desc)
     end
 
-    def create
-      @quote = @topic.quotes.build(quote_params)
-      @quote.user = Current.user  # Set the current user
-      
-      if params[:quote][:author_name].present?
-        begin
-          author = AuthorLookupService.find_or_create_author(params[:quote][:author_name])
-          @quote.author = author
-        rescue AuthorLookupService::NotFoundError => e
-          @quote.attribution_text = params[:quote][:author_name]
-        end
-      elsif @quote.metadata.dig('wikiquote', 'author').present?
-        author_name = @quote.metadata.dig('wikiquote', 'author').titleize
-        begin
-          author = AuthorLookupService.find_or_create_author(author_name)
-          @quote.author = author
-        rescue AuthorLookupService::NotFoundError => e
-          @quote.attribution_text = author_name
-        end
-      end
+    def new
+      @quote = Quote.new(topic: @topic)
+    end
 
-      if @quote.author.nil? && @quote.attribution_text.blank?
-        @quote.attribution_text = @quote.metadata.dig('wikiquote', 'page_title') || 'Anonymous'
+    def create
+      @quote = Quote.new(quote_params)
+      @quote.topic = @topic
+      @quote.user = Current.user
+
+      # Try to resolve the author
+      if @quote.attribution_text.present?
+        Rails.logger.info "Resolving author for: #{@quote.attribution_text}"
+        
+        # Try finding in our database first
+        if author = Person.find_by("lower(title) = ?", @quote.attribution_text.downcase)
+          Rails.logger.info "Found existing author: #{author.title}"
+          @quote.author = author
+        else
+          Rails.logger.info "Author not found in database, trying OpenLibrary..."
+          
+          # Try creating from OpenLibrary if not found
+          if author_data = OpenLibraryService.search_author(@quote.attribution_text)
+            person = Person.create!(
+              title: @quote.attribution_text.downcase,
+              slug: @quote.attribution_text.parameterize,
+              open_library_id: author_data['key'],
+              metadata: {
+                openlibrary: {
+                  birth_date: author_data['birth_date'],
+                  death_date: author_data['death_date']
+                }
+              }
+            )
+            Rails.logger.info "Created author from OpenLibrary: #{person.title}"
+            @quote.author = person
+          end
+        end
       end
 
       if @quote.save
-        redirect_to send("#{@topic.route_key}_quotes_path", @topic),
-          notice: 'Quote was successfully created.'
+        respond_to do |format|
+          format.turbo_stream { 
+            redirect_to send("#{@topic.route_key}_quotes_path", @topic), notice: 'Quote was successfully created.'
+          }
+          format.html { redirect_to send("#{@topic.route_key}_quotes_path", @topic), notice: 'Quote was successfully created.' }
+        end
       else
+        Rails.logger.error "Failed to save quote: #{@quote.errors.full_messages}"
         render :new, status: :unprocessable_entity
       end
     end
 
     def destroy
-      @quote = @topic.quotes.find(params[:id])
       @quote.destroy
-
       respond_to do |format|
-        format.html { redirect_to send("#{@topic.route_key}_quotes_path", @topic), notice: "Quote was successfully removed." }
         format.turbo_stream { 
-          flash.now[:notice] = "Quote was successfully removed."
           render turbo_stream: [
             turbo_stream.remove(@quote),
-            turbo_stream.update("flash", partial: "shared/flash")
+            turbo_stream.update("flash", partial: "shared/flash", locals: { notice: "Quote was successfully removed." })
           ]
         }
+        format.html { redirect_to send("#{@topic.route_key}_quotes_path", @topic), notice: 'Quote was successfully removed.' }
       end
     end
 
@@ -63,26 +79,13 @@ module Topics
       @quote = @topic.quotes.find(params[:id])
     end
 
-    def set_topic
-      @topic = Topic.friendly.find(params[:concept_id] || params[:person_id] || params[:place_id] || 
-                                 params[:thing_id] || params[:event_id] || params[:action_id] || params[:other_id])
-      
-      unless @topic.type == params[:type]
-        redirect_to root_path, alert: "Topic not found"
-      end
-    end
-
     def quote_params
-      params_with_parsed_metadata = params.require(:quote).tap do |quote_params|
-        if quote_params[:metadata].is_a?(String)
-          quote_params[:metadata] = JSON.parse(quote_params[:metadata])
-        end
-      end
-
-      params_with_parsed_metadata.permit(
-        :content, :source_url, :citation,
-        :original_text, :original_language, :disputed,
-        :misattributed, :attribution_text, metadata: {}
+      params.require(:quote).permit(
+        :content, :attribution_text, :citation,
+        :disputed, :misattributed,
+        :original_language, :original_text,
+        :source_url,
+        metadata: {}
       )
     end
   end
