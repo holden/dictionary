@@ -12,10 +12,10 @@ module Topics
         
         respond_to do |format|
           format.turbo_stream do
-            render turbo_stream: turbo_stream.update(
-              "search_results",
-              partial: "result",
-              locals: { results: @results }
+            render turbo_stream: turbo_stream.replace(
+              'search_results',
+              partial: 'topics/lyrics/genius_search/results',
+              locals: { results: @results, topic: @topic }
             )
           end
         end

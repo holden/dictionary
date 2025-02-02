@@ -60,8 +60,13 @@ module Topics
           redirect_to send("#{@topic.route_key}_lyrics_path", @topic), 
             alert: 'This lyric has already been added to the database.'
         else
-          Rails.logger.error "Failed to save lyric: #{@lyric.errors.full_messages}"
-          render :new, status: :unprocessable_entity
+          respond_to do |format|
+            format.html { render :new, status: :unprocessable_entity }
+            format.turbo_stream { 
+              flash.now[:alert] = @lyric.errors.full_messages.to_sentence
+              render turbo_stream: turbo_stream.update("flash", partial: "shared/flash"), status: :unprocessable_entity
+            }
+          end
         end
       end
     end

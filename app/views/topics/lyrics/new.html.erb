@@ -1,0 +1,16 @@
+<% content_for :title, "New Lyric - #{@topic.title}" %>
+
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="sm:flex sm:items-center">
+    <div class="sm:flex-auto">
+      <h1 class="text-base font-semibold leading-6 text-gray-900">New Lyric</h1>
+      <p class="mt-2 text-sm text-gray-700">Add a new lyric to <%= @topic.title %></p>
+    </div>
+  </div>
+
+  <div class="mt-6">
+    <%= form_with model: [@topic, @lyric], url: send("#{@topic.route_key}_lyrics_path", @topic), class: "space-y-6" do |f| %>
+      <%= render "form", f: f %>
+    <% end %>
+  </div>
+</div> 
