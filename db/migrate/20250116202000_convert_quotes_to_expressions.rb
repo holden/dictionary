@@ -10,6 +10,9 @@ class ConvertQuotesToExpressions < ActiveRecord::Migration[8.0]
     add_column :expressions, :year_written, :integer
     add_column :expressions, :source_title, :string  # e.g. song/album name, book title
     
+    # Add index for source_url uniqueness
+    add_index :expressions, [:source_url, :type], unique: true, where: "source_url IS NOT NULL"
+    
     # Update existing records to be of type Quote
     execute "UPDATE expressions SET type = 'Quote'"
     
@@ -19,6 +22,7 @@ class ConvertQuotesToExpressions < ActiveRecord::Migration[8.0]
 
   def down
     remove_index :expressions, :type
+    remove_index :expressions, [:source_url, :type]
     remove_column :expressions, :type
     remove_column :expressions, :year_written
     remove_column :expressions, :source_title

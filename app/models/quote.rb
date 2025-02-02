@@ -14,6 +14,7 @@ class Quote < Expression
 
   validates :content, presence: true
   validate :author_or_attribution_present
+  validates :source_url, uniqueness: { scope: :type, allow_nil: true }
 
   def self.model_name
     Expression.model_name

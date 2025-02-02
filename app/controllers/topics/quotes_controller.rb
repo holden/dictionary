@@ -55,8 +55,14 @@ module Topics
           format.html { redirect_to send("#{@topic.route_key}_quotes_path", @topic), notice: 'Quote was successfully created.' }
         end
       else
-        Rails.logger.error "Failed to save quote: #{@quote.errors.full_messages}"
-        render :new, status: :unprocessable_entity
+        # Check if the error is due to a duplicate quote
+        if @quote.errors[:source_url].include?('has already been taken')
+          redirect_to send("#{@topic.route_key}_quotes_path", @topic), 
+            alert: 'This quote has already been added to the database.'
+        else
+          Rails.logger.error "Failed to save quote: #{@quote.errors.full_messages}"
+          render :new, status: :unprocessable_entity
+        end
       end
     end
 

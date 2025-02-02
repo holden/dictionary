@@ -123,6 +123,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_16_202000) do
     t.integer "year_written"
     t.string "source_title"
     t.index ["author_id"], name: "index_expressions_on_author_id"
+    t.index ["source_url", "type"], name: "index_expressions_on_source_url_and_type", unique: true, where: "(source_url IS NOT NULL)"
     t.index ["topic_id"], name: "index_expressions_on_topic_id"
     t.index ["type"], name: "index_expressions_on_type"
     t.index ["user_id"], name: "index_expressions_on_user_id"
