@@ -1,0 +1,31 @@
+<% content_for :title, "Search Genius - #{@topic.title}" %>
+
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="sm:flex sm:items-center">
+    <div class="sm:flex-auto">
+      <h1 class="text-base font-semibold leading-6 text-gray-900">Search Genius</h1>
+      <p class="mt-2 text-sm text-gray-700">Search for lyrics related to <%= @topic.title %></p>
+    </div>
+  </div>
+
+  <div class="mt-6">
+    <%= form_with url: send("search_genius_#{@topic.route_key}_lyrics_path", @topic),
+                  data: { controller: "search", turbo_frame: "search_results" },
+                  class: "space-y-6" do |f| %>
+      <div>
+        <%= f.label :query, "Search term", class: "block text-sm font-medium leading-6 text-gray-900" %>
+        <div class="mt-2">
+          <%= f.text_field :query,
+              class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+              data: { action: "input->search#search" } %>
+        </div>
+      </div>
+    <% end %>
+
+    <%= turbo_frame_tag "search_results" do %>
+      <div class="mt-6">
+        <p class="text-sm text-gray-500">Enter a search term above to find lyrics.</p>
+      </div>
+    <% end %>
+  </div>
+</div> 

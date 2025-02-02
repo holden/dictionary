@@ -65,6 +65,7 @@ class Topic < ApplicationRecord
            foreign_key: :source_id,
            dependent: :nullify
   has_many :quotes, dependent: :destroy
+  has_many :lyrics, dependent: :destroy
   has_many :authored_quotes, 
            class_name: 'Quote',
            foreign_key: :author_id,

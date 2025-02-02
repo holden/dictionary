@@ -71,6 +71,14 @@ Rails.application.routes.draw do
             post 'search/giphy', to: 'media/giphy_search#create'
           end
         end
+
+        # Add lyrics routes following the same pattern
+        resources :lyrics, only: [:index, :create, :destroy] do
+          collection do
+            get 'search/genius', to: 'lyrics/genius_search#new'
+            post 'search/genius', to: 'lyrics/genius_search#create'
+          end
+        end
       end
     end
   end

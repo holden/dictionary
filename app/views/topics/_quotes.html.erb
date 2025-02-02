@@ -43,8 +43,8 @@
                   <div class="ml-4">
                     <div class="text-sm font-semibold text-gray-900">
                       <% if quote.author %>
-                        <%= link_to quote.author.display_title,
-                            send("#{quote.author.route_key}_path", quote.author),
+                        <%= link_to quote.author.title,
+                            person_path(quote.author),
                             class: "hover:text-blue-600" %>
                       <% else %>
                         <%= quote.attribution_text %>
