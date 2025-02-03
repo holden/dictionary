@@ -1,0 +1,35 @@
+<div id="search_results">
+  <% if results.any? %>
+    <div class="mt-6 space-y-4">
+      <% results.each do |poem| %>
+        <div class="bg-white px-4 py-5 sm:px-6 shadow rounded-lg">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-base font-semibold leading-6 text-gray-900">
+                <%= poem[:source_title] %>
+              </h3>
+              <div class="mt-1 text-sm text-gray-500">
+                <span class="font-medium">By:</span> <%= poem[:attribution_text] %>
+              </div>
+            </div>
+
+            <%= button_to send("#{@topic.route_key}_poems_path", @topic), 
+                params: { poem: poem },
+                data: { turbo: false },
+                class: "rounded-md bg-white px-3 py-2 text-sm font-semibold text-blue-600 shadow-sm ring-1 ring-inset ring-blue-300 hover:bg-blue-50" do %>
+              Add Poem
+            <% end %>
+          </div>
+
+          <div class="mt-4 text-sm text-gray-700 whitespace-pre-line">
+            <%= truncate(poem[:content], length: 300) %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="mt-6 p-4 bg-gray-50 rounded-lg text-gray-600">
+      No poems found
+    </div>
+  <% end %>
+</div> 

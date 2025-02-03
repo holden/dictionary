@@ -1,11 +1,10 @@
 class Expression < ApplicationRecord
   belongs_to :author, class_name: 'Person'
-  belongs_to :topic, optional: true
   belongs_to :user, optional: true
-
   has_many :expression_topics, dependent: :destroy
   has_many :topics, through: :expression_topics
 
+  has_rich_text :content
   validates :content, presence: true
   validates :author, presence: true
   validates :year_written, numericality: { 

@@ -1,0 +1,37 @@
+<div id="<%= dom_id(poem) %>" class="bg-white px-4 py-5 sm:px-6 shadow rounded-lg">
+  <div class="flex items-center justify-between">
+    <div class="flex-1">
+      <% if poem.source_title.present? %>
+        <h3 class="text-base font-semibold leading-6 text-gray-900">
+          <%= poem.source_title %>
+        </h3>
+      <% end %>
+
+      <div class="mt-2 text-sm text-gray-900 whitespace-pre-line">
+        <%= poem.content %>
+      </div>
+      
+      <div class="mt-2 text-sm text-gray-500">
+        <% if poem.author %>
+          <%= link_to poem.author.display_title,
+              send("#{poem.author.route_key}_path", poem.author),
+              class: "font-medium text-gray-900" %>
+        <% else %>
+          <span class="font-medium text-gray-900"><%= poem.attribution_text %></span>
+        <% end %>
+
+        <% if poem.year_written.present? %>
+          <span class="mx-2">•</span>
+          <span class="font-medium">Year:</span> <%= poem.year_written %>
+        <% end %>
+      </div>
+    </div>
+
+    <%= button_to send("#{@topic.route_key}_poem_path", @topic, poem),
+        method: :delete,
+        class: "rounded-md bg-white px-2 py-1 text-sm font-semibold text-red-600 shadow-sm ring-1 ring-inset ring-red-300 hover:bg-red-50",
+        form: { data: { turbo_confirm: "Are you sure you want to remove this poem?" } } do %>
+      Delete
+    <% end %>
+  </div>
+</div> 

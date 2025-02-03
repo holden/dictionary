@@ -79,6 +79,14 @@ Rails.application.routes.draw do
             post 'search/genius', to: 'lyrics/genius_search#create'
           end
         end
+
+        # Add poems routes following the same pattern
+        resources :poems, only: [:index, :create, :destroy] do
+          collection do
+            get 'search/poetrydb', to: 'poems/poetry_db_search#new'
+            post 'search/poetrydb', to: 'poems/poetry_db_search#create'
+          end
+        end
       end
     end
   end
@@ -96,4 +104,23 @@ Rails.application.routes.draw do
   resources :bots do
     resources :bot_influences, only: [:new, :create, :destroy]
   end
+
+  # Remove these duplicate routes
+  # concern :has_poems do
+  #   resources :poems do
+  #     collection do
+  #       get :search
+  #       post :search, action: :create_search
+  #     end
+  #   end
+  # end
+
+  # namespace :topics do
+  #   resources :concepts, concerns: [:has_poems]
+  #   resources :places, concerns: [:has_poems]
+  #   resources :events, concerns: [:has_poems]
+  #   resources :things, concerns: [:has_poems]
+  #   resources :actions, concerns: [:has_poems]
+  #   resources :other, concerns: [:has_poems]
+  # end
 end

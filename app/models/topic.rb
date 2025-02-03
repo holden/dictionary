@@ -94,6 +94,9 @@ class Topic < ApplicationRecord
   has_many :lyrics, -> { where(type: 'Lyric') }, 
     through: :expression_topics,
     source: :expression
+  has_many :poems, -> { where(type: 'Poem') }, 
+    through: :expression_topics,
+    source: :expression
 
   def refresh_conceptnet_data!
     self.concept_net_id = nil

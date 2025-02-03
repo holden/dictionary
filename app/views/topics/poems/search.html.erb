@@ -1,0 +1,44 @@
+<% content_for :title, "Search Poems - #{@topic.title}" %>
+
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="sm:flex sm:items-center">
+    <div class="sm:flex-auto">
+      <h1 class="text-base font-semibold leading-6 text-gray-900">Search Poems</h1>
+      <p class="mt-2 text-sm text-gray-700">Search for poems related to <%= @topic.title %></p>
+    </div>
+  </div>
+
+  <div class="mt-6">
+    <%= form_with url: search_send("#{@topic.route_key}_poems_path", @topic), 
+                method: :get,
+                data: { turbo_frame: "search_results" },
+                class: "space-y-6" do |f| %>
+      <div>
+        <%= f.label :author, "Author", class: "block text-sm font-medium leading-6 text-gray-900" %>
+        <div class="mt-2 flex gap-x-4">
+          <%= f.text_field :author,
+              class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6",
+              placeholder: "Enter poet's name..." %>
+          
+          <%= f.submit "Search",
+              class: "rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" %>
+        </div>
+      </div>
+
+      <div>
+        <%= f.label :q, "Or search by title", class: "block text-sm font-medium leading-6 text-gray-900" %>
+        <div class="mt-2 flex gap-x-4">
+          <%= f.text_field :q,
+              class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6",
+              placeholder: "Enter poem title..." %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <%= turbo_frame_tag "search_results" do %>
+    <div class="mt-6 p-4 bg-gray-50 rounded-lg text-gray-600">
+      Enter a search term above to find poems
+    </div>
+  <% end %>
+</div> 

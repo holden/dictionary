@@ -10,4 +10,6 @@ class Poem < Expression
     text += " (from #{source_title})" if source_title.present?
     text
   end
+
+  # Add any poem-specific validations or methods here
 end 
