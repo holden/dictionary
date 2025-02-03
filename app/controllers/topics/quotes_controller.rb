@@ -9,73 +9,96 @@ module Topics
     end
 
     def new
-      @quote = Quote.new(topic: @topic)
+      @quote = Quote.new
     end
 
     def create
-      @quote = Quote.new(quote_params)
-      @quote.topic = @topic
-      @quote.user = Current.user
+      # Try to find existing quote first
+      @quote = Quote.find_by(source_url: quote_params[:source_url]) if quote_params[:source_url].present?
+      
+      if @quote
+        # Check if this topic already has this quote
+        if @topic.quotes.exists?(@quote.id)
+          redirect_to send("#{@topic.route_key}_quotes_path", @topic), 
+            alert: 'This quote has already been added to this topic.'
+          return
+        end
+      else
+        # Create new quote if none exists
+        @quote = Quote.new(quote_params)
+        @quote.user = Current.user
 
-      # Try to resolve the author
-      if @quote.attribution_text.present?
-        Rails.logger.info "Resolving author for: #{@quote.attribution_text}"
-        
-        # Try finding in our database first
-        if author = Person.find_by("lower(title) = ?", @quote.attribution_text.downcase)
-          Rails.logger.info "Found existing author: #{author.title}"
-          @quote.author = author
-        else
-          Rails.logger.info "Author not found in database, trying OpenLibrary..."
+        # Handle author resolution
+        if @quote.attribution_text.present?
+          Rails.logger.info "Resolving author for: #{@quote.attribution_text}"
           
-          # Try creating from OpenLibrary if not found
-          if author_data = OpenLibraryService.search_author(@quote.attribution_text)
-            person = Person.create!(
-              title: @quote.attribution_text.downcase,
-              slug: @quote.attribution_text.parameterize,
-              open_library_id: author_data['key'],
-              metadata: {
-                openlibrary: {
-                  birth_date: author_data['birth_date'],
-                  death_date: author_data['death_date']
+          if author = Person.find_by("lower(title) = ?", @quote.attribution_text.downcase)
+            Rails.logger.info "Found existing author: #{author.title}"
+            @quote.author = author
+          else
+            Rails.logger.info "Author not found in database, trying OpenLibrary..."
+            
+            if author_data = OpenLibraryService.search_author(@quote.attribution_text)
+              person = Person.create!(
+                title: @quote.attribution_text,
+                slug: @quote.attribution_text.parameterize,
+                open_library_id: author_data['key'],
+                metadata: {
+                  openlibrary: {
+                    birth_date: author_data['birth_date'],
+                    death_date: author_data['death_date']
+                  }
                 }
-              }
-            )
-            Rails.logger.info "Created author from OpenLibrary: #{person.title}"
-            @quote.author = person
+              )
+              Rails.logger.info "Created author from OpenLibrary: #{person.title}"
+              @quote.author = person
+            end
           end
+        end
+
+        unless @quote.save
+          respond_to do |format|
+            format.html { render :new, status: :unprocessable_entity }
+            format.turbo_stream { 
+              flash.now[:alert] = @quote.errors.full_messages.to_sentence
+              render turbo_stream: turbo_stream.update("flash", partial: "shared/flash"), 
+                status: :unprocessable_entity
+            }
+          end
+          return
         end
       end
 
-      if @quote.save
-        respond_to do |format|
-          format.turbo_stream { 
-            redirect_to send("#{@topic.route_key}_quotes_path", @topic), notice: 'Quote was successfully created.'
-          }
-          format.html { redirect_to send("#{@topic.route_key}_quotes_path", @topic), notice: 'Quote was successfully created.' }
-        end
-      else
-        # Check if the error is due to a duplicate quote
-        if @quote.errors[:source_url].include?('has already been taken')
+      # Associate with topic
+      @topic.quotes << @quote
+
+      respond_to do |format|
+        format.html { 
           redirect_to send("#{@topic.route_key}_quotes_path", @topic), 
-            alert: 'This quote has already been added to the database.'
-        else
-          Rails.logger.error "Failed to save quote: #{@quote.errors.full_messages}"
-          render :new, status: :unprocessable_entity
+            notice: 'Quote was successfully added.' 
+        }
+        format.turbo_stream do
+          flash.now[:notice] = 'Quote was successfully added.'
+          render turbo_stream: [
+            turbo_stream.prepend("quotes", partial: "topics/quotes/quote", locals: { quote: @quote }),
+            turbo_stream.update("flash", partial: "shared/flash")
+          ]
         end
       end
     end
 
     def destroy
       @quote.destroy
+
       respond_to do |format|
-        format.turbo_stream { 
+        format.html { redirect_to send("#{@topic.route_key}_quotes_path", @topic), notice: 'Quote was successfully removed.' }
+        format.turbo_stream do
+          flash.now[:notice] = 'Quote was successfully removed.'
           render turbo_stream: [
             turbo_stream.remove(@quote),
-            turbo_stream.update("flash", partial: "shared/flash", locals: { notice: "Quote was successfully removed." })
+            turbo_stream.update("flash", partial: "shared/flash")
           ]
-        }
-        format.html { redirect_to send("#{@topic.route_key}_quotes_path", @topic), notice: 'Quote was successfully removed.' }
+        end
       end
     end
 
@@ -88,9 +111,7 @@ module Topics
     def quote_params
       params.require(:quote).permit(
         :content, :attribution_text, :citation,
-        :disputed, :misattributed,
-        :original_language, :original_text,
-        :source_url,
+        :source_url, :disputed, :misattributed,
         metadata: {}
       )
     end

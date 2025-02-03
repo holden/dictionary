@@ -28,4 +28,15 @@ class Person < ApplicationRecord
     metadata.dig('tmdb', 'biography') ||
     metadata.dig('openlibrary', 'bio')
   end
+
+  def display_title
+    # Capitalize each word in the title, preserving special cases
+    title.split(' ').map { |word| 
+      Topic::SPECIAL_CASES[word.downcase] || word.capitalize 
+    }.join(' ')
+  end
+
+  def route_key
+    'person'
+  end
 end 
