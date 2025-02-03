@@ -1,0 +1,56 @@
+<div class="space-y-8">
+  <div>
+    <%= f.label :content, "Lyrics", class: "block text-sm font-medium leading-6 text-gray-900" %>
+    <div class="mt-2">
+      <%= f.rich_text_area :content,
+          class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6",
+          placeholder: "Enter lyrics..." %>
+    </div>
+  </div>
+
+  <div>
+    <%= f.label :attribution_text, "Artist/Band", class: "block text-sm font-medium leading-6 text-gray-900" %>
+    <div class="mt-2">
+      <%= f.text_field :attribution_text,
+          class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6",
+          placeholder: "Enter artist or band name..." %>
+    </div>
+  </div>
+
+  <div>
+    <%= f.label :source_title, "Song Title", class: "block text-sm font-medium leading-6 text-gray-900" %>
+    <div class="mt-2">
+      <%= f.text_field :source_title,
+          class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6",
+          placeholder: "Enter song title..." %>
+    </div>
+  </div>
+
+  <div>
+    <%= f.label :source_url, "Source URL", class: "block text-sm font-medium leading-6 text-gray-900" %>
+    <div class="mt-2">
+      <%= f.text_field :source_url,
+          class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6",
+          placeholder: "Enter source URL..." %>
+    </div>
+  </div>
+
+  <div>
+    <%= f.label :year_written, "Year", class: "block text-sm font-medium leading-6 text-gray-900" %>
+    <div class="mt-2">
+      <%= f.text_field :year_written,
+          class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6",
+          placeholder: "Enter year..." %>
+    </div>
+  </div>
+
+  <%= f.hidden_field :metadata if f.object.metadata.present? %>
+
+  <div class="flex justify-end gap-x-3">
+    <%= link_to "Cancel", 
+        send("#{@topic.route_key}_lyrics_path", @topic),
+        class: "rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" %>
+    
+    <%= f.submit class: "rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" %>
+  </div>
+</div> 

@@ -3,6 +3,9 @@ class Expression < ApplicationRecord
   belongs_to :topic, optional: true
   belongs_to :user, optional: true
 
+  has_many :expression_topics, dependent: :destroy
+  has_many :topics, through: :expression_topics
+
   validates :content, presence: true
   validates :author, presence: true
   validates :year_written, numericality: { 

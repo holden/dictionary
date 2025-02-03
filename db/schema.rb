@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_16_202000) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_03_105100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -105,8 +105,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_16_202000) do
     t.index ["topic_id"], name: "index_definitions_on_topic_id"
   end
 
-  create_table "expressions", force: :cascade do |t|
+  create_table "expression_topics", force: :cascade do |t|
+    t.bigint "expression_id", null: false
     t.bigint "topic_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["expression_id", "topic_id"], name: "index_expression_topics_on_expression_id_and_topic_id", unique: true
+    t.index ["expression_id"], name: "index_expression_topics_on_expression_id"
+    t.index ["topic_id"], name: "index_expression_topics_on_topic_id"
+  end
+
+  create_table "expressions", force: :cascade do |t|
     t.bigint "author_id"
     t.string "attribution_text"
     t.string "source_url"
@@ -124,7 +133,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_16_202000) do
     t.string "source_title"
     t.index ["author_id"], name: "index_expressions_on_author_id"
     t.index ["source_url", "type"], name: "index_expressions_on_source_url_and_type", unique: true, where: "(source_url IS NOT NULL)"
-    t.index ["topic_id"], name: "index_expressions_on_topic_id"
     t.index ["type"], name: "index_expressions_on_type"
     t.index ["user_id"], name: "index_expressions_on_user_id"
   end
@@ -287,8 +295,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_16_202000) do
   add_foreign_key "bot_influences", "bots"
   add_foreign_key "bot_influences", "people"
   add_foreign_key "definitions", "topics"
+  add_foreign_key "expression_topics", "expressions"
+  add_foreign_key "expression_topics", "topics"
   add_foreign_key "expressions", "people", column: "author_id"
-  add_foreign_key "expressions", "topics"
   add_foreign_key "expressions", "users"
   add_foreign_key "media_people", "media", column: "media_id"
   add_foreign_key "media_people", "people"

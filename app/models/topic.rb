@@ -86,6 +86,15 @@ class Topic < ApplicationRecord
   # Or if you prefer not to use default_scope, modify your controller:
   scope :with_content, -> { includes(definitions: :rich_text_content) }
 
+  has_many :expression_topics, dependent: :destroy
+  has_many :expressions, through: :expression_topics
+  has_many :quotes, -> { where(type: 'Quote') }, 
+    through: :expression_topics,
+    source: :expression
+  has_many :lyrics, -> { where(type: 'Lyric') }, 
+    through: :expression_topics,
+    source: :expression
+
   def refresh_conceptnet_data!
     self.concept_net_id = nil
     generate_concept_net_id
