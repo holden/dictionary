@@ -78,7 +78,6 @@ class LyricsScrapingService
 
       # Combine all lyrics containers and clean up the text
       content = lyrics_containers.map do |container|
-        # Replace <br> tags with newlines
         container.inner_html.gsub(/<br>/, "\n")
       end.join("\n\n")
 
@@ -92,6 +91,7 @@ class LyricsScrapingService
 
       {
         content: content,
+        source_title: title,  # Add the title to the returned hash
         extracted_at: Time.current.iso8601
       }
     end

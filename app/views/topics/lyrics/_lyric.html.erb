@@ -1,8 +1,15 @@
 <%= turbo_frame_tag lyric do %>
   <div class="bg-white px-4 py-5 sm:px-6 shadow rounded-lg">
-    <!-- Title/Lyric -->
-    <div class="text-base font-medium text-gray-900 mb-1">
-      <%= lyric.content.to_plain_text %>
+    <!-- Title -->
+    <% if lyric.source_title.present? %>
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">
+        <%= lyric.source_title %>
+      </h3>
+    <% end %>
+
+    <!-- Lyric preview -->
+    <div class="text-base text-gray-900 mb-3">
+      <%= truncate(lyric.content.to_plain_text, length: 300, separator: ' ') %>
     </div>
 
     <!-- Author and actions -->
@@ -32,10 +39,6 @@
 
     <!-- Metadata -->
     <div class="mt-1 text-xs text-gray-500">
-      <% if lyric.source_title.present? %>
-        <%= lyric.source_title %>
-        <span class="mx-2">•</span>
-      <% end %>
       Added by <%= lyric.user.email_address %> • <%= time_ago_in_words(lyric.created_at) %> ago
     </div>
   </div>
