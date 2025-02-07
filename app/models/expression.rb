@@ -5,6 +5,7 @@ class Expression < ApplicationRecord
   has_many :topics, through: :expression_topics
 
   has_rich_text :content
+  
   validates :content, presence: true
   validates :author, presence: true
   validates :year_written, numericality: { 

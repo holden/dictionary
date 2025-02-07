@@ -18,7 +18,6 @@ module Topics
     end
 
     def create
-      # Try to find existing lyric first
       @lyric = Lyric.find_by(source_url: lyric_params[:source_url]) if lyric_params[:source_url].present?
       
       if @lyric
@@ -29,9 +28,12 @@ module Topics
           return
         end
       else
-        # Create new lyric if none exists
-        @lyric = Lyric.new(lyric_params)
+        create_params = lyric_params.except(:content)
+        @lyric = Lyric.new(create_params)
         @lyric.user = Current.user
+        
+        # Set temporary placeholder content
+        @lyric.content = "Loading lyrics for #{@lyric.source_title}..."
 
         # Handle author resolution
         if @lyric.attribution_text.present?
@@ -103,7 +105,8 @@ module Topics
     private
 
     def set_topic
-      @topic = Topic.find_by!(type: type_param.classify, slug: params[:other_id])
+      param_key = "#{type_param}_id"
+      @topic = Topic.find_by!(type: type_param.classify, slug: params[param_key])
     end
 
     def set_lyric
