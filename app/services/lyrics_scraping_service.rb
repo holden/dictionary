@@ -76,12 +76,11 @@ class LyricsScrapingService
       lyrics_containers = doc.css('[data-lyrics-container="true"]')
       return nil if lyrics_containers.empty?
 
-      # Combine all lyrics containers and clean up the text
+      # Extract lyrics content
       content = lyrics_containers.map do |container|
         container.inner_html.gsub(/<br>/, "\n")
       end.join("\n\n")
 
-      # Clean up the text
       content = Nokogiri::HTML(content).text
         .gsub(/\[.*?\]/, '')  # Remove [Verse], [Chorus] etc.
         .gsub(/\s+/, ' ')     # Normalize whitespace
@@ -91,8 +90,7 @@ class LyricsScrapingService
 
       {
         content: content,
-        source_title: title,  # Add the title to the returned hash
-        extracted_at: Time.current.iso8601
+        metadata: lyric_params[:metadata]  # Just use the metadata from the API request
       }
     end
   end
