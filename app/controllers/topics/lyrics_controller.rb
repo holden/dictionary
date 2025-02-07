@@ -2,10 +2,15 @@ module Topics
   class LyricsController < ApplicationController
     include Topics::TopicFinder
     before_action :authenticate
-    before_action :set_lyric, only: [:destroy]
+    before_action :set_topic
+    before_action :set_lyric, only: [:show, :destroy]
 
     def index
       @lyrics = @topic.lyrics.order(created_at: :desc)
+    end
+
+    def show
+      # @lyric is set by before_action :set_lyric
     end
 
     def new
@@ -97,8 +102,16 @@ module Topics
 
     private
 
+    def set_topic
+      @topic = Topic.find_by!(type: type_param.classify, slug: params[:other_id])
+    end
+
     def set_lyric
       @lyric = @topic.lyrics.find(params[:id])
+    end
+
+    def type_param
+      params[:type].underscore
     end
 
     def lyric_params

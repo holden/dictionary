@@ -3,13 +3,20 @@
     <!-- Title -->
     <% if lyric.source_title.present? %>
       <h3 class="text-lg font-semibold text-gray-900 mb-2">
-        <%= lyric.source_title %>
+        <%= link_to lyric.source_title, 
+            send("#{@topic.route_key}_lyric_path", @topic, lyric),
+            data: { turbo_frame: "_top" },
+            class: "hover:text-indigo-600" %>
       </h3>
     <% end %>
 
     <!-- Lyric preview -->
     <div class="text-base text-gray-900 mb-3">
       <%= truncate(lyric.content.to_plain_text, length: 300, separator: ' ') %>
+      <%= link_to "Read more", 
+          send("#{@topic.route_key}_lyric_path", @topic, lyric),
+          data: { turbo_frame: "_top" },
+          class: "text-indigo-600 hover:text-indigo-900 ml-2" %>
     </div>
 
     <!-- Author and actions -->
